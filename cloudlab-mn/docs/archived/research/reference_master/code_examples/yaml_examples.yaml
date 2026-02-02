@@ -1,0 +1,553 @@
+# YAML Examples
+
+Complete collection of YAML configuration examples for Emily Sovereign V4 project.
+
+## Phase 0: NixOS Configuration
+
+### NixOS Main Configuration
+```yaml
+# phase0_nixos_setup/example_configuration.nix (YAML representation)
+{ config, pkgs, ... }: {
+  # ZFS storage
+  boot.zfs.pools = {
+    tank = {
+      type = "raidz2";
+      datasets = {
+        "data" = {
+          mountpoint = "/tank/data";
+          compression = "lz4";
+          atime = "off";
+        };
+      };
+      devices = [
+        "/dev/disk/by-id/ata-HGST_HUH7280ALE604_...",
+        # ... more disks
+        "/dev/disk/by-id/nvme-INTEL_SSDPEKKW..."  # Special VDEV
+      ];
+    };
+  };
+
+  # WireGuard VPN
+  networking.wg-quick.interfaces = {
+    wg0 = {
+      address = ["10.0.1.1/24"];
+      listenPort = 51820;
+      privateKeyFile = "/etc/wireguard/privatekey";
+      peers = [
+        {
+          publicKey = "PEER_PUBLIC_KEY";
+          allowedIPs = ["10.0.1.2/32"];
+          endpoint = "EXTERNAL_IP:51820";
+        }
+      ];
+    };
+  };
+
+  # SMB file sharing
+  services.samba = {
+    enable = true;
+    settings = {
+      "global" = {
+        "hosts allow" = "10.0.0.0/8";
+        "server min protocol" = "SMB3";
+      };
+    shares = {
+      data = {
+        path = "/tank/data";
+        "browseable" = "yes";
+        "read only" = "no";
+      };
+    };
+  };
+
+  # Prometheus monitoring
+  services.prometheus = {
+    enable = true;
+    port = 9090;
+    scrapeConfigs = [
+      {
+        job_name = "prometheus";
+        static_configs = [
+          {
+            targets = ["localhost:9100"];
+          }
+        ];
+      }
+    ];
+  };
+}
+```
+
+### Systemd Services
+```yaml
+# systemd service for custom application
+[Unit]
+Description=Sovereign Application
+After=network.target
+
+[Service]
+Type=simple
+User=sovereign
+WorkingDirectory=/opt/sovereign
+ExecStart=/opt/sovereign/.venv/bin/python -m sovereign.main
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+## Phase 1: Observability
+
+### Cilium Configuration
+```yaml
+# phase1_foundation/example_configurations/cilium_config.yaml
+apiVersion: cilium.io/v1alpha1
+kind: CiliumConfig
+metadata:
+  name: cilium-config
+spec:
+  # Enable BBR
+  bpf:
+    policyEnforcement: "default"
+
+  # Tunnel configuration
+  tunnel: "vxlan"
+  tunnelMTU: 9000
+
+  # Bandwidth management
+  bandwidthManager: "bbr"
+}
+```
+
+### Langfuse Configuration
+```yaml
+# phase1_foundation/example_configurations/langfuse_config.yml
+host: http://localhost:3000
+publicKey: "pk-lf-..."
+secretKey: "sk-lf-..."
+salt: "random-salt"
+
+# Database
+database:
+  url: postgresql://postgres:password@localhost:5432/langfuse
+  pool_size: 20
+
+# Storage
+storage:
+  type: "postgresql"
+
+# Redis (for caching)
+redis:
+  url: redis://localhost:6379
+  max_retries: 3
+```
+
+### Hubble Configuration
+```yaml
+# phase1_foundation/example_configurations/hubble_config.yaml
+listen-address: :4244
+tls:
+  enabled: true
+  cert-file: /var/lib/cilium/tls/hubble.pem
+  key-file: /var/lib/cilium/tls/hubble-key.pem
+
+metrics:
+  enabled: true
+  port: 4245
+
+relay:
+  enabled: true
+  server-address: :4242
+```
+
+## Phase 1: Inference
+
+### SGLang Configuration
+```yaml
+# phase1_foundation/example_configurations/sglang_config.yaml
+model_path: /models/llama-7b-q4.gguf
+host: 0.0.0.0
+port: 8000
+tp: 1  # Tensor parallelism
+pp: 1  # Pipeline parallelism
+
+# Memory management
+mem_fraction_static: 0.9
+max_running_requests: 4
+context_length: 4096
+
+# Data type
+dtype: float16
+
+# Schedule policy
+schedule_policy: fcfs
+
+# Logging
+log_level: INFO
+log_requests: true
+```
+
+## Phase 2: Edge & Performance
+
+### WasmEdge Configuration
+```yaml
+# phase2_edge_performance/example_deployments/wasm_edge_config.yaml
+[[module]]
+  name = "cognitive_module"
+  source = "/opt/wasm/cognitive_module.wasm"
+  module_type = "WasmEdge_Py"
+
+[[module]]
+  name = "memory_module"
+  source = "/opt/wasm/memory_module.wasm"
+  module_type = "WasmEdge_Py"
+
+[server]
+  address = "0.0.0.0"
+  port = 8080
+  threads = 4
+
+[execution]
+  wasm_modules = ["cognitive_module", "memory_module"]
+  max_memory_per_module = "64MB"
+  timeout = "30s"
+```
+
+### QUIC Configuration
+```yaml
+# phase2_edge_performance/example_deployments/quic_config.yaml
+quic:
+  max_datagram_frame_size: 1350
+  max_connection_window: 1048576
+  max_stream_window: 1048576
+  congestion_control_algorithm: "bbr"
+  enable_packet_pacing: false
+
+ack_delay_exponent: 2
+
+http3:
+  enabled: true
+  max_concurrent_streams: 100
+```
+
+### Ray Configuration
+```yaml
+# phase2_edge_performance/example_deployments/ray_cluster.yaml
+cluster_name: sovereign-cluster
+upstream_address: "auto"
+
+# Head node
+head_node:
+  ip: "10.0.1.10"
+  port: 6379
+  redis_max_memory: 4000000000
+
+# Worker nodes
+worker_nodes:
+  - ip: "10.0.1.11"
+    resources: '{"CPU": 8, "GPU": 1}'
+  - ip: "10.0.1.12"
+    resources: '{"CPU": 8, "GPU": 0}'
+
+# Resources
+resources:
+  CPU: 28
+  GPU: 1
+
+# Environment
+environment:
+  PYTHONPATH: "$HOME/.venv/lib/python3.12/site-packages"
+```
+
+## Phase 3: Advanced Features
+
+### IPFS Configuration
+```yaml
+# phase3_advanced/example_workflows/ipfs_config.yaml
+ Addresses:
+  Swarm: [
+      "/ip4/10.0.1.10/tcp/4001",
+      "/p2p/QmXx..."  # Peer ID
+    ]
+
+  Gateway: "/ip4/10.0.1.10/tcp/8080"
+
+  API: "/ip4/127.0.0.1/tcp/5001"
+
+ Datastore:
+  Path: "/tank/data/ipfs"
+  StorageMax: "500GB"
+
+ Swarm:
+  ConnMgr:
+    LowWater: 10
+    HighWater: 50
+
+  Routing:
+    Type: "dht"
+
+ Mounts:
+  - IPFS: "/ipfs"
+    Target: "/tank/data/ipfs"
+
+  PubSub:
+    Router: ""
+    Discover: true
+```
+
+### Prefect Configuration
+```yaml
+# phase3_advanced/example_workflows/prefect_config.yml
+server:
+  backend:
+    type: "postgres"
+    database_url: postgresql://postgres:password@localhost:5432/prefect
+
+  api:
+    host: "localhost"
+    port: 4200
+
+  ui:
+    enabled: true
+    port: 8080
+
+execution:
+  batch_size: 10
+  task_timeout_seconds: 3600
+
+logging:
+  level: "INFO"
+```
+
+### Temporal Configuration
+```yaml
+# phase3_advanced/example_workflows/temporal_config.yml
+server:
+  persistence:
+    default:
+      driver: "postgres"
+      postgres:
+        host: "localhost"
+        port: 5432
+        user: "temporal"
+        password: "password"
+        database: "temporal"
+
+  frontend:
+    http:
+      address: "0.0.0.0:7233"
+
+  metrics:
+    prometheus:
+      listenAddress: "0.0.0.0:9090"
+```
+
+## CI/CD
+
+### Forgejo Actions Configuration
+```yaml
+# .forgejo/workflows/deploy.yml
+name: Sovereign CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: self-hosted
+    steps:
+      - name: Setup Nix
+        run: |
+          nix-channel add https://nixos.org/channels/nixos-unstable
+          nix-channel update
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build with Nix
+        run: nix build .#package
+
+      - name: Run Tests
+        run: nix develop --command pytest tests/
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: result/
+
+      - name: Deploy
+        if: github.ref == 'refs/heads/main'
+        run: |
+          nix-env switch --upgrade --profile production
+```
+
+### Docker Compose
+```yaml
+# docker-compose.yml for local development
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: sovereign
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.18.0
+    ports:
+      - "5000:5000"
+    environment:
+      BACKEND_STORE_URI: postgresql://postgres:password@postgres:5432/mlflow
+      DEFAULT_ARTIFACT_ROOT: /mlflow/artifacts
+    volumes:
+      - ./data/mlflow:/mlflow/artifacts
+
+  sglang:
+    build: .
+    environment:
+      CUDA_VISIBLE_DEVICES: "0"
+    ports:
+      - "8000:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+```
+
+## Monitoring
+
+### Prometheus Configuration
+```yaml
+# prometheus.yml
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'node'
+    static_configs:
+      - targets: ['localhost:9100']
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['localhost:9187']
+
+  - job_name: 'sglang'
+    static_configs:
+      - targets: ['localhost:8000']
+
+  - job_name: 'ray'
+    static_configs:
+      - targets: ['localhost:9264']
+
+  - job_name: 'ipfs'
+    static_configs:
+      - targets: ['localhost:5001']
+```
+
+### Alertmanager Configuration
+```yaml
+# alertmanager.yml
+global:
+  resolve_timeout: 5m
+  smtp_smarthost: 'smtp.example.com'
+  smtp_from: 'alerts@sovereign.local'
+
+route:
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 12h
+  receiver: 'email'
+
+receivers:
+  - name: 'email'
+    email_configs:
+      - to: 'team@sovereign.local'
+        from: 'alerts@sovereign.local'
+        smarthost: 'smtp.example.com'
+        auth_username: 'alerts'
+        auth_password: 'password'
+
+inhibit_rules:
+  - source_match:
+      severity: 'warning'
+    target_match:
+      severity: 'critical'
+    equal: [' inhibited_critical_alerts']
+
+templates:
+  - '/etc/alertmanager/template/*.tmpl'
+```
+
+### Alert Rules
+```yaml
+# alerts.yml
+groups:
+  - name: sovereign_alerts
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"5.."}[5m])) /
+            sum(rate(http_requests_total[5m]))
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate detected"
+
+      - alert: HighLatency
+        expr: |
+          histogram_quantile(0.95,
+            sum(http_request_duration_seconds[5m])
+          ) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High latency detected"
+
+      - alert: DiskSpaceLow
+        expr: |
+          (
+            node_filesystem_avail_bytes{mountpoint="/tank"} /
+            node_filesystem_size_bytes{mountpoint="/tank"}
+          ) < 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Disk space running low"
+```
+
+---
+
+**Last Updated**: 2026-01-12
+
+**For AI Agents**: When using YAML examples:
+1. Validate YAML syntax before applying (yamllint)
+2. Adapt to your specific environment
+3. Replace placeholders (passwords, IPs, etc.)
+4. Consider CloudLab c220g5 hardware constraints
+5. Use environment variables for sensitive data
+6. Test configuration changes in staging first

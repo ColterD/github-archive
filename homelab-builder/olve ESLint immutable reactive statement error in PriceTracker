@@ -1,0 +1,5 @@
+[33m42afaac[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m feat: enhance build creator with comprehensive security and accessibility improvements
+[33m7ab7b23[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m fix: resolve E2E testing and Lighthouse CI issues
+[33m1aa9eee[m fix: enhance CI/CD build-time environment detection
+[33m65cd5df[m fix: Resolve ESLint TypeScript errors in env.ts
+[33mb174be1[m fix: Make environment validation build-time compatible

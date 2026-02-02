@@ -1,0 +1,14 @@
+name: "CodeQL Config"
+
+# Exclude paths from analysis
+paths-ignore:
+  # Manual test scripts - intentionally access local services
+  - tests/manual/**
+  # Test output files
+  - tests/output_*
+
+# Custom model packs for security analysis
+# The extensions directory contains our custom sanitizer models
+packs:
+  - codeql/javascript-queries
+  - .github/codeql/extensions

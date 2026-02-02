@@ -1,0 +1,297 @@
+global:
+  smtp_smarthost: "localhost:587"
+  smtp_from: "alerts@your-domain.com"
+  smtp_auth_username: "alerts@your-domain.com"
+  smtp_auth_password: "your-smtp-password"
+  smtp_require_tls: true
+
+# Templates for custom alert formatting
+templates:
+  - "/etc/alertmanager/templates/*.tmpl"
+
+# Route tree for alert routing
+route:
+  group_by: ["alertname", "cluster", "service"]
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: "default"
+  routes:
+    # Critical alerts - immediate notification
+    - match:
+        severity: critical
+      receiver: "critical-alerts"
+      group_wait: 0s
+      group_interval: 5s
+      repeat_interval: 15m
+      continue: true
+
+    # System alerts
+    - match:
+        category: system
+      receiver: "system-alerts"
+      group_interval: 5m
+      repeat_interval: 2h
+
+    # Application alerts
+    - match:
+        category: application
+      receiver: "application-alerts"
+      group_interval: 2m
+      repeat_interval: 1h
+
+    # Database alerts
+    - match:
+        category: database
+      receiver: "database-alerts"
+      group_interval: 1m
+      repeat_interval: 30m
+
+    # SSL certificate alerts
+    - match:
+        category: ssl
+      receiver: "ssl-alerts"
+      group_interval: 1h
+      repeat_interval: 24h
+
+    # Container alerts
+    - match:
+        category: container
+      receiver: "container-alerts"
+      group_interval: 5m
+      repeat_interval: 2h
+
+    # Endpoint monitoring alerts
+    - match:
+        category: endpoint
+      receiver: "endpoint-alerts"
+      group_interval: 2m
+      repeat_interval: 1h
+
+    # Security alerts (if any)
+    - match:
+        category: security
+      receiver: "security-alerts"
+      group_wait: 0s
+      group_interval: 0s
+      repeat_interval: 5m
+      continue: true
+
+# Inhibition rules to suppress redundant alerts
+inhibit_rules:
+  # Suppress warning alerts when critical alerts are firing
+  - source_match:
+      severity: "critical"
+    target_match:
+      severity: "warning"
+    equal: ["alertname", "instance"]
+
+  # Suppress individual container alerts when node is down
+  - source_match:
+      alertname: "NodeDown"
+    target_match:
+      category: "container"
+    equal: ["instance"]
+
+  # Suppress application alerts when database is down
+  - source_match:
+      alertname: "DatabaseDown"
+    target_match:
+      category: "application"
+    equal: ["cluster"]
+
+# Receivers define how to send notifications
+receivers:
+  # Default receiver
+  - name: "default"
+    email_configs:
+      - to: "admin@your-domain.com"
+        subject: "[Homelab] {{ .GroupLabels.alertname }} - {{ .Status | toUpper }}"
+        body: |
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Labels: {{ range .Labels.SortedPairs }}{{ .Name }}={{ .Value }} {{ end }}
+          {{ end }}
+
+  # Critical alerts - multiple notification channels
+  - name: "critical-alerts"
+    email_configs:
+      - to: "admin@your-domain.com"
+        subject: "[CRITICAL] Homelab Alert: {{ .GroupLabels.alertname }}"
+        body: |
+          🚨 CRITICAL ALERT 🚨
+
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Severity: {{ .Labels.severity }}
+          Instance: {{ .Labels.instance }}
+          Time: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+
+          Labels: {{ range .Labels.SortedPairs }}{{ .Name }}={{ .Value }} {{ end }}
+          {{ end }}
+        headers:
+          Priority: "high"
+    # Uncomment and configure for Slack notifications
+    # slack_configs:
+    #   - api_url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
+    #     channel: '#alerts'
+    #     title: '🚨 Critical Alert: {{ .GroupLabels.alertname }}'
+    #     text: |
+    #       {{ range .Alerts }}
+    #       *{{ .Annotations.summary }}*
+    #       {{ .Annotations.description }}
+    #       {{ end }}
+    #     color: 'danger'
+    # Uncomment and configure for Discord notifications
+    # discord_configs:
+    #   - webhook_url: 'https://discord.com/api/webhooks/YOUR/WEBHOOK/URL'
+    #     title: '🚨 Critical Alert'
+    #     description: |
+    #       {{ range .Alerts }}
+    #       **{{ .Annotations.summary }}**
+    #       {{ .Annotations.description }}
+    #       {{ end }}
+
+  # System alerts
+  - name: "system-alerts"
+    email_configs:
+      - to: "sysadmin@your-domain.com"
+        subject: "[System] {{ .GroupLabels.alertname }} on {{ .GroupLabels.instance }}"
+        body: |
+          System Alert Details:
+
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Instance: {{ .Labels.instance }}
+          Severity: {{ .Labels.severity }}
+          Time: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          {{ end }}
+
+  # Application alerts
+  - name: "application-alerts"
+    email_configs:
+      - to: "dev@your-domain.com"
+        subject: "[Application] {{ .GroupLabels.alertname }}"
+        body: |
+          Application Alert Details:
+
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Severity: {{ .Labels.severity }}
+          Time: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          {{ end }}
+
+  # Database alerts
+  - name: "database-alerts"
+    email_configs:
+      - to: "dba@your-domain.com"
+        subject: "[Database] {{ .GroupLabels.alertname }}"
+        body: |
+          Database Alert Details:
+
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Severity: {{ .Labels.severity }}
+          Time: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          {{ end }}
+
+  # SSL certificate alerts
+  - name: "ssl-alerts"
+    email_configs:
+      - to: "security@your-domain.com"
+        subject: "[SSL] Certificate Alert: {{ .GroupLabels.alertname }}"
+        body: |
+          SSL Certificate Alert:
+
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Instance: {{ .Labels.instance }}
+          Time: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          {{ end }}
+
+  # Container alerts
+  - name: "container-alerts"
+    email_configs:
+      - to: "devops@your-domain.com"
+        subject: "[Container] {{ .GroupLabels.alertname }}"
+        body: |
+          Container Alert Details:
+
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Container: {{ .Labels.name }}
+          Severity: {{ .Labels.severity }}
+          Time: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          {{ end }}
+
+  # Endpoint monitoring alerts
+  - name: "endpoint-alerts"
+    email_configs:
+      - to: "monitoring@your-domain.com"
+        subject: "[Endpoint] {{ .GroupLabels.alertname }}"
+        body: |
+          Endpoint Monitoring Alert:
+
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Endpoint: {{ .Labels.instance }}
+          Severity: {{ .Labels.severity }}
+          Time: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          {{ end }}
+
+  # Security alerts
+  - name: "security-alerts"
+    email_configs:
+      - to: "security@your-domain.com"
+        subject: "[SECURITY] {{ .GroupLabels.alertname }}"
+        body: |
+          🔒 SECURITY ALERT 🔒
+
+          {{ range .Alerts }}
+          Alert: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Severity: {{ .Labels.severity }}
+          Time: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+
+          Labels: {{ range .Labels.SortedPairs }}{{ .Name }}={{ .Value }} {{ end }}
+          {{ end }}
+        headers:
+          Priority: "high"
+          X-Priority: "1"
+
+# Time intervals for muting alerts
+time_intervals:
+  - name: "maintenance-window"
+    time_intervals:
+      - times:
+          - start_time: "02:00"
+            end_time: "04:00"
+        weekdays: ["sunday"]
+        months: ["1:12"]
+        days_of_month: ["1:31"]
+
+  - name: "business-hours"
+    time_intervals:
+      - times:
+          - start_time: "09:00"
+            end_time: "17:00"
+        weekdays: ["monday:friday"]
+
+  - name: "off-hours"
+    time_intervals:
+      - times:
+          - start_time: "17:01"
+            end_time: "08:59"
+        weekdays: ["monday:friday"]
+      - times:
+          - start_time: "00:00"
+            end_time: "23:59"
+        weekdays: ["saturday", "sunday"]

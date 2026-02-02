@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "types": ["vue", "vite/client", "vitest/globals", "node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["docs/*"],
+      "@theme/*": ["docs/.vitepress/theme/*"],
+      "@components/*": ["docs/.vitepress/theme/components/*"],
+      "@composables/*": ["docs/.vitepress/theme/composables/*"],
+      "@utils/*": ["docs/.vitepress/theme/utils/*"],
+      "@styles/*": ["docs/.vitepress/theme/styles/*"],
+      "@config/*": ["docs/.vitepress/config/*"]
+    },
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "docs/**/*.ts",
+    "docs/**/*.d.ts",
+    "docs/**/*.tsx",
+    "docs/**/*.vue",
+    "tests/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".vitepress/cache"
+  ]
+}

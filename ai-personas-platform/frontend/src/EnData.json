@@ -1,0 +1,314 @@
+{
+    "Header" :{
+        "home" : "Home",
+        "howWork": "How It's Work",
+        "findComp": "Find Companion",
+        "faq": "FAQ",
+        "start": "Start Chatting",
+        "logout": "Logout"
+    },
+    "SelectMode" : {
+        "title": "Chose Your companion Based On Mode, Gender, Hobbies, Passion...",
+        "list": [
+            {
+                "title": "Adventurous",
+                "icon": "/icon/Adventurous.png"
+            },
+            {
+                "title": "Creative",
+                "icon": "/icon/Creative.png"
+            },
+            {
+                "title": "Optimistic",
+                "icon": "/icon/Optimistic.png"
+            },
+            {
+                "title": "Loyal",
+                "icon": "/icon/Loyal.png"
+            },
+            {
+                "title": "Anxious",
+                "icon": "/icon/Anxious.png"
+            },
+            {
+                "title": "Empathetic",
+                "icon": "/icon/Empathetic.png"
+            },
+            {
+                "title": "Ambitious",
+                "icon": "/icon/Ambitious.png"
+            },
+            {
+                "title": "Humorous",
+                "icon": "/icon/Humorous.png"
+            },
+            {
+                "title": "Courageous",
+                "icon": "/icon/Courageous.png"
+            },
+            {
+                "title": "Respectful",
+                "icon": "/icon/Respectful.png"
+            },
+            {
+                "title": "Shy",
+                "icon": "/icon/Shy.png"
+            },
+            {
+                "title": "Honest",
+                "icon": "/icon/Honest.png"
+            },
+            {
+                "title": "Extraverted",
+                "icon": "/icon/Extraverted.png"
+            },
+            {
+                "title": "Agreeable",
+                "icon": "/icon/Agreeable.png"
+            },
+            {
+                "title": "Conscientious",
+                "icon": "/icon/Conscientious.png"
+            },
+            {
+                "title": "Neurotic",
+                "icon": "/icon/Neurotic.png"
+            },
+            {
+                "title": "Open",
+                "icon": "/icon/Open.png"
+            },
+            {
+                "title": "Playful",
+                "icon": "/icon/Playful.png"
+            },
+            {
+                "title": "Nerd",
+                "icon": "/icon/Nerd.png"
+            },
+            {
+                "title": "male",
+                "icon": "/icon/male.png"
+            },
+            {
+                "title": "female",
+                "icon": "/icon/female.png"
+            },
+            {
+                "title": "real",
+                "icon": "/icon/real.png"
+            },
+            {
+                "title": "Synthetic",
+                "icon": "/icon/Synthetic.png"
+            }
+        ]
+    },
+    "HowWork": {
+        "title": "HOW IT'S WORKS",
+        "Create": "CREATE AN ACCOUNT",
+        "CreateDes" :"Start your magical adventure with our platform by registering yourself. The sign-up process is simple and designed with utmost user-friendliness. Moreover, it's your first step towards receiving personalized AI assistance.",
+        "Choose" : "CHOOSE YOUR AI COMPANION",
+        "ChooseDes": "Choose your desirable AI companion best suited to your mood, passion, or personal predisposition. Our platform offers a diverse array of AI modes, ensuring that your selection perfectly aligns with your preferences and state of mind.",
+        "Chat" : "START CHATTING",
+        "ChatDes": "Once you have selected your ideal AI companion, you're all set to initiate conversation. Our AI is equipped with exceptional chit-chat abilities, understanding abilities, and can respond dynamically according to your moods and inputs. Enjoy engaging, intriguing, and stimulating conversations."
+    },
+    "FindCompanion": {
+        "title": "FIND YOUR PERFECT COMPANION",
+        "Companion": [
+            {
+                "name": "Sarah",
+                "img": "/profile/NewSarah.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/brahms-st-anthony-chorale-theme-two-pianos.mp3"
+            },
+            {
+                "name": "Ava",
+                "img": "/profile/NewSarah2.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/vivaldi-estro-armonico-no11-2.mp3"
+            },
+            {
+                "name": "Lala",
+                "img": "/profile/Newlala.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/mozart-symphony41-3-piano.mp3"
+            },
+            {
+                "name": "Laila",
+                "img": "/profile/Newlaila.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/mozart-symphony41-3-piano.mp3"
+            },
+            {
+                "name": "Sarah",
+                "img": "/profile/NewSarah.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/brahms-st-anthony-chorale-theme-two-pianos.mp3"
+            },
+            {
+                "name": "Ava",
+                "img": "/profile/NewSarah2.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/vivaldi-estro-armonico-no11-2.mp3"
+            },
+            {
+                "name": "Lala",
+                "img": "/profile/Newlala.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/mozart-symphony41-3-piano.mp3"
+            },
+            {
+                "name": "Laila",
+                "img": "/profile/Newlaila.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/mozart-symphony41-3-piano.mp3"
+            }
+            
+        ]
+    },
+    "Banner": {
+        "title" : "FIND YOUR",
+        "subTitle" : "PERFECT COMPANION",
+        "disc": "Your loyal virtual friend! This AI-powered bot is here to keep you company, engage in fun conversations, and be your go-to buddy whenever you need someone to talk to."
+    },
+    "ConversationsTypes" : {
+        "title":  "100% Private",
+        "subtitle" : "Conversations",
+        "disc":"Secure, private chatting",
+        "Btns":[
+            {
+                "label" : "Private",
+                "link" : ""
+            },
+            {
+                "label" : "Safe",
+                "link" : ""
+            },
+            {
+                "label" : "Ethical",
+                "link" : ""
+            }
+        ]
+    },
+    "Frequently" :{
+        "title":  "Frequently Asked Questions",
+        "Questions" : [
+            {
+                "questions" : "What is the purpose of dummy data?",
+                "resp" : "In Informatics, dummy data is benign information that does not contain any useful data, but serves to reserve space where real data is nominally present. Dummy data can be used as a placeholder for both testing and operational purposes."
+            },
+            {
+                "questions" : "What is the purpose of dummy data really?",
+                "resp" : "In Informatics, dummy data is benign information that does not contain any useful data, but serves to reserve space where real data is nominally present. Dummy data can be used as a placeholder for both testing and operational purposes."
+            },
+            {
+                "questions" : "What is the purpose of dummy data really?",
+                "resp" : "In Informatics, dummy data is benign information that does not contain any useful data, but serves to reserve space where real data is nominally present. Dummy data can be used as a placeholder for both testing and operational purposes."
+            },
+             {
+                "questions" : "What is the purpose of dummy data really?",
+                "resp" : "In Informatics, dummy data is benign information that does not contain any useful data, but serves to reserve space where real data is nominally present. Dummy data can be used as a placeholder for both testing and operational purposes."
+            },
+             {
+                "questions" : "What is the purpose of dummy data really?",
+                "resp" : "In Informatics, dummy data is benign information that does not contain any useful data, but serves to reserve space where real data is nominally present. Dummy data can be used as a placeholder for both testing and operational purposes."
+            }
+        ]
+    },
+    "footer" : {
+        "paypal" : "/footer/paypal.png",
+        "visa": "/footer/visa.png",
+        "wireTransfer":"/footer/wire-transfer-logo.png",
+        "RefundPolicy": {
+            "label" :"Refund Policy",
+            "link" : ""
+        },
+        "PrivacyPolicy": {
+            "label" :"Privacy Policy",
+            "link" : ""
+        } ,
+        "TermsConditions":{
+            "label" :"Terms & Conditions",
+            "link" : ""
+        },
+        "about":{
+            "title":  "About",
+            "options" :[
+                {
+                    "title":"About Us",
+                    "link" :""
+                },
+                {
+                    "title":"Careers",
+                    "link" :""
+                }
+            ]
+        },
+        "contact": {
+             "title":  "Contact Us",
+            "options" :[
+                {
+                    "title":"contact@support.com",
+                    "link" :""
+                },
+                {
+                    "title":"+1 267 799 1800",
+                    "link" :""
+                },
+                {
+                    "title":"+44 1183 282090",
+                    "link" :""
+                }
+            ]
+        },
+        "Services": {
+            "title":  "Services",
+            "options" :[
+                {
+                    "title":"Pricing",
+                    "link" :""
+                },
+                {
+                    "title":"New Products",
+                    "link" :""
+                }
+            ]
+        }
+    },
+    "auth" : {
+        "signintitle": "Sign In",
+        "signuptitle": "Sign Up",
+        "forgottitle": "Forgot Password",
+        "Googlesignin": "Sign in with Google",
+        "Metasignin": "Sign in with Meta",
+        "googlesignup": "Sign up with Google",
+        "metasignup": "Sign up with Meta",
+        "or": "Or",
+        "email": "Email",
+        "password": "Password",
+        "firstname": "First Name",
+        "lastname": "Last Name",
+        "gender": "Gender",
+        "male": "male",
+        "female": "Female",
+        "forgot": "Forgot Password?",
+        "required": "Required",
+        "wronginput": "Wrong email or password. Try again or create an account .",
+        "needaccount": "Need new account? ",
+        "loading": "Loading...",
+        "login": "Login",
+        "next": "Next",
+        "goback": "Go Back",
+        "digitTitle": "Enter the 6-digit code sent to your email",
+        "digitholder": "Please enter the 6-digit",
+        "digitwrong": "Wrong code. Try again or create an account.",
+        "enterdigit": "you need to enter 6 digit code",
+        "validate": "Validate",
+        "newpassword": "Enter the New Password",
+        "passwordrule": "Your password must contain:",
+        "passwordlist": "At least 6 characters",
+        "changepass": "Change Password",
+        "continue": "Continue",
+        "already": "Already have an account? "
+        
+    }
+}
+
+
+
+
+
+

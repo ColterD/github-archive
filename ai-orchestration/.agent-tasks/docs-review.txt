@@ -1,0 +1,32 @@
+Review and audit all documentation across the project.
+
+**Scope:**
+- All *.md files in root directory
+- README files in subdirectories
+- Inline code documentation (JSDoc, docstrings)
+- Architecture diagrams and specifications
+
+**Review Criteria:**
+1. Completeness - Are all features documented?
+2. Accuracy - Does documentation match implementation?
+3. Clarity - Is documentation easy to understand?
+4. Structure - Is information well-organized?
+5. Examples - Are there sufficient code examples?
+
+**Specific Files to Review:**
+- README.md
+- ARCHITECTURE.md
+- START_HERE.md
+- SETUP.md
+- SECURITY.md
+- mimir/README.md
+- mimir/dashboard/README.md
+- All QUICKSTART guides
+
+**Deliverables:**
+1. Documentation coverage report
+2. Gaps and inconsistencies identified
+3. Recommendations for improvements
+4. Outdated content flagged
+
+EXCLUDE: Github/reorganization/ directory

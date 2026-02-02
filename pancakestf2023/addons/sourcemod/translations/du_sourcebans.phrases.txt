@@ -1,0 +1,89 @@
+"Phrases"
+{
+	"MuteEmbedTitle"
+	{
+		"en"		"New Player Comm-Banned!"
+		"ru"		"Новый игрок забанен в сообществом"
+	}
+	"TimeInMinutes"
+	{
+		"#format"	"{1:i}"
+		"en"		"{1} minute(s)"
+		"ru"		"{1} минут(ы)"
+	}
+	"MUTE"
+	{
+		"en"		"MUTE"
+		"ru"		"Мут"
+	}
+	"GAG"
+	{
+		"en"		"GAG"
+		"ru"		"Гаг"
+	}
+	"SILENCE"
+	{
+		"en"		"SILENCE"
+		"ru"		"Молчание"
+	}
+	"Permanent"
+	{
+		"en"		"PERMANENT"
+		"ru"		"Навсегда"
+	}
+	"Admin"
+	{
+		"en"		"Admin:"
+		"ru"		"Администратор:"
+	}
+	"Player"
+	{
+		"en"		"Player:"
+		"ru"		"Игрок:"
+	}
+	"Length"
+	{
+		"ru"		"Время:"
+		"en"		"Length:"
+	}
+	"Type"
+	{
+		"en"		"Type:"
+		"ru"		"Тип:"
+	}
+	"Reason"
+	{
+		"en"		"Reason:"
+		"ru"		"Причина:"
+	}
+	"BanEmbedTitle"
+	{
+		"en"		"New Player Server Banned!"
+		"ru"		"Новый игрок забанен на сервере"
+	}
+	"ReportEmbedTitle"
+	{
+		"en"		"New Report"
+		"ru"		"Новый репорт"
+	}
+	"Reporter"
+	{
+		"en"		"Reporter:"
+		"ru"		"Жалоба от:"
+	}
+	"Target"
+	{
+		"en"		"Target:"
+		"ru"		"Нарушитель:"
+	}
+	"Reason"
+	{
+		"en"		"Reason:"
+		"ru"		"Причина:"
+	}
+	"DirectConnect"
+	{
+		"en"		"Direct Connect:"
+		"ru"		"Подключиться:"
+	}
+}

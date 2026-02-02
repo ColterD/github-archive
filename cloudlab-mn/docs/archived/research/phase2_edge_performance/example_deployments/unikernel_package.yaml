@@ -1,0 +1,95 @@
+# Unikernel Package Configuration
+# Nanos/OSv for Emily Sovereign V4 Cognitive Modules
+
+# Application metadata
+name: "emily-cognitive-core"
+version: "0.1.0"
+description: "Emily Sovereign V4 Cognitive Core Unikernel"
+
+# Build configuration
+build:
+  base: "nanos:0.1.0"
+  target: "cognitive_core.py"
+  
+  # Runtime configuration
+  runtime:
+    python_version: "3.11"
+    memory: "64M"  # Minimal memory for cognitive core
+    
+  # Dependencies
+  dependencies:
+    - name: "numpy"
+      version: "1.24.0"
+    - name: "pydantic"
+      version: "2.0.0"
+
+# Runtime configuration
+runtime:
+  # Boot arguments
+  bootargs: "console=ttyS0,reboot=k panic=1"
+  
+  # Environment variables
+  environment:
+    - key: "RUST_LOG"
+      value: "info"
+    - key: "COGNITIVE_MODE"
+      value: "production"
+  
+  # Resource limits
+  limits:
+    memory: "64M"
+    cpu: "2"
+    network: "true"
+  
+  # Port configuration
+  ports:
+    - port: 8080
+      protocol: "tcp"
+      description: "Cognitive API endpoint"
+    - port: 8443
+      protocol: "tcp"
+      description: "Zenoh QUIC"
+
+# Manifest for files to include
+manifest:
+  - target: "/python/cognitive_core.py"
+    source: "./cognitive_core.py"
+  - target: "/python/neurotransmitters.py"
+    source: "./neurotransmitters.py"
+  - target: "/python/global_workspace.py"
+    source: "./global_workspace.py"
+  - target: "/python/inference_engine.py"
+    source: "./inference_engine.py"
+  - target: "/python/agency.py"
+    source: "./agency.py"
+
+# Network configuration
+network:
+  mode: "bridge"
+  interface: "eth0"
+  
+  # DNS configuration
+  dns:
+    - "8.8.8.8"
+    - "1.1.1.1"
+
+# Security configuration
+security:
+  # Sandboxing
+  sandbox: "strict"
+  
+  # Allowed syscalls
+  syscalls:
+    - "read"
+    - "write"
+    - "socket"
+    - "connect"
+    - "bind"
+    - "listen"
+    - "accept"
+  
+  # Denied operations
+  denied:
+    - "fork"
+    - "exec"
+    - "ptrace"

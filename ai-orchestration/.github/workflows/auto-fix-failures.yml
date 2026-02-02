@@ -1,0 +1,134 @@
+name: Auto-fix Failed Tests
+
+on:
+  check_suite:
+    types: [completed]
+  workflow_run:
+    workflows: ["Mimir CI/CD"]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  detect-failures-and-fix:
+    runs-on: ubuntu-latest
+    if: github.event.check_suite.conclusion == 'failure' || github.event.workflow_run.conclusion == 'failure' || contains(github.actor, 'copilot')
+    
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: read
+      actions: write
+    
+    steps:
+      - name: Check for test failures
+        id: check_failures
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Get PR number
+            const prNumber = context.payload.pull_request?.number || 
+                           context.payload.check_suite?.pull_requests?.[0]?.number ||
+                           context.payload.workflow_run?.pull_requests?.[0]?.number;
+            
+            if (!prNumber) {
+              console.log('No PR found, skipping');
+              return;
+            }
+            
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+            
+            // Only handle bot PRs
+            if (!pr.user.login.includes('copilot') && pr.user.type !== 'Bot') {
+              console.log('Not a bot PR, skipping');
+              return;
+            }
+            
+            // Get failed checks
+            const { data: checkRuns } = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: pr.head.sha,
+              per_page: 100
+            });
+            
+            const failedChecks = checkRuns.check_runs.filter(check => 
+              check.conclusion === 'failure' || check.conclusion === 'cancelled'
+            );
+            
+            if (failedChecks.length === 0) {
+              console.log('No failures detected');
+              return;
+            }
+            
+            console.log(`Found ${failedChecks.length} failed checks`);
+            
+            core.setOutput('pr_number', prNumber);
+            core.setOutput('has_failures', 'true');
+            core.setOutput('failed_check_names', failedChecks.map(c => c.name).join(', '));
+            
+            // Get failure details
+            const failureDetails = [];
+            for (const check of failedChecks) {
+              failureDetails.push({
+                name: check.name,
+                url: check.html_url,
+                output: check.output?.summary || 'No details available'
+              });
+            }
+            
+            core.setOutput('failure_details', JSON.stringify(failureDetails));
+      
+      - name: Spawn fixer agent
+        if: steps.check_failures.outputs.has_failures == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUM="${{ steps.check_failures.outputs.pr_number }}"
+          FAILED_CHECKS="${{ steps.check_failures.outputs.failed_check_names }}"
+          
+          echo "Spawning agent to fix failed tests in PR #$PR_NUM"
+          
+          cat > fix-task.txt << 'EOF'
+          CRITICAL: Fix test failures in PR #${{ steps.check_failures.outputs.pr_number }}
+          
+          **Failed Checks:**
+          ${{ steps.check_failures.outputs.failed_check_names }}
+          
+          **Your Task:**
+          1. Check out the PR branch
+          2. Run the failing tests locally to reproduce
+          3. Analyze the failure output carefully
+          4. Fix the code causing the failures
+          5. Run tests again to verify fixes
+          6. Commit and push fixes to the PR
+          
+          **Requirements:**
+          - ALL tests must pass
+          - No shortcuts or test disabling
+          - Fix the root cause, not symptoms
+          - Add tests if coverage gaps found
+          
+          Work on the existing PR branch. Update it with your fixes.
+          EOF
+          
+          gh agent-task create --custom-agent qc -F fix-task.txt
+          
+          echo "Fixer agent spawned"
+      
+      - name: Comment on PR
+        if: steps.check_failures.outputs.has_failures == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const failedChecks = '${{ steps.check_failures.outputs.failed_check_names }}';
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ steps.check_failures.outputs.pr_number }},
+              body: `🔧 **Auto-Fix Agent Spawned**\n\nTest failures detected:\n- ${failedChecks.split(', ').join('\n- ')}\n\nA QC agent has been spawned to analyze and fix these failures.\n\nThe agent will:\n1. Reproduce the failures\n2. Fix the root cause\n3. Verify all tests pass\n4. Update this PR with fixes\n\n⏳ Please wait for the agent to complete...`
+            });

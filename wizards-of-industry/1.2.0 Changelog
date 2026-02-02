@@ -1,0 +1,187 @@
+v1.2.0:
+Changes:
+
+Upgraded:
+- Forge v14.23.5.2815
+
+Known Issues:
+- EnderIO Solar Panels disabled due to game-crashing bug.
+
+Added:
+- Actually Baubles
+- ArmorPlus
+- AtomicStryker's Infernal Mobs
+- AttributeFix
+- Baubles
+- Chunk Pregenerator
+- Corail Tombstone
+- Dynamic Trees - Thaumcraft Compat
+- Ender IO Endergy
+- Familiar Fauna
+- FTB Quests
+- Hammer Core 
+- ICBM Classic
+- Integrated Dynamics
+- Just Enough Energistics (JEE)
+- Main Menu Scale
+- MalisisBlocks
+- Modular Forcefield System
+- Nether Portal Fix
+- No Recipe Book
+- Overloaded Armor Bar
+- Power Chisels (for Chisel)
+- Proportional Destruction Particles
+- Random Patches
+- RandomThings
+- ReAuth
+- ReWIRED
+- Robotic Parts
+- Rustic Thaumaturgy
+- Schematica
+- Smooth Font
+- SpatialCompat for AE2
+- Stackie
+- Stacksize
+- Swing Through Grass
+- Thaumcraft
+- Thaumcraft 6 Aspects for JEI
+- Thaumic Additions: Reconstructed
+- Thaumic Computers
+- Thaumic Energistics
+- Thaumic Inventory Scanning
+- Thaumic JEI
+- Thaumic Periphery
+- Thaumic Terminal
+- Thaumic Tinkerer
+- TidyChunk
+- ToastControl
+- Uppers (Upside Down Hoppers)
+- Wither Skeleton Tweaks
+- Woot
+
+Removed:
+- Advanced Rocketry
+- Armory Expansion
+- B.A.S.E.
+- Construct's Armory
+- Content Tweaker
+- Deep Resonance
+- Exchangers
+- FTB Guides
+- InventoryPets
+- IronBackpacks
+- IronChests
+- JAOPCA
+- JAOPCA Agriculture
+- JustTheTips
+- LetsEncryptCraft
+- LibVulpes
+- MineColonies
+- MineTweaker RecipeMaker
+- MPUtils
+- MPUtils Basic Tools
+- OpenLib
+- OpenModularTurrets
+- Patchouli
+- ProjectE
+- Soul Shards Respawn
+- Soul Shards: The Old Ways
+- Thermal Cultivation
+- TrackAPI
+
+Configuration Changes:
+- Added Iron AIOT, direct upgrade from Stone AIOT.  1500 Durability
+- Added most books to Akashic Tome on initial spawn
+- Added multiple mods to Morph-o-Tool compatibility
+- Allowed Slime Islands to spawn in Mining Dimension
+- Bedrock Flat again... whoops!
+- Better looking changelog, woo!
+- Changed how gravestones work, enhanced entire system.
+- Changed main menu design... again!
+- Changed splash animation on initial load
+- Cleaned up config folder... again!
+- Disabled (most) Lava Mobs from LycanitesMobs
+- Disabled Rose Gold spawning, delete existing mined ores as they are useless.
+- Fixed Mekanism rendering issues with items in JEI not appearing.
+- MemoryTester will now skip dialogue if allocated memory is enough
+- Modified all Skeletons in the Nether to become Wither Skeletons
+- Natura Cotton disabled, Pams HarvestCraft Cotton preferred
+- Set Better Sprinting to have double tap enabled by default
+- Toned down the spawn rates (a LOT) on Nether Portals for LycanitesMobs
+- Toned down the spawn rates in LycanitesMobs in general
+
+Scripting Changes:
+- Added alternative way to craft Nether Stars
+- Allowed a way to craft gunpowder
+- Allowed more books to be compatible with Akashic Tome
+- Armor system completely reworked
+- Changed default fonts and font settings
+- Cleaned up Akashic Tome entries and sorted alphabetically
+- Disabled Mekanism Universal Cables
+- InstantUnify priority changed
+- Removed Book and Quill item and recipe due to exploit.
+- Removed useless scripts
+
+Updated:
+- Actually Additions
+- Advanced Rocketry
+- Aroma1977Core
+- Aroma1977s Dimensional World
+- Binnie's Mods
+- Biomes-o-Plenty
+- Bookshelf
+- Chisels and Bits
+- COFHCore
+- Common Capabilities
+- Compact Machines
+- Construct's Armory
+- Cooking for Blockheads
+- CoroUtil
+- Cosmetic Armor Reworked
+- CraftPresence
+- CraftStudio API
+- Cyclic
+- Cyclops Core
+- Dark Utilities
+- Draconic Evolution
+- Dynamic Trees
+- Dynamic Trees - Pam's Harvestcraft Compat
+- Dynamic Trees - Traverse Compat
+- End: Reborn
+- FastWorkbench
+- Forestry
+- ForgeMultipart CBE
+- FTB Library
+- FTB Utilities
+- Industrial Foregoing
+- Integrated Dynamics
+- Iron Chests
+- Just Enough Items (JEI)
+- LibVulpes
+- Mantle
+- McJtyLib
+- Morph-o-Tool
+- MouseTweaks
+- Mystical Agradditions
+- Mystical Agriculture
+- Natura
+- Nuclearcraft
+- OpenComputers
+- OpenBlocks Elevator Mod
+- PlusTic
+- Quantum Storage
+- Quark
+- RandomPatches
+- RandomTweaks
+- Reborn Core
+- RFTools
+- RFTools Control
+- RFTools Dimensions
+- RFTools Power
+- Rustic
+- SilentLib
+- Super Sound Muffler
+- Tinkers Construct
+- XNet
+- xNICEx
+- YABBA

@@ -1,0 +1,189 @@
+v1.2.3:
+
+Not required, but recommended creating a new world.
+
+Existing Issues:
+- Cable Anchor recipe still requires an entire Saw for 4 pieces.
+- Actually Additions Farmer still spawning Cotton from Barley seeds. (See issue: https://github.com/Ellpeck/ActuallyAdditions/issues/1207)
+
+Fixes:
+- Added an alternative fertilizer recipe using ash
+- Created recipe for Immersive Engineering Fluid Pipe
+- Cleaned up config folder
+
+Added:
+- Autoswitch
+- Better Diving
+- BetterPortals
+- Biome Bundle
+- Bonsai Trees
+- Giacomo's Bookshelf
+- Giacomo's Foundry
+- Ice and Fire
+- JustEnoughIDs Integration
+- Magneticraft
+- Mowzie's Mobs
+- Multi Mine
+- Ocean Floor - Clay/Sand/Dirt
+- Open Terrain Generator
+- Phosphor
+- Surge
+- ThebombzenAPI
+- Traveller's Backpack
+- Treasure2!
+- Trees of Stages
+
+Removed:
+- Biomes O Plenty
+- Dynamic Lights
+- Dynamic Trees
+- Overloaded Armor Bar
+- ReWIRED
+- Robotic Parts
+- Rustic BoP Woods
+
+Config Fixes:
+- Disabled Abaias from spawning (very massive, very spammy)
+- Disabled Aegis (VERY LOUD)
+- Disabled Nether Portals from spawning Lycanites Mobs
+- Disabled Pigmen from spawning at Nether Portal
+- Disabled Pinky (nether spawn)
+- Disabled Triffids from spawning (farmers rejoice!)
+- Enabled Platinum Ore to spawn
+- Halved Afrit spawnrate
+- Halved Geonach spawnrate
+- Halved Gesalt spawnrate
+- Halved Lurker spawnrate
+- Halved Salamander spawnrate
+- Increased Digital Miner range (from 32 to 100)
+
+Forge:
+- Dimmed Forge Loading Screen
+- Updated Main Menu to be prettier
+- Updated to v14.23.5.2847
+
+Updated:
+- Actually Additions
+- AE2 Wireless Terminal Library
+- Applied Energistics 2
+- ArchitectureCraft - TridentMC Version
+- ArmorPlus
+- AtomicStryker's Infernal Mobs
+- AutoRegLib
+- Better Sprinting
+- Biomes O' Plenty
+- Blockcraftery
+- Bonsai Trees
+- Bookshelf
+- Brandon's Core
+- Carry On
+- Chicken Chunks 1.8+
+- Chisels & Bits
+- CodeChicken Lib 1.8+
+- CoFH Core
+- CoFH World
+- Common Capabilities
+- Compact Machines
+- Cooking for Blockheads
+- Corail Tombstone
+- CoroUtil
+- Cosmetic Armor Reworked
+- CraftPresence
+- CraftTweaker
+- Cyclic
+- Cyclops Core
+- Dark Utilities
+- Draconic Evolution
+- End: Reborn
+- Ender Storage 1.8+
+- Ender Utilities
+- EnderCore
+- EnderIO
+- EnderIO Endergy
+- Farseek
+- FastFurnace
+- FastWorkbench
+- FoamFix for Minecraft
+- Forestry
+- Forge MultiPart CBE
+- FTB Library
+- FTB Quests
+- FTB Utilities
+- FTB Utilities: Backups
+- HammerCore
+- Hunting Dimension
+- Industrial Foregoing
+- Inspirations
+- Item Filters
+- JourneyMap
+- Just Enough Energistics
+- Just Enough HarvestCraft
+- Just Enough Resources
+- LibraryEx
+- Lycanites Mobs
+- Mantle
+- McJtyLib
+- Mekanism
+- Mekanism Generators
+- Mekanism Tools
+- Minecraft Comes Alive
+- Mod Name Tooltip
+- ModTweaker
+- More Overlays
+- Mr Crayfish's Furniture Mod
+- Mystical Agradditions
+- Mystical Agriculture
+- MysticalLib
+- Natura
+- NetherEx
+- Nuclearcraft
+- OpenBlocks
+- OpenBlocks Elevator
+- OpenModsLib
+- Overloaded Armor Bar
+- p455w0rd's Library
+- Pam's HarvestCraft
+- Patchouli
+- Phosphor
+- Placebo
+- PlusTiC
+- Quark
+- Random Patches
+- Random Things
+- Random Tweaks
+- Reborn Core
+- Reborn Storage
+- Refined Storage
+- Restone Arsenal
+- RFTools
+- RFTools Control
+- RFTools Dimensions
+- RFTools Power
+- Ruins
+- Rustic
+- Rustic Thaumaturgy
+- Shadowfacts' Forgelin
+- Simply Jetpacks 2
+- Smooth Font
+- Streams
+- Thaumic Additions: Reconstructed
+- Thaumic Energistics
+- Thaumic JEI
+- Thaumic Terminal
+- The Twilight Forest
+- Thermal Dynamics
+- Thermal Expansion
+- Thermal Foundation
+- Thermal Innovation
+- Tinkers Construct
+- Tinkers' Complement
+- Toast Control
+- Translocators
+- Wawla
+- Wireless Crafting Terminal
+- Wireless Redstone CBE
+- Woot
+- XNet
+- xNICEx
+- YABBA
+- YNot

@@ -1,0 +1,307 @@
+{
+    "Header" :{
+        "home": "Accueil",
+        "howWork": "Comment ça fonctionne",
+        "findComp": "Trouver un compagnon",
+        "faq": "FAQ",
+        "start": "Commencer à discuter",
+        "logout": "Se déconnecter"
+    },
+    "SelectMode" : {
+        "title": "Choisissez votre compagnon en fonction du mode, du genre, des hobbies, de la passion...",
+        "list": [
+            {
+                "title": "Aventureux",
+                "icon": "/icon/Adventurous.png"
+            },
+            {
+                "title": "Créatif",
+                "icon": "/icon/Creative.png"
+            },
+            {
+                "title": "Optimiste",
+                "icon": "/icon/Optimistic.png"
+            },
+            {
+                "title": "Loyal",
+                "icon": "/icon/Loyal.png"
+            },
+            {
+                "title": "Anxieux",
+                "icon": "/icon/Anxious.png"
+            },
+            {
+                "title": "Empathique",
+                "icon": "/icon/Empathetic.png"
+            },
+            {
+                "title": "Ambitieux",
+                "icon": "/icon/Ambitious.png"
+            },
+            {
+                "title": "Drôle",
+                "icon": "/icon/Humorous.png"
+            },
+            {
+                "title": "Courageux",
+                "icon": "/icon/Courageous.png"
+            },
+            {
+                "title": "Respectueux",
+                "icon": "/icon/Respectful.png"
+            },
+            {
+                "title": "Timide",
+                "icon": "/icon/Shy.png"
+            },
+            {
+                "title": "Honnête",
+                "icon": "/icon/Honest.png"
+            },
+            {
+                "title": "Extraverti",
+                "icon": "/icon/Extraverted.png"
+            },
+            {
+                "title": "Agréable",
+                "icon": "/icon/Agreeable.png"
+            },
+            {
+                "title": "Consciencieux",
+                "icon": "/icon/Conscientious.png"
+            },
+            {
+                "title": "Névrosé",
+                "icon": "/icon/Neurotic.png"
+            },
+            {
+                "title": "Ouvert",
+                "icon": "/icon/Open.png"
+            },
+            {
+                "title": "Joueur",
+                "icon": "/icon/Playful.png"
+            },
+            {
+                "title": "Nerd",
+                "icon": "/icon/Nerd.png"
+            },
+            {
+                "title": "Homme",
+                "icon": "/icon/male.png"
+            },
+            {
+                "title": "Femme",
+                "icon": "/icon/female.png"
+            },
+            {
+                "title": "Réel",
+                "icon": "/icon/real.png"
+            },
+            {
+                "title": "Synthétique",
+                "icon": "/icon/Synthetic.png"
+            }
+        ]
+    },
+    "HowWork": {
+        "title": "COMMENT ÇA MARCHE",
+        "Create": "CRÉER UN COMPTE",
+        "CreateDes" :"Commencez votre aventure magique avec notre plateforme en vous inscrivant. Le processus d'inscription est simple et conçu pour être convivial. De plus, c'est votre première étape vers l'obtention d'une assistance IA personnalisée.",
+        "Choose" : "CHOISISSEZ VOTRE COMPAGNON IA",
+        "ChooseDes": "Choisissez votre compagnon IA souhaité en fonction de votre humeur, de votre passion ou de votre prédisposition personnelle. Notre plateforme offre une gamme diversifiée de modes IA, garantissant que votre sélection correspond parfaitement à vos préférences et à votre état d'esprit.",
+        "Chat" : "COMMENCER LA DISCUSSION",
+        "ChatDes": "Une fois que vous avez sélectionné votre compagnon IA idéal, vous êtes prêt à entamer la conversation. Notre IA est dotée d'une capacité exceptionnelle à discuter, à comprendre et à répondre de manière dynamique à vos humeurs et à vos entrées. Profitez de conversations engageantes, intrigantes et stimulantes."
+    },
+    "FindCompanion": {
+        "title": "TROUVEZ VOTRE COMPAGNON IDÉAL",
+        "Companion": [
+            {
+                "name": "Sarah",
+                "img": "/profile/NewSarah.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/brahms-st-anthony-chorale-theme-two-pianos.mp3"
+            },
+            {
+                "name": "Ava",
+                "img": "/profile/NewSarah2.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/vivaldi-estro-armonico-no11-2.mp3"
+            },
+            {
+                "name": "Lala",
+                "img": "/profile/Newlala.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/mozart-symphony41-3-piano.mp3"
+            },
+            {
+                "name": "Laila",
+                "img": "/profile/Newlaila.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/mozart-symphony41-3-piano.mp3"
+            },
+            {
+                "name": "Sarah",
+                "img": "/profile/NewSarah.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/brahms-st-anthony-chorale-theme-two-pianos.mp3"
+            },
+            {
+                "name": "Ava",
+                "img": "/profile/NewSarah2.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/vivaldi-estro-armonico-no11-2.mp3"
+            },
+            {
+                "name": "Lala",
+                "img": "/profile/Newlala.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/mozart-symphony41-3-piano.mp3"
+            },
+            {
+                "name": "Laila",
+                "img": "/profile/Newlaila.png",
+                "Sound": "https://www.mfiles.co.uk/mp3-downloads/mozart-symphony41-3-piano.mp3"
+            }
+            
+        ]
+    },
+    "Banner": {
+        "title" : "TROUVEZ VOTRE",
+        "subTitle" : "COMPAGNON IDÉAL",
+        "disc": "Votre ami virtuel fidèle ! Ce bot alimenté par l'IA est là pour vous tenir compagnie, engager des conversations amusantes et être votre compagnon privilégié lorsque vous avez besoin de parler à quelqu'un."
+    },
+    "ConversationsTypes" : {
+        "title":  "Conversations",
+        "subtitle" : "100% privées",
+        "disc":"Discussions sécurisées et privées",
+        "Btns":[
+            {
+                "label" : "Privées",
+                "link" : ""
+            },
+            {
+                "label" : "Sûres",
+                "link" : ""
+            },
+            {
+                "label" : "Éthiques",
+                "link" : ""
+            }
+        ]
+    },
+    "Frequently" :{
+        "title":  "Questions fréquemment posées",
+        "Questions" : [
+            {
+                "questions" : "Quel est le but des données fictives ?",
+                "resp" : "En informatique, les données fictives sont des informations bénignes qui ne contiennent aucune donnée utile, mais qui servent à réserver de l'espace là où des données réelles sont normalement présentes. Les données fictives peuvent être utilisées comme espace réservé à des fins de test et opérationnelles."
+            },
+            {
+                "questions" : "Quel est vraiment le but des données fictives ?",
+                "resp" : "En informatique, les données fictives sont des informations bénignes qui ne contiennent aucune donnée utile, mais qui servent à réserver de l'espace là où des données réelles sont normalement présentes. Les données fictives peuvent être utilisées comme espace réservé à des fins de test et opérationnelles."
+            },
+            {
+                "questions" : "Quel est vraiment le but des données fictives ?",
+                "resp" : "En informatique, les données fictives sont des informations bénignes qui ne contiennent aucune donnée utile, mais qui servent à réserver de l'espace là où des données réelles sont normalement présentes. Les données fictives peuvent être utilisées comme espace réservé à des fins de test et opérationnelles."
+            },
+            {
+                "questions" : "Quel est vraiment le but des données fictives ?",
+                "resp" : "En informatique, les données fictives sont des informations bénignes qui ne contiennent aucune donnée utile, mais qui servent à réserver de l'espace là où des données réelles sont normalement présentes. Les données fictives peuvent être utilisées comme espace réservé à des fins de test et opérationnelles."
+            },
+            {
+                "questions" : "Quel est vraiment le but des données fictives ?",
+                "resp" : "En informatique, les données fictives sont des informations bénignes qui ne contiennent aucune donnée utile, mais qui servent à réserver de l'espace là où des données réelles sont normalement présentes. Les données fictives peuvent être utilisées comme espace réservé à des fins de test et opérationnelles."
+            }
+        ]
+    },
+    "footer" : {
+        "paypal" : "/footer/paypal.png",
+        "visa": "/footer/visa.png",
+        "wireTransfer":"/footer/wire-transfer-logo.png",
+        "RefundPolicy": {
+            "label" :"Politique de remboursement",
+            "link" : ""
+        },
+        "PrivacyPolicy": {
+            "label" :"Politique de confidentialité",
+            "link" : ""
+        } ,
+        "TermsConditions":{
+            "label" :"Termes et conditions",
+            "link" : ""
+        },
+        "about":{
+            "title":  "À propos",
+            "options" :[
+                {
+                    "title":"À propos de nous",
+                    "link" :""
+                },
+                {
+                    "title":"Carrières",
+                    "link" :""
+                }
+            ]
+        },
+        "contact": {
+             "title":  "Contactez-nous",
+            "options" :[
+                {
+                    "title":"contact@support.com",
+                    "link" :""
+                },
+                {
+                    "title":"+1 267 799 1800",
+                    "link" :""
+                },
+                {
+                    "title":"+44 1183 282090",
+                    "link" :""
+                }
+            ]
+        },
+        "Services": {
+            "title":  "Services",
+            "options" :[
+                {
+                    "title":"Tarification",
+                    "link" :""
+                },
+                {
+                    "title":"Nouveaux produits",
+                    "link" :""
+                }
+            ]
+        }
+    },
+    "auth" : {
+        "signintitle": "Se connecter",
+        "signuptitle": "S'inscrire",
+        "forgottitle": "Mot de passe oublié",
+        "Googlesignin": "Se connecter avec Google",
+        "Metasignin": "Se connecter avec Meta",
+        "googlesignup": "S'inscrire avec Google",
+        "metasignup": "S'inscrire avec Meta",
+        "or": "Ou",
+        "email": "Email",
+        "password": "Mot de passe",
+        "firstname": "Prénom",
+        "lastname": "Nom de famille",
+        "gender": "Genre",
+        "male": "Homme",
+        "female": "Femme",
+        "forgot": "Mot de passe oublié ?",
+        "required": "Requis",
+        "wronginput": "Adresse email ou mot de passe incorrect. Veuillez réessayer ou créer un compte.",
+        "needaccount": "Besoin d'un nouveau compte ?",
+        "loading": "Chargement...",
+        "login": "Connexion",
+        "next": "Suivant",
+        "goback": "Retour",
+        "digitTitle": "Entrez le code à 6 chiffres",
+        "digitholder": "Veuillez entrer le code à 6 chiffres envoyé à votre adresse email",
+        "digitwrong": "Code incorrect. Veuillez réessayer ou créer un compte.",
+        "enterdigit": "Vous devez entrer un code à 6 chiffres",
+        "validate": "Valider",
+        "newpassword": "Entrez le nouveau mot de passe",
+        "passwordrule": "Votre mot de passe doit contenir :",
+        "passwordlist": "Au moins 6 caractères",
+        "changepass": "Changer le mot de passe",
+        "continue": "Continuer",
+        "already": "Vous avez déjà un compte ?"
+}
+}

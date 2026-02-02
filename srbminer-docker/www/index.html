@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRBMiner-Multi Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.7.0/chart.min.js"></script>
+</head>
+<body class="dark-theme">
+    <div class="dashboard-container">
+        <div class="header">
+            <div class="header-title">
+                <i class="fas fa-microchip logo-icon"></i>
+                <h1>SRBMiner-Multi Dashboard</h1>
+            </div>
+            <div class="controls">
+                <span>Dark Mode</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="theme-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+                <button class="button" id="refresh-button">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <div class="tooltip">
+                    <button class="button button-secondary" id="config-button">
+                        <i class="fas fa-cog"></i> Settings
+                    </button>
+                    <span class="tooltip-text">View and modify miner configuration</span>
+                </div>
+                <button class="button button-danger" id="stop-button">
+                    <i class="fas fa-stop-circle"></i> Stop
+                </button>
+            </div>
+        </div>
+        
+        <div id="alerts-container"></div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="dashboard">Dashboard</div>
+            <div class="tab" data-tab="performance">Performance</div>
+            <div class="tab" data-tab="logs">Logs</div>
+            <div class="tab" data-tab="config">Configuration</div>
+            <div class="tab" data-tab="about">About</div>
+        </div>
+        
+        <div class="tab-content active" id="dashboard">
+            <div class="overview-cards">
+                <div class="overview-card">
+                    <div class="overview-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <div class="overview-details">
+                        <div class="overview-title">Status</div>
+                        <div id="miner-status" class="overview-value">
+                            <span class="status status-running">
+                                <i class="fas fa-play-circle"></i> Running
+                            </span>
+                        </div>
+                        <div class="overview-subtitle">Current mining status</div>
+                    </div>
+                </div>
+                
+                <div class="overview-card">
+                    <div class="overview-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="overview-details">
+                        <div class="overview-title">Total Hashrate</div>
+                        <div id="total-hashrate" class="overview-value">0.00 H/s</div>
+                        <div class="overview-subtitle">Combined mining power</div>
+                    </div>
+                </div>
+                
+                <div class="overview-card">
+                    <div class="overview-icon">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    <div class="overview-details">
+                        <div class="overview-title">Algorithm</div>
+                        <div id="algorithm" class="overview-value">-</div>
+                        <div class="overview-subtitle">Current mining algorithm</div>
+                    </div>
+                </div>
+                
+                <div class="overview-card">
+                    <div class="overview-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="overview-details">
+                        <div class="overview-title">Uptime</div>
+                        <div id="uptime" class="overview-value">-</div>
+                        <div class="overview-subtitle">Time since miner started</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2><i class="fas fa-microchip"></i> GPU Stats</h2>
+                <div id="gpu-container" class="gpu-grid"></div>
+                <div id="no-gpu-message" class="centered-message" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i> No GPU hardware detected or configured
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2><i class="fas fa-desktop"></i> CPU Stats</h2>
+                <div id="cpu-container">
+                    <div id="cpu-stats" class="cpu-card">
+                        <div class="cpu-header">
+                            <div class="cpu-name"><i class="fas fa-microchip"></i> CPU Mining</div>
+                            <span id="cpu-enabled" class="badge badge-success">Enabled</span>
+                        </div>
+                        
+                        <div class="cpu-stats">
+                            <div class="cpu-stat">
+                                <div class="cpu-stat-title">Hashrate</div>
+                                <div id="cpu-hashrate" class="cpu-stat-value">0.00 H/s</div>
+                            </div>
+                            
+                            <div class="cpu-stat">
+                                <div class="cpu-stat-title">Threads</div>
+                                <div id="cpu-threads" class="cpu-stat-value">0</div>
+                            </div>
+                            
+                            <div class="cpu-stat">
+                                <div class="cpu-stat-title">Usage</div>
+                                <div id="cpu-usage" class="cpu-stat-value">0%</div>
+                                <div class="progress-bar">
+                                    <div id="cpu-usage-bar" class="progress-fill cpu-usage" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="cpu-stat">
+                                <div class="cpu-stat-title">Shares</div>
+                                <div id="cpu-shares" class="cpu-stat-value">0 / 0 / 0</div>
+                                <div class="cpu-stat-subtitle">Accepted / Rejected / Invalid</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="no-cpu-message" class="centered-message" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i> CPU mining is not enabled
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2><i class="fas fa-info-circle"></i> Mining Information</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-title"><i class="fas fa-tag"></i> Version</div>
+                        <div id="version" class="info-value">-</div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-title"><i class="fas fa-server"></i> Pool</div>
+                        <div id="pool" class="info-value">-</div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-title"><i class="fas fa-wallet"></i> Wallet</div>
+                        <div id="wallet" class="info-value">-</div>
+                    </div>
+                    
+                    <div class="info-card">
+                        <div class="info-title"><i class="fas fa-user"></i> Worker</div>
+                        <div id="worker" class="info-value">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="performance">
+            <div class="section">
+                <h2><i class="fas fa-chart-line"></i> Real-time Performance</h2>
+                
+                <div class="chart-container">
+                    <canvas id="hashrate-chart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="temperature-chart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="power-chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2><i class="fas fa-trophy"></i> Mining Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title"><i class="fas fa-check-circle"></i> Shares</div>
+                        <div id="shares" class="stat-value">0 / 0 / 0</div>
+                        <div class="stat-subtitle">Accepted / Rejected / Invalid</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-title"><i class="fas fa-bolt"></i> Power</div>
+                        <div id="power-consumption" class="stat-value">0W</div>
+                        <div class="stat-subtitle">Total power consumption</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-title"><i class="fas fa-thermometer-half"></i> Temperature</div>
+                        <div id="avg-temp" class="stat-value">0°C</div>
+                        <div class="stat-subtitle">Average GPU temperature</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-title"><i class="fas fa-dollar-sign"></i> Dev Fee</div>
+                        <div id="dev-fee" class="stat-value">0%</div>
+                        <div class="stat-subtitle">Developer fee percentage</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="logs">
+            <div class="section">
+                <h2><i class="fas fa-file-alt"></i> Miner Logs</h2>
+                <div class="logs-header">
+                    <div class="logs-controls">
+                        <button class="button" id="clear-logs">
+                            <i class="fas fa-broom"></i> Clear Display
+                        </button>
+                        <button class="button button-secondary" id="download-logs">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                        <select id="log-type" class="form-input">
+                            <option value="miner">Miner Logs</option>
+                            <option value="update">Update Logs</option>
+                            <option value="health">Health Check Logs</option>
+                        </select>
+                    </div>
+                    <div class="logs-auto-refresh">
+                        <label class="auto-refresh-label">
+                            <input type="checkbox" id="auto-refresh-logs" checked> Auto-refresh
+                        </label>
+                        <span id="last-refresh">Last refresh: Never</span>
+                    </div>
+                </div>
+                <div id="logs-display" class="logs">Fetching logs...</div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="config">
+            <div class="section">
+                <h2><i class="fas fa-cog"></i> Miner Configuration</h2>
+                <div class="config-actions">
+                    <button class="button" id="reconfigure-button">
+                        <i class="fas fa-tools"></i> Run Setup Wizard
+                    </button>
+                    <button class="button button-secondary" id="reset-config">
+                        <i class="fas fa-redo"></i> Reset Configuration
+                    </button>
+                    <button class="button button-accent" id="export-config">
+                        <i class="fas fa-file-export"></i> Export Config
+                    </button>
+                    <button class="button button-accent" id="import-config">
+                        <i class="fas fa-file-import"></i> Import Config
+                    </button>
+                </div>
+                
+                <div class="config-form">
+                    <h3>Quick Settings</h3>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Mining Intensity</label>
+                        <input type="range" id="intensity-slider" class="intensity-slider" min="1" max="25" value="21">
+                        <div class="slider-labels">
+                            <span>Low (Cooler)</span>
+                            <span id="intensity-value">21</span>
+                            <span>High (Hotter)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-col">
+                            <label class="form-label">Memory Tweak</label>
+                            <select id="memory-tweak" class="form-input">
+                                <option value="0">0 - Disabled (Safe)</option>
+                                <option value="1">1 - Mild Optimization</option>
+                                <option value="2">2 - Moderate Optimization</option>
+                                <option value="3">3 - Aggressive Optimization</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-col">
+                            <label class="form-label">Power Limit (W)</label>
+                            <input type="number" id="power-limit" class="form-input" placeholder="0 (no limit)" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="auto-tune" checked> Enable Auto-Tuning
+                        </label>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="button" id="apply-settings">
+                            <i class="fas fa-check"></i> Apply Settings
+                        </button>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> These settings will be applied immediately. For more advanced configuration, use the Setup Wizard.
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Current Configuration</label>
+                    <div class="code-container">
+                        <pre id="config-json" class="code-block">Loading configuration...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="about">
+            <div class="section">
+                <h2><i class="fas fa-info-circle"></i> About SRBMiner-Multi</h2>
+                
+                <div class="about-intro">
+                    <div class="about-logo">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <div class="about-details">
+                        <h3>SRBMiner-Multi <span id="about-version">-</span></h3>
+                        <p>A high-performance cryptocurrency miner for CPU and GPU mining</p>
+                    </div>
+                </div>
+                
+                <div class="about-links">
+                    <a href="https://github.com/doktor83/SRBMiner-Multi" target="_blank" class="about-link">
+                        <i class="fab fa-github"></i> Official GitHub Repository
+                    </a>
+                    <a href="https://bitcointalk.org/index.php?topic=5190081.0" target="_blank" class="about-link">
+                        <i class="fab fa-bitcoin"></i> BitcoinTalk Forum
+                    </a>
+                    <a href="#" class="about-link" id="check-updates-link">
+                        <i class="fas fa-sync"></i> Check for Updates
+                    </a>
+                </div>
+                
+                <h3>Supported Algorithms</h3>
+                <div id="algorithms-list" class="algorithms-table-container">
+                    <table class="algorithms-table">
+                        <thead>
+                            <tr>
+                                <th>Algorithm</th>
+                                <th>CPU</th>
+                                <th>AMD GPU</th>
+                                <th>NVIDIA GPU</th>
+                                <th>Intel GPU</th>
+                                <th>Dev Fee</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Loading...</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h3>System Information</h3>
+                <div id="system-info" class="system-info-container">
+                    <table class="system-info-table">
+                        <tbody>
+                            <tr>
+                                <td>CPU:</td>
+                                <td id="sys-cpu">Loading...</td>
+                            </tr>
+                            <tr>
+                                <td>Memory:</td>
+                                <td id="sys-memory">Loading...</td>
+                            </tr>
+                            <tr>
+                                <td>OS:</td>
+                                <td id="sys-os">Loading...</td>
+                            </tr>
+                            <tr>
+                                <td>GPU Driver:</td>
+                                <td id="sys-driver">Loading...</td>
+                            </tr>
+                            <tr>
+                                <td>Container:</td>
+                                <td id="sys-container">Docker</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <h3>Support</h3>
+                <p>If you encounter any issues or need assistance:</p>
+                <ul>
+                    <li>Check the logs tab for error messages</li>
+                    <li>Visit the <a href="https://github.com/doktor83/SRBMiner-Multi/issues" target="_blank">GitHub Issues</a> page</li>
+                    <li>Join the <a href="https://discord.gg/zXY23De" target="_blank">Discord Server</a> for community support</li>
+                </ul>
+                
+                <div class="about-footer">
+                    <p>SRBMiner-Multi Container &copy; 2025</p>
+                    <p>Open source under MIT License</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> Dashboard Settings</h2>
+                <span id="close-modal" class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Auto-refresh Interval (seconds)</label>
+                    <input type="number" id="refresh-interval" class="form-input" min="5" max="300" value="30">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Maximum Log Lines</label>
+                    <input type="number" id="log-lines" class="form-input" min="50" max="1000" value="100">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" id="enable-charts" checked> Enable Performance Charts
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Theme</label>
+                    <div class="theme-selector">
+                        <div class="theme-option" data-theme="dark">
+                            <div class="theme-preview dark-preview"></div>
+                            <span>Dark</span>
+                        </div>
+                        <div class="theme-option" data-theme="light">
+                            <div class="theme-preview light-preview"></div>
+                            <span>Light</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="save-settings" class="button">
+                    <i class="fas fa-save"></i> Save Settings
+                </button>
+                <button id="cancel-settings" class="button button-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirm Stop Modal -->
+    <div id="confirm-stop-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-exclamation-triangle"></i> Confirm Stop</h2>
+                <span class="modal-close" data-modal="confirm-stop-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to stop the miner?</p>
+                <p>This will end all mining operations until you restart the miner.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirm-stop" class="button button-danger">
+                    <i class="fas fa-stop-circle"></i> Stop Mining
+                </button>
+                <button class="button button-secondary modal-cancel" data-modal="confirm-stop-modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confirm Reset Modal -->
+    <div id="confirm-reset-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-exclamation-triangle"></i> Confirm Reset</h2>
+                <span class="modal-close" data-modal="confirm-reset-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to reset your configuration?</p>
+                <p>This will delete your current settings and restart the setup wizard.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirm-reset" class="button button-danger">
+                    <i class="fas fa-trash-alt"></i> Reset Configuration
+                </button>
+                <button class="button button-secondary modal-cancel" data-modal="confirm-reset-modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div id="loading-message" class="loading-message">Loading data...</div>
+    </div>
+    
+    <script>
+        // Global variables
+        let hashrateChart, temperatureChart, powerChart;
+        const historyData = {
+            timestamps: [],
+            hashrates: {},
+            temperatures: {},
+            powerUsage: {}
+        };
+        let autoRefreshInterval;
+        let logsAutoRefreshInterval;
+        let apiErrorCounter = 0;
+        
+        // DOM Elements
+        const themeToggle = document.getElementById('theme-toggle');
+        const refreshButton = document.getElementById('refresh-button');
+        const configButton = document.getElementById('config-button');
+        const stopButton = document.getElementById('stop-button');
+        const clearLogsButton = document.getElementById('clear-logs');
+        const downloadLogsButton = document.getElementById('download-logs');
+        const reconfigureButton = document.getElementById('reconfigure-button');
+        const resetConfigButton = document.getElementById('reset-config');
+        const exportConfigButton = document.getElementById('export-config');
+        const importConfigButton = document.getElementById('import-config');
+        const applySettingsButton = document.getElementById('apply-settings');
+        const tabButtons = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const logsDisplay = document.getElementById('logs-display');
+        const logTypeSelect = document.getElementById('log-type');
+        const autoRefreshLogs = document.getElementById('auto-refresh-logs');
+        const lastRefreshSpan = document.getElementById('last-refresh');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Initialize theme
+            initializeTheme();
+            
+            // Fetch initial data
+            fetchDashboardData();
+            
+            // Set up auto-refresh
+            autoRefreshInterval = setInterval(fetchDashboardData, 30000);
+            
+            // Set up logs auto-refresh
+            setupLogsAutoRefresh();
+            
+            // Initialize charts if enabled
+            initializeCharts();
+        });
+        
+        // Handle API errors consistently
+        function handleApiError(error, endpoint, showAlertMessage = true) {
+            console.error(`Error connecting to API endpoint ${endpoint}:`, error);
+            
+            if (showAlertMessage) {
+                // Check if error is due to network connectivity
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    showAlert('Cannot connect to the miner API. Please check if the server is running.', 'error');
+                } else {
+                    showAlert(`Error connecting to miner API: ${error.message}`, 'error');
+                }
+            }
+            
+            // After repeated API errors, check if the container is in setup mode
+            if (apiErrorCounter === undefined) {
+                apiErrorCounter = 0;
+            }
+            
+            apiErrorCounter++;
+            
+            if (apiErrorCounter >= 3) {
+                apiErrorCounter = 0;
+                
+                // Check if we're in setup mode
+                fetch('/api/setup/status')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.setup_required) {
+                            showAlert('Miner is in setup mode. Redirecting to setup wizard...', 'warning');
+                            setTimeout(() => {
+                                window.location.href = '/setup.html';
+                            }, 3000);
+                        }
+                    })
+                    .catch(() => {
+                        // Even setup status check failed, might be server completely down
+                        showAlert('Cannot connect to the miner server. Please check if the container is running.', 'error');
+                    });
+            }
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Theme toggle
+            themeToggle.addEventListener('change', toggleTheme);
+            
+            // Refresh button
+            refreshButton.addEventListener('click', fetchDashboardData);
+            
+            // Config button (opens settings modal)
+            configButton.addEventListener('click', () => {
+                document.getElementById('settings-modal').style.display = 'block';
+            });
+            
+            // Stop button
+            stopButton.addEventListener('click', () => {
+                document.getElementById('confirm-stop-modal').style.display = 'block';
+            });
+            
+            // Close modals
+            document.querySelectorAll('.modal-close, .modal-cancel').forEach(el => {
+                el.addEventListener('click', () => {
+                    const modalId = el.dataset.modal || 'settings-modal';
+                    document.getElementById(modalId).style.display = 'none';
+                });
+            });
+            
+            // Save settings
+            document.getElementById('save-settings').addEventListener('click', saveSettings);
+            document.getElementById('cancel-settings').addEventListener('click', () => {
+                document.getElementById('settings-modal').style.display = 'none';
+            });
+            
+            // Confirm stop mining
+            document.getElementById('confirm-stop').addEventListener('click', stopMining);
+            
+            // Confirm reset configuration
+            document.getElementById('confirm-reset').addEventListener('click', resetConfiguration);
+            
+            // Tab switching
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    button.classList.add('active');
+                    document.getElementById(button.dataset.tab).classList.add('active');
+                    
+                    // Special handling for performance tab to resize charts
+                    if (button.dataset.tab === 'performance' && hashrateChart) {
+                        hashrateChart.resize();
+                        temperatureChart.resize();
+                        powerChart.resize();
+                    }
+                });
+            });
+            
+            // Logs controls
+            clearLogsButton.addEventListener('click', clearLogs);
+            downloadLogsButton.addEventListener('click', downloadLogs);
+            logTypeSelect.addEventListener('change', fetchLogs);
+            autoRefreshLogs.addEventListener('change', toggleLogsAutoRefresh);
+            
+            // Configuration actions
+            reconfigureButton.addEventListener('click', runSetupWizard);
+            resetConfigButton.addEventListener('click', () => {
+                document.getElementById('confirm-reset-modal').style.display = 'block';
+            });
+            exportConfigButton.addEventListener('click', exportConfiguration);
+            importConfigButton.addEventListener('click', importConfiguration);
+            applySettingsButton.addEventListener('click', applyQuickSettings);
+            
+            // Theme selector
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const theme = option.dataset.theme;
+                    document.body.classList.remove('dark-theme', 'light-theme');
+                    document.body.classList.add(`${theme}-theme`);
+                    themeToggle.checked = theme === 'dark';
+                    localStorage.setItem('theme', theme);
+                    
+                    document.querySelectorAll('.theme-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    option.classList.add('selected');
+                });
+            });
+            
+            // Check for updates link
+            document.getElementById('check-updates-link').addEventListener('click', checkForUpdates);
+        }
+        
+        // Initialize theme from localStorage
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.body.classList.remove('dark-theme', 'light-theme');
+            document.body.classList.add(`${savedTheme}-theme`);
+            themeToggle.checked = savedTheme === 'dark';
+            
+            // Select the correct theme option
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.classList.toggle('selected', option.dataset.theme === savedTheme);
+            });
+        }
+        
+        // Toggle between light and dark theme
+        function toggleTheme() {
+            const isDarkTheme = themeToggle.checked;
+            document.body.classList.remove('dark-theme', 'light-theme');
+            document.body.classList.add(isDarkTheme ? 'dark-theme' : 'light-theme');
+            localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
+            
+            // Update theme selector
+            document.body.classList.add(isDarkTheme ? 'dark-theme' : 'light-theme');
+            localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
+            
+            // Update theme selector
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.classList.toggle('selected', option.dataset.theme === (isDarkTheme ? 'dark' : 'light'));
+            });
+            
+            // Update charts if they exist
+            updateChartsTheme();
+        }
+        
+        // Update charts theme
+        function updateChartsTheme() {
+            const isDarkTheme = document.body.classList.contains('dark-theme');
+            const textColor = isDarkTheme ? '#f0f0f0' : '#333';
+            const gridColor = isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            
+            const updateChartTheme = (chart) => {
+                if (!chart) return;
+                
+                // Update title color
+                if (chart.options.plugins.title) {
+                    chart.options.plugins.title.color = textColor;
+                }
+                
+                // Update legend labels color
+                if (chart.options.plugins.legend) {
+                    chart.options.plugins.legend.labels.color = textColor;
+                }
+                
+                // Update axis colors
+                if (chart.options.scales.x) {
+                    chart.options.scales.x.ticks.color = textColor;
+                    chart.options.scales.x.grid.color = gridColor;
+                }
+                
+                if (chart.options.scales.y) {
+                    chart.options.scales.y.ticks.color = textColor;
+                    chart.options.scales.y.grid.color = gridColor;
+                }
+                
+                chart.update();
+            };
+            
+            updateChartTheme(hashrateChart);
+            updateChartTheme(temperatureChart);
+            updateChartTheme(powerChart);
+        }
+        
+        // Fetch dashboard data
+        async function fetchDashboardData() {
+            showLoading('Fetching miner data...');
+            
+            try {
+                // Fetch summary data
+                const summaryResponse = await fetch('/api/summary');
+                
+                if (!summaryResponse.ok) {
+                    throw new Error(`HTTP error ${summaryResponse.status}`);
+                }
+                
+                const summaryData = await summaryResponse.json();
+                
+                // Reset API error counter on success
+                apiErrorCounter = 0;
+                
+                // Update dashboard with the data
+                updateDashboard(summaryData);
+                
+                // Update charts with new data
+                updateCharts(summaryData);
+                
+                // Hide loading overlay
+                hideLoading();
+            } catch (error) {
+                handleApiError(error, '/api/summary');
+                hideLoading();
+            }
+        }
+        
+        // Update dashboard with data
+        function updateDashboard(data) {
+            // Update status
+            const statusElement = document.getElementById('miner-status');
+            if (data.running) {
+                statusElement.innerHTML = '<span class="status status-running"><i class="fas fa-play-circle"></i> Running</span>';
+            } else {
+                statusElement.innerHTML = '<span class="status status-stopped"><i class="fas fa-stop-circle"></i> Stopped</span>';
+            }
+            
+            // Check for setup mode
+            if (data.setup_mode) {
+                showAlert('Miner is in setup mode. Please complete the setup wizard.', 'warning');
+                setTimeout(() => {
+                    window.location.href = '/setup.html';
+                }, 3000);
+                return;
+            }
+            
+            // Update basic stats
+            document.getElementById('total-hashrate').textContent = formatHashrate(data.hashrate_total);
+            document.getElementById('algorithm').textContent = data.algorithm || 'N/A';
+            document.getElementById('uptime').textContent = formatUptime(data.uptime);
+            document.getElementById('version').textContent = data.version || 'N/A';
+            document.getElementById('about-version').textContent = data.version || 'N/A';
+            document.getElementById('pool').textContent = data.pool || 'N/A';
+            document.getElementById('wallet').textContent = abbreviateWallet(data.wallet);
+            document.getElementById('worker').textContent = data.rig_id || 'N/A';
+            
+            // Update shares if available
+            if (data.accepted !== undefined) {
+                const accepted = data.accepted || 0;
+                const rejected = data.rejected || 0;
+                const invalid = data.invalid || 0;
+                document.getElementById('shares').textContent = `${accepted} / ${rejected} / ${invalid}`;
+                
+                // Also update CPU shares if CPU mining is enabled
+                if (data.cpu_mining) {
+                    document.getElementById('cpu-shares').textContent = `${accepted} / ${rejected} / ${invalid}`;
+                }
+            }
+            
+            // Dev fee
+            if (data.dev_fee !== undefined) {
+                document.getElementById('dev-fee').textContent = `${data.dev_fee}%`;
+            }
+            
+            // Update GPU stats
+            updateGpuStats(data);
+            
+            // Update CPU stats
+            updateCpuStats(data);
+            
+            // Update configuration display
+            updateConfigDisplay(data);
+        }
+        
+        // Update GPU stats
+        function updateGpuStats(data) {
+            const gpuContainer = document.getElementById('gpu-container');
+            const noGpuMessage = document.getElementById('no-gpu-message');
+            
+            // Clear existing GPU cards
+            gpuContainer.innerHTML = '';
+            
+            if (data.gpus && data.gpus.length > 0) {
+                // Hide no GPU message
+                noGpuMessage.style.display = 'none';
+                
+                // Calculate total power and average temp
+                let totalPower = 0;
+                let totalTemp = 0;
+                let gpuCount = 0;
+                
+                data.gpus.forEach((gpu, index) => {
+                    if (gpu.temperature !== undefined) {
+                        totalTemp += gpu.temperature;
+                        gpuCount++;
+                    }
+                    
+                    if (gpu.power !== undefined) {
+                        totalPower += gpu.power;
+                    }
+                    
+                    const gpuCard = document.createElement('div');
+                    gpuCard.className = 'gpu-card';
+                    
+                    gpuCard.innerHTML = `
+                        <div class="gpu-header">
+                            <div class="gpu-name"><i class="fas fa-microchip"></i> GPU ${index}: ${gpu.name || 'Unknown'}</div>
+                        </div>
+                        
+                        <div class="gpu-stats">
+                            <div class="gpu-stat">
+                                <div class="gpu-stat-title">Hashrate</div>
+                                <div class="gpu-stat-value">${formatHashrate(gpu.hashrate)}</div>
+                            </div>
+                            
+                            <div class="gpu-stat">
+                                <div class="gpu-stat-title">Temperature</div>
+                                <div class="gpu-stat-value">${gpu.temperature !== undefined ? gpu.temperature + '°C' : 'N/A'}</div>
+                                ${gpu.temperature !== undefined ? `
+                                    <div class="progress-bar">
+                                        <div class="progress-fill ${getTempColorClass(gpu.temperature)}" 
+                                            style="width: ${Math.min(gpu.temperature, 100)}%"></div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="gpu-stat">
+                                <div class="gpu-stat-title">Power</div>
+                                <div class="gpu-stat-value">${gpu.power !== undefined ? gpu.power + 'W' : 'N/A'}</div>
+                                ${gpu.power !== undefined ? `
+                                    <div class="progress-bar">
+                                        <div class="progress-fill gpu-power" 
+                                            style="width: ${Math.min((gpu.power / 300) * 100, 100)}%"></div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="gpu-stat">
+                                <div class="gpu-stat-title">Fan</div>
+                                <div class="gpu-stat-value">${gpu.fan !== undefined ? gpu.fan + '%' : 'N/A'}</div>
+                                ${gpu.fan !== undefined ? `
+                                    <div class="progress-bar">
+                                        <div class="progress-fill gpu-fan" 
+                                            style="width: ${gpu.fan}%"></div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                    
+                    gpuContainer.appendChild(gpuCard);
+                });
+                
+                // Update average temperature
+                document.getElementById('avg-temp').textContent = gpuCount > 0 ? 
+                    Math.round(totalTemp / gpuCount) + '°C' : 'N/A';
+                
+                // Update total power consumption
+                document.getElementById('power-consumption').textContent = 
+                    totalPower > 0 ? totalPower + 'W' : 'N/A';
+            } else {
+                // Show no GPU message
+                noGpuMessage.style.display = 'block';
+                document.getElementById('avg-temp').textContent = 'N/A';
+                document.getElementById('power-consumption').textContent = 'N/A';
+            }
+        }
+        
+        // Update CPU stats
+        function updateCpuStats(data) {
+            const cpuContainer = document.getElementById('cpu-container');
+            const noCpuMessage = document.getElementById('no-cpu-message');
+            
+            if (data.cpu_mining) {
+                // Hide no CPU message
+                noCpuMessage.style.display = 'none';
+                cpuContainer.style.display = 'block';
+                
+                // Update CPU stats
+                document.getElementById('cpu-enabled').className = 'badge badge-success';
+                document.getElementById('cpu-enabled').textContent = 'Enabled';
+                document.getElementById('cpu-hashrate').textContent = formatHashrate(data.cpu_hashrate || 0);
+                document.getElementById('cpu-threads').textContent = data.cpu_threads || 0;
+                
+                // CPU usage (if available)
+                let cpuUsage = data.cpu_usage || 0;
+                document.getElementById('cpu-usage').textContent = cpuUsage + '%';
+                document.getElementById('cpu-usage-bar').style.width = cpuUsage + '%';
+            } else {
+                // Show no CPU message
+                cpuContainer.style.display = 'none';
+                noCpuMessage.style.display = 'block';
+            }
+        }
+        
+        // Update configuration display
+        function updateConfigDisplay(data) {
+            // Fetch the full configuration
+            fetch('/api/config')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(config => {
+                    // Display configuration in formatted JSON
+                    const configJson = document.getElementById('config-json');
+                    configJson.textContent = JSON.stringify(config, null, 2);
+                    
+                    // Set form values based on config
+                    if (config.gpu_threads && config.gpu_threads.length > 0) {
+                        const firstThread = config.gpu_threads[0];
+                        document.getElementById('intensity-slider').value = firstThread.intensity || 21;
+                        document.getElementById('intensity-value').textContent = firstThread.intensity || 21;
+                        document.getElementById('memory-tweak').value = firstThread.mem_tweak || 0;
+                        document.getElementById('power-limit').value = firstThread.power_limit || 0;
+                    }
+                    
+                    document.getElementById('auto-tune').checked = config.auto_tune !== false;
+                })
+                .catch(error => {
+                    handleApiError(error, '/api/config', false);
+                    document.getElementById('config-json').textContent = 'Error loading configuration';
+                });
+        }
+        
+        // Format hashrate with appropriate units
+        function formatHashrate(hashrate) {
+            if (hashrate === null || hashrate === undefined) return 'N/A';
+            
+            if (hashrate >= 1000000000) {
+                return (hashrate / 1000000000).toFixed(2) + ' GH/s';
+            } else if (hashrate >= 1000000) {
+                return (hashrate / 1000000).toFixed(2) + ' MH/s';
+            } else if (hashrate >= 1000) {
+                return (hashrate / 1000).toFixed(2) + ' kH/s';
+            } else {
+                return hashrate.toFixed(2) + ' H/s';
+            }
+        }
+        
+        // Format uptime
+        function formatUptime(seconds) {
+            if (seconds === null || seconds === undefined) return 'N/A';
+            
+            const days = Math.floor(seconds / 86400);
+            seconds %= 86400;
+            const hours = Math.floor(seconds / 3600);
+            seconds %= 3600;
+            const minutes = Math.floor(seconds / 60);
+            seconds %= 60;
+            
+            let result = '';
+            if (days > 0) result += days + 'd ';
+            if (hours > 0 || days > 0) result += hours + 'h ';
+            if (minutes > 0 || hours > 0 || days > 0) result += minutes + 'm ';
+            result += seconds + 's';
+            
+            return result;
+        }
+        
+        // Abbreviate wallet address
+        function abbreviateWallet(wallet) {
+            if (!wallet || wallet === 'YOUR_WALLET_ADDRESS') return 'Not set';
+            
+            return wallet.substring(0, 6) + '...' + wallet.substring(wallet.length - 4);
+        }
+        
+        // Get temperature color class
+        function getTempColorClass(temp) {
+            if (temp === undefined || temp === null) return '';
+            
+            if (temp >= 80) return 'gpu-temp-danger';
+            if (temp >= 70) return 'gpu-temp-warn';
+            return 'gpu-temp-normal';
+        }
+        
+        // Initialize charts
+        function initializeCharts() {
+            const enableCharts = localStorage.getItem('enableCharts') !== 'false';
+            if (!enableCharts) return;
+            
+            const isDarkTheme = document.body.classList.contains('dark-theme');
+            const textColor = isDarkTheme ? '#f0f0f0' : '#333';
+            const gridColor = isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            
+            // Hashrate chart
+            const hashrateCtx = document.getElementById('hashrate-chart').getContext('2d');
+            hashrateChart = new Chart(hashrateCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Hashrate History',
+                            color: textColor
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: textColor
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Temperature chart
+            const temperatureCtx = document.getElementById('temperature-chart').getContext('2d');
+            temperatureChart = new Chart(temperatureCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Temperature History',
+                            color: textColor
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: textColor
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Power chart
+            const powerCtx = document.getElementById('power-chart').getContext('2d');
+            powerChart = new Chart(powerCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: []
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Power Usage History',
+                            color: textColor
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: textColor
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Update charts with new data
+        function updateCharts(summaryData) {
+            const enableCharts = localStorage.getItem('enableCharts') !== 'false';
+            if (!enableCharts || !summaryData || !summaryData.gpus) return;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            historyData.timestamps.push(timestamp);
+            
+            // Limit history to 20 points
+            if (historyData.timestamps.length > 20) {
+                historyData.timestamps.shift();
+            }
+            
+            // Update hashrate chart
+            if (hashrateChart) {
+                hashrateChart.data.labels = historyData.timestamps;
+                
+                // Total hashrate dataset
+                if (!hashrateChart.data.datasets.some(ds => ds.label === 'Total')) {
+                    hashrateChart.data.datasets.push({
+                        label: 'Total',
+                        data: [],
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                        borderWidth: 2,
+                        tension: 0.3
+                    });
+                }
+                
+                const totalDataset = hashrateChart.data.datasets.find(ds => ds.label === 'Total');
+                totalDataset.data.push(summaryData.hashrate_total);
+                if (totalDataset.data.length > 20) totalDataset.data.shift();
+                
+                // GPU-specific hashrate datasets
+                summaryData.gpus.forEach((gpu, index) => {
+                    const gpuLabel = `GPU ${index}`;
+                    
+                    // Initialize history tracking for this GPU if needed
+                    if (!historyData.hashrates[gpuLabel]) {
+                        historyData.hashrates[gpuLabel] = [];
+                    }
+                    
+                    // Record current hashrate
+                    historyData.hashrates[gpuLabel].push(gpu.hashrate || 0);
+                    if (historyData.hashrates[gpuLabel].length > 20) {
+                        historyData.hashrates[gpuLabel].shift();
+                    }
+                    
+                    // Add dataset if it doesn't exist
+                    if (!hashrateChart.data.datasets.some(ds => ds.label === gpuLabel)) {
+                        const color = getColorForIndex(index);
+                        hashrateChart.data.datasets.push({
+                            label: gpuLabel,
+                            data: historyData.hashrates[gpuLabel],
+                            borderColor: color,
+                            backgroundColor: `${color}33`,
+                            borderWidth: 2,
+                            tension: 0.3
+                        });
+                    } else {
+                        // Update existing dataset
+                        const dataset = hashrateChart.data.datasets.find(ds => ds.label === gpuLabel);
+                        dataset.data = historyData.hashrates[gpuLabel];
+                    }
+                });
+                
+                hashrateChart.update();
+            }
+            
+            // Update temperature chart
+            if (temperatureChart) {
+                temperatureChart.data.labels = historyData.timestamps;
+                
+                summaryData.gpus.forEach((gpu, index) => {
+                    const gpuLabel = `GPU ${index}`;
+                    
+                    // Initialize history tracking for this GPU if needed
+                    if (!historyData.temperatures[gpuLabel]) {
+                        historyData.temperatures[gpuLabel] = [];
+                    }
+                    
+                    // Record current temperature
+                    historyData.temperatures[gpuLabel].push(gpu.temperature || 0);
+                    if (historyData.temperatures[gpuLabel].length > 20) {
+                        historyData.temperatures[gpuLabel].shift();
+                    }
+                    
+                    // Add dataset if it doesn't exist
+                    if (!temperatureChart.data.datasets.some(ds => ds.label === gpuLabel)) {
+                        const color = getColorForIndex(index);
+                        temperatureChart.data.datasets.push({
+                            label: gpuLabel,
+                            data: historyData.temperatures[gpuLabel],
+                            borderColor: color,
+                            backgroundColor: `${color}33`,
+                            borderWidth: 2,
+                            tension: 0.3
+                        });
+                    } else {
+                        // Update existing dataset
+                        const dataset = temperatureChart.data.datasets.find(ds => ds.label === gpuLabel);
+                        dataset.data = historyData.temperatures[gpuLabel];
+                    }
+                });
+                
+                temperatureChart.update();
+            }
+            
+            // Update power chart
+            if (powerChart) {
+                powerChart.data.labels = historyData.timestamps;
+                
+                summaryData.gpus.forEach((gpu, index) => {
+                    const gpuLabel = `GPU ${index}`;
+                    
+                    // Initialize history tracking for this GPU if needed
+                    if (!historyData.powerUsage[gpuLabel]) {
+                        historyData.powerUsage[gpuLabel] = [];
+                    }
+                    
+                    // Record current power
+                    historyData.powerUsage[gpuLabel].push(gpu.power || 0);
+                    if (historyData.powerUsage[gpuLabel].length > 20) {
+                        historyData.powerUsage[gpuLabel].shift();
+                    }
+                    
+                    // Add dataset if it doesn't exist
+                    if (!powerChart.data.datasets.some(ds => ds.label === gpuLabel)) {
+                        const color = getColorForIndex(index);
+                        powerChart.data.datasets.push({
+                            label: gpuLabel,
+                            data: historyData.powerUsage[gpuLabel],
+                            borderColor: color,
+                            backgroundColor: `${color}33`,
+                            borderWidth: 2,
+                            tension: 0.3
+                        });
+                    } else {
+                        // Update existing dataset
+                        const dataset = powerChart.data.datasets.find(ds => ds.label === gpuLabel);
+                        dataset.data = historyData.powerUsage[gpuLabel];
+                    }
+                });
+                
+                powerChart.update();
+            }
+        }
+        
+        // Get color for chart datasets
+        function getColorForIndex(index) {
+            const colors = [
+                '#2196F3', '#FF9800', '#9C27B0', '#F44336', '#4CAF50',
+                '#FFEB3B', '#03A9F4', '#E91E63', '#8BC34A', '#673AB7'
+            ];
+            return colors[index % colors.length];
+        }
+        
+        // Set up logs auto-refresh
+        function setupLogsAutoRefresh() {
+            // Initial logs fetch
+            fetchLogs();
+            
+            // Set up auto-refresh interval
+            if (autoRefreshLogs.checked) {
+                logsAutoRefreshInterval = setInterval(fetchLogs, 10000);
+            }
+        }
+        
+        // Toggle logs auto-refresh
+        function toggleLogsAutoRefresh() {
+            if (autoRefreshLogs.checked) {
+                logsAutoRefreshInterval = setInterval(fetchLogs, 10000);
+            } else {
+                clearInterval(logsAutoRefreshInterval);
+            }
+        }
+        
+        // Fetch logs based on selected type
+        function fetchLogs() {
+            const logType = logTypeSelect.value;
+            let logEndpoint = '/api/logs';
+            
+            // Adjust endpoint based on log type
+            if (logType === 'update') {
+                logEndpoint = '/api/logs/update';
+            } else if (logType === 'health') {
+                logEndpoint = '/api/logs/health';
+            }
+            
+            fetch(logEndpoint)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(logs => {
+                    logsDisplay.textContent = logs || 'No logs available';
+                    lastRefreshSpan.textContent = `Last refresh: ${new Date().toLocaleTimeString()}`;
+                })
+                .catch(error => {
+                    handleApiError(error, logEndpoint, false);
+                    logsDisplay.textContent = `Error fetching logs: ${error.message}`;
+                });
+        }
+        
+        // Clear logs display
+        function clearLogs() {
+            logsDisplay.textContent = 'Logs cleared from display. Refresh to fetch again.';
+        }
+        
+        // Download logs
+        function downloadLogs() {
+            const logType = logTypeSelect.value;
+            const logText = logsDisplay.textContent;
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const filename = `srbminer-${logType}-logs-${timestamp}.txt`;
+            
+            const blob = new Blob([logText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // Save dashboard settings
+        function saveSettings() {
+            const refreshInterval = document.getElementById('refresh-interval').value;
+            const logLines = document.getElementById('log-lines').value;
+            const enableCharts = document.getElementById('enable-charts').checked;
+            
+            // Save to localStorage
+            localStorage.setItem('refreshInterval', refreshInterval);
+            localStorage.setItem('logLines', logLines);
+            localStorage.setItem('enableCharts', enableCharts);
+            
+            // Update refresh interval
+            clearInterval(autoRefreshInterval);
+            autoRefreshInterval = setInterval(fetchDashboardData, refreshInterval * 1000);
+            
+            // Close modal
+            document.getElementById('settings-modal').style.display = 'none';
+            
+            // Show success message
+            showAlert('Settings saved successfully', 'success');
+        }
+        
+        // Stop mining
+        function stopMining() {
+            showLoading('Stopping miner...');
+            
+            fetch('/api/miner/stop', { method: 'POST' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    hideLoading();
+                    if (data.success) {
+                        showAlert('Miner stopped successfully', 'success');
+                        document.getElementById('confirm-stop-modal').style.display = 'none';
+                        
+                        // Refresh dashboard data
+                        setTimeout(fetchDashboardData, 1000);
+                    } else {
+                        showAlert(`Failed to stop miner: ${data.error}`, 'error');
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    handleApiError(error, '/api/miner/stop');
+                });
+        }
+        
+        // Reset configuration
+        function resetConfiguration() {
+            showLoading('Resetting configuration...');
+            
+            fetch('/api/setup/reset', { method: 'POST' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    hideLoading();
+                    if (data.success) {
+                        showAlert('Configuration reset. Redirecting to setup wizard...', 'success');
+                        document.getElementById('confirm-reset-modal').style.display = 'none';
+                        
+                        // Redirect to setup wizard
+                        setTimeout(() => {
+                            window.location.href = '/setup.html';
+                        }, 2000);
+                    } else {
+                        showAlert(`Failed to reset configuration: ${data.error}`, 'error');
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    handleApiError(error, '/api/setup/reset');
+                });
+        }
+        
+        // Run setup wizard
+        function runSetupWizard() {
+            window.location.href = '/setup.html';
+        }
+        
+        // Export configuration
+        function exportConfiguration() {
+            fetch('/api/config')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(config => {
+                    const configJson = JSON.stringify(config, null, 2);
+                    const blob = new Blob([configJson], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'srbminer-config.json';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    handleApiError(error, '/api/config');
+                });
+        }
+        
+        // Import configuration
+        function importConfiguration() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = event => {
+                    try {
+                        const config = JSON.parse(event.target.result);
+                        
+                        // Validate config (basic check)
+                        if (!config.api || !config.hasOwnProperty('gpu_threads')) {
+                            throw new Error('Invalid configuration format');
+                        }
+                        
+                        // Upload config
+                        uploadConfig(config);
+                    } catch (error) {
+                        showAlert(`Error parsing configuration: ${error.message}`, 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+        
+        // Upload configuration to server
+        function uploadConfig(config) {
+            showLoading('Uploading configuration...');
+            
+            fetch('/api/config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(config)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    hideLoading();
+                    if (data.success) {
+                        showAlert('Configuration imported successfully. Restarting miner...', 'success');
+                        
+                        // Restart miner
+                        fetch('/api/miner/restart', { method: 'POST' })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                            .then(() => {
+                                // Refresh dashboard data after a delay
+                                setTimeout(fetchDashboardData, 3000);
+                            })
+                            .catch(error => {
+                                handleApiError(error, '/api/miner/restart');
+                            });
+                    } else {
+                        showAlert(`Failed to import configuration: ${data.error}`, 'error');
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    handleApiError(error, '/api/config');
+                });
+        }
+        
+        // Apply quick settings
+        function applyQuickSettings() {
+            showLoading('Applying settings...');
+            
+            // Get current config
+            fetch('/api/config')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(config => {
+                    // Update with new settings
+                    const intensity = parseInt(document.getElementById('intensity-slider').value);
+                    const memoryTweak = parseInt(document.getElementById('memory-tweak').value);
+                    const powerLimit = parseInt(document.getElementById('power-limit').value);
+                    const autoTune = document.getElementById('auto-tune').checked;
+                    
+                    // Update all GPU threads
+                    if (config.gpu_threads) {
+                        config.gpu_threads.forEach(thread => {
+                            thread.intensity = intensity;
+                            thread.mem_tweak = memoryTweak;
+                            thread.power_limit = powerLimit;
+                        });
+                    }
+                    
+                    // Update auto-tune
+                    config.auto_tune = autoTune;
+                    
+                    // Save updated config
+                    return fetch('/api/config', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(config)
+                    });
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Restart miner
+                        return fetch('/api/miner/restart', { method: 'POST' });
+                    } else {
+                        throw new Error(data.error || 'Failed to save configuration');
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    hideLoading();
+                    if (data.success) {
+                        showAlert('Settings applied successfully. Miner restarted.', 'success');
+                        
+                        // Refresh dashboard data after a delay
+                        setTimeout(fetchDashboardData, 3000);
+                    } else {
+                        showAlert(`Failed to restart miner: ${data.error}`, 'error');
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    handleApiError(error, '/api/apply-settings');
+                });
+        }
+        
+        // Check for updates
+        function checkForUpdates() {
+            showLoading('Checking for updates...');
+            
+            fetch('/api/update/check', { method: 'POST' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    hideLoading();
+                    if (data.updateAvailable) {
+                        showAlert(`Update available: version ${data.latestVersion}. Installing update...`, 'info');
+                        
+                        // Install update
+                        installUpdate();
+                    } else {
+                        showAlert('No updates available. You have the latest version.', 'success');
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    handleApiError(error, '/api/update/check');
+                });
+        }
+        
+        // Install update
+        function installUpdate() {
+            showLoading('Installing update...');
+            
+            fetch('/api/update/install', { method: 'POST' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    hideLoading();
+                    if (data.success) {
+                        showAlert('Update installed successfully. Restarting miner...', 'success');
+                        
+                        // Restart miner
+                        fetch('/api/miner/restart', { method: 'POST' })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                            .then(() => {
+                                // Refresh dashboard data after a delay
+                                setTimeout(fetchDashboardData, 3000);
+                            })
+                            .catch(error => {
+                                handleApiError(error, '/api/miner/restart');
+                            });
+                    } else {
+                        showAlert(`Failed to install update: ${data.error}`, 'error');
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    handleApiError(error, '/api/update/install');
+                });
+        }
+        
+        // Show loading overlay
+        function showLoading(message) {
+            document.getElementById('loading-message').textContent = message || 'Loading...';
+            loadingOverlay.style.display = 'flex';
+        }
+        
+        // Hide loading overlay
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
+        
+        // Show alert message
+        function showAlert(message, type) {
+            const alertsContainer = document.getElementById('alerts-container');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            
+            let icon;
+            switch (type) {
+                case 'success':
+                    icon = 'check-circle';
+                    break;
+                case 'error':
+                    icon = 'exclamation-circle';
+                    break;
+                case 'warning':
+                    icon = 'exclamation-triangle';
+                    break;
+                default:
+                    icon = 'info-circle';
+            }
+            
+            alertDiv.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+            alertsContainer.appendChild(alertDiv);
+            
+            // Remove alert after 5 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+    </script>
+    <script type="module" src="js/dashboard/main.js"></script>
+</body>
+</html>

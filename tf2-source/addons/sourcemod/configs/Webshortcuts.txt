@@ -1,0 +1,119 @@
+"group"
+{
+	"Url"	"https://steamcommunity.com/groups/houseofpancakes"
+	"Title"	"Pancakes.tf"
+	"Hook"	"!group"
+	"Hook"	"/group"
+}
+
+"rules"
+{
+	"Url"	"https://pancakes.tf/#rules"
+	"Title"	"Pancakes.tf Server Rules"
+	"Hook"	"!rules"
+	"Hook"	"/rules"
+}
+
+"donate"
+{
+	"Url"	"https://www.patreon.com/pancakestf"
+	"Title"	"Pancakes.tf Donation"
+	"Hook"	"!donate"
+	"Hook"	"/donate"
+}
+
+"forum"
+{
+	"Url"	"https://steamcommunity.com/groups/houseofpancakes/discussions"
+	"Title"	"Pancakes.tf Discussions"
+	"Hook"	"!forum"
+	"Hook"	"/forum"
+}
+
+"wedoitlive"
+{
+	"Url"	"https://steamcommunity.com/profiles/76561197983001567"
+	"Title"	"We Do It Live! | Pancakes.tf Owner"
+	"Hook"	"!wedoitlive"
+	"Hook"	"/wedoitlive"
+}
+
+"owner"
+{
+	"Url"	"https://steamcommunity.com/profiles/76561197983001567"
+	"Title"	"We Do It Live! | Pancakes.TF Owner"
+	"Hook"	"!owner"
+	"Hook"	"/owner"
+}
+
+"website"
+{
+	"Url"	"https://pancakes.tf/"
+	"Title"	"Pancakes.TF"
+	"Hook"	"!website"
+	"Hook"	"/website"
+}
+
+"youtube"
+{
+	"Url"	"https://gaming.youtube.com/c/LivesHouseofPancakes"
+	"Title"	"PancakesTF | YouTube"
+	"Hook"	"!youtube"
+	"Hook"	"/youtube"
+}
+
+"patreon"
+{
+	"Url"	"https://www.patreon.com/pancakestf"
+	"Title"	"Patreon | PancakesTF"
+	"Hook"	"!patreon"
+	"Hook"	"/patreon"
+}
+
+"steamgroup"
+{
+	"Url"	"https://steamcommunity.com/groups/houseofpancakes"
+	"Title"	"Pancakes.TF"
+	"Hook"	"!steamgroup"
+	"Hook"	"/steamgroup"
+}
+
+"join"
+{
+	"Url"	"https://steamcommunity.com/groups/houseofpancakes"
+	"Title"	"Pancakes.TF"
+	"Hook"	"!join"
+	"Hook"	"/join"
+}
+
+"member"
+{
+	"Url"	"https://steamcommunity.com/groups/houseofpancakes"
+	"Title"	"Pancakes.TF"
+	"Hook"	"!member"
+	"Hook"	"/member"
+}
+
+"servers"
+{
+	"Url"	"https://pancakes.tf/#servers"
+	"Title"	"Pancakes.TF Servers List"
+	"Hook"	"!servers"
+	"Hook"	"/servers"
+}
+
+"server"
+{
+	"Url"	"https://pancakes.tf/#servers"
+	"Title"	"Pancakes.TF Servers List"
+	"Hook"	"!server"
+	"Hook"	"/server"
+}
+
+"discord"
+{
+	"Url"	"http://discord.gg/Q7hdGat"
+	"Title"	"PancakesTF Discord"
+	"Hook"	"!discord"
+	"Hook"	"/discord"
+}

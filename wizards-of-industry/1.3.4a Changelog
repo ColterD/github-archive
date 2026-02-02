@@ -1,0 +1,3 @@
+HOTFIX:  Yet another bug with Mixins compatibility.
+This was fixed in VanillaFix in prior version, but bug remained for Better Portals.
+Resolved with this: https://www.curseforge.com/minecraft/mc-mods/mixin-0-7-0-8-compatibility

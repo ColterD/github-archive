@@ -1,0 +1,46 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'mimir-ai-orchestration'
+    environment: 'development'
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # Mimir MCP Server
+  - job_name: 'mimir-mcp'
+    static_configs:
+      - targets: ['mcp-server:3000']
+        labels:
+          service: 'mimir'
+    metrics_path: '/metrics'
+    scrape_interval: 10s
+
+  # Docker container metrics (cAdvisor can be added later)
+  - job_name: 'docker'
+    static_configs:
+      - targets: []  # Placeholder for cAdvisor integration
+        labels:
+          service: 'docker'
+
+  # Neo4j metrics (if exposed)
+  - job_name: 'neo4j'
+    static_configs:
+      - targets: ['neo4j:7474']
+        labels:
+          service: 'neo4j'
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+# Alerting configuration (optional)
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []  # No alertmanager configured yet

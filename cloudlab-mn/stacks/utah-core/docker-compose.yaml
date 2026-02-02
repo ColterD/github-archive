@@ -1,0 +1,81 @@
+# Utah Core Stack - Emily's Brain
+# Managed by Coolify on emily-core-ut (Tesla P4, 8GB)
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    devices:
+      - nvidia.com/gpu=all
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - NVIDIA_VISIBLE_DEVICES=all
+      - OLLAMA_KEEP_ALIVE=-1
+    networks:
+      - sovereign-net
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  valkey:
+    image: falkordb/falkordb:latest
+    container_name: valkey_memory
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - valkey_data:/data
+    networks:
+      - sovereign-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    environment:
+      - OPENAI_API_BASE_URL=https://api.openrouter.ai/api/v1
+      - OPENAI_API_KEY=${OPENROUTER_API_KEY}
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_NAME=Emily Sovereign V5
+      - ENABLE_RAG_WEB_SEARCH=true
+    volumes:
+      - open-webui-data:/app/backend/data
+    depends_on:
+      ollama:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - sovereign-net
+
+volumes:
+  ollama_data:
+    name: cognitive-core_ollama_data
+    external: true
+  valkey_data:
+    name: graphiti_falkordb_data
+    external: true
+  open-webui-data:
+    name: ui_open-webui-data
+    external: true
+
+networks:
+  sovereign-net:
+    external: true

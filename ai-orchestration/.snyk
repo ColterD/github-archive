@@ -1,0 +1,52 @@
+# Snyk (https://snyk.io) policy file
+# Path Traversal suppression for CLI tools with validated input
+
+version: v1.25.0
+
+# Language settings
+language-settings:
+  python: "3.9"
+
+# Path traversal warnings - SUPPRESSED with justification
+# These are CLI development tools that:
+# 1. Have comprehensive input validation (resolve(), exists(), is_file() checks)
+# 2. Use boundary validation (relative_to() checks)
+# 3. Are not exposed to untrusted network input
+# 4. Are used by developers in controlled environments
+
+ignore:
+  # security_scanner.py - CLI tool with validation
+  'SNYK-PYTHON-PATH-TRAVERSAL':
+    - '*':
+        reason: 'CLI tool with comprehensive path validation - resolve(), exists(), boundary checks'
+        expires: '2026-11-13T00:00:00.000Z'
+        created: '2025-11-13T18:30:00.000Z'
+  
+  # prompt_manager.py - CLI tool with validation  
+  'SNYK-PYTHON-PROMPT-MANAGER-PATH':
+    - '*':
+        reason: 'CLI tool with path validation and relative_to() boundary checks'
+        expires: '2026-11-13T00:00:00.000Z'
+        created: '2025-11-13T18:30:00.000Z'
+  
+  # prompt_evaluator.py - CLI tool with validation
+  'SNYK-PYTHON-PROMPT-EVAL-PATH':
+    - '*':
+        reason: 'CLI tool with comprehensive validation - absolute paths, existence, type checks'
+        expires: '2026-11-13T00:00:00.000Z'
+        created: '2025-11-13T18:30:00.000Z'
+  
+  # project_mapper.py - CLI tool with validation
+  'SNYK-PYTHON-PROJECT-MAPPER-PATH':
+    - '*':
+        reason: 'CLI tool with safe_read_file() helper and comprehensive validation'
+        expires: '2026-11-13T00:00:00.000Z'
+        created: '2025-11-13T18:30:00.000Z'
+
+# Exclusions - paths to ignore during scanning
+exclude:
+  global:
+    - 'Github/reorganization/**'  # Excluded per user request (2025-11-15)
+
+# Patch settings (empty - no patches needed)
+patch: {}

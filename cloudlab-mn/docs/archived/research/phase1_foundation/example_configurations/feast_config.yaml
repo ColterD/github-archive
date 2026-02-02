@@ -1,0 +1,239 @@
+# Feast Feature Store Configuration for Emily Sovereign V4
+# Platform: CloudLab c220g5
+# CRITICAL: Redis online store REQUIRED for <10ms latency (not 500ms-2s with file source)
+
+project: emily_sovereign_v4
+
+# Registry (metadata store)
+registry:
+  type: FeastRegistry
+  path: data/feast/registry.db
+
+# Offline Store (batch serving, historical data)
+offline_store:
+  type: feast.infra.offline_stores.file.FileOfflineStore
+  path: data/feast/offline
+
+# ONLINE STORE (critical for low-latency serving)
+# Without Redis: 500ms-2s latency (file source scanning)
+# With Redis: <10ms latency (in-memory lookup)
+online_store:
+  type: feast.infra.online_stores.redis.RedisOnlineStore
+  connection_string: "localhost:6379"
+  redis_config:
+    host: localhost
+    port: 6379
+    db: 0
+    ssl: false
+    max_connections: 50
+    socket_timeout: 5
+    socket_connect_timeout: 5
+
+# Redis connection pool
+redis_connection_pool:
+  max_connections: 50
+  retry_on_timeout: true
+  socket_keepalive: true
+
+# Feature Definitions
+alpha_oscillation_features:
+  name: alpha_oscillation_features
+  entities:
+    - episode_id
+    - timestamp
+  schema:
+    # Raw alpha oscillation signals
+    - name: alpha_power_raw
+      dtype: float32
+      description: "Mean power in 8-12Hz band (raw, 0-1 normalized)"
+    
+    - name: alpha_phase_raw
+      dtype: float32
+      description: "Phase of alpha oscillation (raw, 0-360 degrees)"
+    
+    # Transformed features (computed in Feast)
+    - name: alpha_power_normalized
+      dtype: float32
+      description: "Alpha power normalized to [0, 1]"
+    
+    - name: alpha_phase_sin
+      dtype: float32
+      description: "Alpha phase sin component (circular encoding)"
+    
+    - name: alpha_phase_cos
+      dtype: float32
+      description: "Alpha phase cos component (circular encoding)"
+    
+    - name: attention_score
+      dtype: float32
+      description: "Attention gating score from Global Workspace (0-1)"
+    
+    - name: latency_ms
+      dtype: float32
+      description: "Processing latency in milliseconds"
+  
+  source:
+    # File source (Parquet)
+    type: feast.data_source.FileSource
+    path: data/features/alpha_oscillation.parquet
+    event_timestamp_column: timestamp
+    created_timestamp_column: created_at
+  
+  # TTL (time-to-live)
+  ttl: 2592000  # 30 days in seconds
+
+gflownet_features:
+  name: gflownet_features
+  entities:
+    - episode_id
+    - iteration
+  schema:
+    - name: trajectory_balance_loss
+      dtype: float32
+      description: "GFlowNet trajectory balance loss"
+    
+    - name: flow_matching_loss
+      dtype: float32
+      description: "GFlowNet flow matching loss"
+    
+    - name: diversity_score
+      dtype: float32
+      description: "Hypothesis diversity score (0-1)"
+    
+    - name: mode_collapse_rate
+      dtype: float32
+      description: "Mode collapse detection rate (0-1)"
+    
+    - name: efe_score
+      dtype: float32
+      description: "Expected Free Energy (EFE) score"
+  
+  source:
+    type: feast.data_source.FileSource
+    path: data/features/gflownet.parquet
+    event_timestamp_column: timestamp
+    created_timestamp_column: created_at
+  
+  ttl: 604800  # 7 days in seconds
+
+# On-Demand Feature Views (transformations computed in Feast)
+ondemand_feature_views:
+  alpha_transformed:
+    name: alpha_transformed
+    sources:
+      - alpha_oscillation_features
+    
+    schema:
+      - name: alpha_power_normalized
+        dtype: float32
+        description: "Alpha power normalized to [0, 1]"
+      
+      - name: alpha_phase_sin
+        dtype: float32
+        description: "Alpha phase sin component"
+      
+      - name: alpha_phase_cos
+        dtype: float32
+        description: "Alpha phase cos component"
+    
+    # UDF (User-Defined Function) for transformation
+    udf:
+      type: python
+      path: data/feast/udfs/alpha_transform.py
+
+# Monitoring (feature drift, staleness, missing values)
+monitoring:
+  enabled: true
+  
+  # Drift detection (Chi-square test)
+  drift_detection:
+    enabled: true
+    method: chi_square
+    threshold: 0.05  # p-value threshold
+    reference_period: 7d  # 7 days reference
+    check_interval: 1d  # Daily check
+  
+  # Staleness detection
+  staleness:
+    enabled: true
+    max_staleness: 3600  # 1 hour max staleness
+    alert_threshold: 1800  # Alert at 30 minutes
+  
+  # Missing value detection
+  missing_values:
+    enabled: true
+    threshold: 0.1  # Alert if >10% missing
+
+# Materialization (online store population)
+materialization:
+  enabled: true
+  
+  # Schedule
+  cron_schedule: "0 */4 * * *"  # Every 4 hours
+  
+  # Incremental materialization (faster)
+  incremental_from: 7d  # Only last 7 days
+  
+  # Spark configuration (for large-scale)
+  spark:
+    enabled: false  # CloudLab: Use local (no Spark cluster)
+  
+  # Batch size
+  batch_size: 10000
+
+# Feature serving
+serving:
+  enabled: true
+  type: feast.infra.online_stores.redis.RedisOnlineStore
+  host: localhost
+  port: 6379
+  
+  # GRPC server
+  grpc:
+    enabled: true
+    port: 6566
+    thread_pool_size: 10
+  
+  # HTTP server (alternative)
+  http:
+    enabled: true
+    port: 6567
+    workers: 4
+
+# Provider (custom feature logic)
+provider:
+  type: local
+  config:
+    concurrency: 4
+
+# Security
+auth:
+  enabled: false  # Enable for production with JWT
+
+# Cache (for repeated queries)
+cache:
+  enabled: true
+  ttl: 300  # 5 minutes
+
+# Expected Performance (CloudLab c220g5, Redis online store):
+# - Online feature retrieval: <10ms (in-memory Redis)
+# - Feature materialization: 5-10 minutes (incremental, last 7 days)
+# - Storage overhead: ~2x offline data size (Redis in-memory)
+# - QPS (feature retrieval): >5000 (Redis single-node)
+
+# WITHOUT Redis (file source):
+# - Latency: 500ms-2s (file scanning)
+# - QPS: ~50-100 (file I/O bottleneck)
+# - NOT PRODUCTION-VIABLE
+
+# Critical Corrections Applied:
+# 1. Redis online store configured (required for <10ms latency)
+# 2. Connection pooling (max_connections=50)
+# 3. On-Demand Feature Views for transformations
+# 4. Monitoring for drift, staleness, missing values
+
+# References:
+# - Feast Documentation: https://feast.dev/
+# - Redis Online Store: https://feast.dev/how-to-guides/online-stores/redis/
+# - REVIEW_AGENT_3_MLOPS.md: Feast corrections
+

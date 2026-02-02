@@ -1,0 +1,83 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #333;
+  color: #fff;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 0;
+}
+
+.clock {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%;
+  border-radius: 50%;
+  background-color: #222;
+  overflow: hidden;
+  box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
+}
+
+.clock:before,
+.clock:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.clock:before {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  background-color: #444;
+}
+
+.clock:after {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #fff;
+}
+
+.time {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3em;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px #000;
+}
+
+.victim-count {
+  text-align: center;
+  font-size: 1.2em;
+  margin-top: 10px;
+}
+
+.victim-count span {
+  font-weight: bold;
+}
+
+.source-links {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.source-links a {
+  color: #fff;
+  text-decoration: underline;
+  margin: 0 10px;
+}

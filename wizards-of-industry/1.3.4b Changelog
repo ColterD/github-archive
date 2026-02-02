@@ -1,0 +1,38 @@
+Note:  Curseforge bug causing QMD to appear out of date but it isn't.
+
+Known Bugs:
+- Modular Power Suits showing as blank/invisible texture instead of normal, not sure how to fix
+
+Possibly Fixed:
+- Memory leaks found in 1.3.4 possibly patched out with Athenaeum update. See: https://github.com/codetaylor/athenaeum-1.12/issues/8
+
+Config:
+- Allowed harvesting Stargate blocks without destroying them
+- Changed end-game Vampirism block "Sunscreen" to 64 blocks from 32
+- Changed Stargate ambient sound from 1.0 to 0.6
+- Stargate chevons lock in place while turning
+- Turned Vampire Forest fog off completely
+- Tweaked Vampirism Hunter camp spawns from 1:100 to 1:50
+
+Scripting:
+- Added Storage Drawers Extras compatibility for Storage Drawers Upgrade Template (oredict)
+- Fixed Immersive Engineering Fluid Pipes recipe to work
+
+Added:
+- ME Capability Adapter (Compact Machinery 3)
+
+Updated:
+- Athenaeum
+- CraftPresence
+- CraftTweaker
+- Engineer's Decor
+- Mo' Bends
+- OMLib
+- Open Modular Turrets
+- OpenPrinter
+- QMD
+- Xaero's Minimap
+- Xaero's World Map
+
+Resource Packs:
+- Removed Blinking Ender Eyes (conflict with End: Reborn, sorry)

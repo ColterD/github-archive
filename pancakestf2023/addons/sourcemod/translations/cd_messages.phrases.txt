@@ -1,0 +1,59 @@
+"Phrases"
+{
+	// Less - {name}, {steam_id}, {ip}
+	// Full - {name}, {steam_id}, {ip}, {city}, {country}, {cc}
+
+	"Connect_less"
+	{
+		"en"		"{green}+ {orange}{name} {default}is connecting from {darkgray}{country}."
+	}
+	"Connect"
+	{
+		"en"		"{green}+ {orange}{name} {default}is connecting from {darkgray}{country}."
+	}
+	"Connect_adm_less"
+	{
+		"en"		"{green}+ {orange}{name} {default}is connecting from {darkgray}{country}."
+	}
+	"Connect_adm"
+	{
+		"en"		"{green}+ {orange}{name} {default}is connecting from {darkgray}{country}."
+	}
+	"Connect_srv_less"
+	{
+		"en"		"{green}+ {orange}{name} {default}is connecting from {darkgray}{country}."
+	}
+	"Connect_srv"
+	{
+		"en"		"{green}+ {orange}{name} {default}is connecting from {darkgray}{country}."
+	}
+
+
+	// Less - {name}, {steam_id}, {ip}, {reason}
+	// Full - {name}, {steam_id}, {ip}, {city}, {country}, {cc}, {reason}
+
+	"Disconnect_less"
+	{
+		"en"		"{red}× {orange}{name} {default}has disconnected. {darkgray}({reason}{default})"
+	}
+	"Disconnect"
+	{
+		"en"		"{red}× {orange}{name} {default}has disconnected. {darkgray}({reason}{default})"
+	}
+	"Disconnect_adm_less"
+	{
+		"en"		"{red}× {orange}{name} {default}has disconnected. {darkgray}({reason}{default})"
+	}
+	"Disconnect_adm"
+	{
+		"en"		"{red}× {orange}{name} {default}has disconnected. {darkgray}({reason}{default})"
+	}
+	"Disconnect_srv_less"
+	{
+		"en"		"{red}× {orange}{name} {default}has disconnected. {darkgray}({reason}{default})"
+	}
+	"Disconnect_srv"
+	{
+		"en"		"{red}× {orange}{name} {default}has disconnected. {darkgray}({reason}{default})"
+	}
+}

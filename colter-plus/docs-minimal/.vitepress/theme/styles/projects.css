@@ -1,0 +1,139 @@
+/* Projects styles */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.project-card {
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--vp-c-bg-soft);
+  transition: transform var(--transition-standard), box-shadow var(--transition-standard);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.project-image {
+  height: 180px;
+  overflow: hidden;
+}
+
+.project-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.project-card:hover .project-image img {
+  transform: scale(1.05);
+}
+
+.project-content {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-status {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  text-transform: capitalize;
+}
+
+.project-status.completed {
+  background-color: rgba(var(--vp-c-success-rgb), 0.1);
+  color: var(--vp-c-success);
+}
+
+.project-status.in-progress {
+  background-color: rgba(var(--vp-c-warning-rgb), 0.1);
+  color: var(--vp-c-warning);
+}
+
+.project-status.planned {
+  background-color: rgba(var(--vp-c-info-rgb), 0.1);
+  color: var(--vp-c-info);
+}
+
+.project-content h2 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.project-content p {
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.project-tag {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background-color: var(--vp-c-bg-mute);
+  color: var(--vp-c-text-2);
+}
+
+.view-project {
+  display: inline-block;
+  font-weight: 500;
+  color: var(--vp-c-brand);
+  text-decoration: none;
+}
+
+.view-project:hover {
+  text-decoration: underline;
+}
+
+.project-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.filter-button {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  background-color: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+  cursor: pointer;
+  transition: all var(--transition-standard);
+}
+
+.filter-button:hover {
+  background-color: var(--vp-c-bg-mute);
+}
+
+.filter-button.active {
+  background-color: var(--vp-c-brand);
+  color: white;
+  border-color: var(--vp-c-brand);
+}
+
+.empty-projects {
+  text-align: center;
+  padding: 3rem;
+  background-color: var(--vp-c-bg-soft);
+  border-radius: 8px;
+}

@@ -1,0 +1,74 @@
+version: "3"
+services:
+  frontend:
+    build: frontend/
+    container_name: frontend
+    env_file:
+      - .env
+    ports:
+      - 3000:3000
+    environment:
+      - VIRTUAL_HOST=colter.dev, www.colter.dev
+      - VIRTUAL_PORT=3000
+    networks:
+      - APInetwork
+    depends_on:
+      - backend
+      - database
+    volumes:
+      - ./frontend/:/app
+
+  backend:
+    build: backend/
+    container_name: backend
+    env_file:
+      - .env
+    ports:
+      - 7777:7777
+    environment:
+      - VIRTUAL_HOST=api.colter.dev
+      - VIRTUAL_PORT=7777
+    networks:
+      - APInetwork
+    depends_on:
+      - database
+    volumes:
+      - ./backend/:/app
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - APInetwork
+    depends_on:
+      - database
+
+  database:
+    image: postgres:16
+    container_name: database
+    environment:
+      POSTGRES_USER: username12_43
+      POSTGRES_PASSWORD: password12_43
+      POSTGRES_DB: database12_43
+    networks:
+      - APInetwork
+    volumes:
+      - ./database/:/var/lib/postgresql/data
+
+  nginx:
+    image: jwilder/nginx-proxy
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - APInetwork
+
+networks:
+  APInetwork:
+    driver: bridge

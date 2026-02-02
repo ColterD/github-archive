@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Disallow specific paths
+Disallow: /api/
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://colter.plus/sitemap.xml

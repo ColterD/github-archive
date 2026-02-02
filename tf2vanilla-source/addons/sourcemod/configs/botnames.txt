@@ -1,0 +1,2026 @@
+// Default Bot Names
+A Professional With Standards
+AimBot
+AmNot
+Aperture Science Prototype XR7
+Archimedes!
+BeepBeepBoop
+Big Mean Muther Hubbard
+Black Mesa
+BoomerBile
+Cannon Fodder
+CEDA
+Chell
+Chucklenuts
+Companion Cube
+Crazed Gunman
+CreditToTeam
+CRITRAWKETS
+Crowbar
+CryBaby
+CrySomeMore
+C++
+DeadHead
+Delicious Cake
+Divide by Zero
+Dog
+Force of Nature
+Freakin' Unbelievable
+Gentlemanne of Leisure
+GENTLE MANNE of LEISURE
+GLaDOS
+Glorified Toaster with Legs
+Grim Bloody Fable
+GutsAndGlory!
+Hat-Wearing MAN
+Headful of Eyeballs
+Herr Doktor
+HI THERE
+Hostage
+Humans Are Weak
+H@XX0RZ
+I LIVE!
+It's Filthy in There!
+IvanTheSpaceBiker
+Kaboom!
+Kill Me
+LOS LOS LOS
+Maggot
+Mann Co.
+Me
+Mega Baboon
+Mentlegen
+Mindless Electrons
+MoreGun
+Nobody
+Nom Nom Nom
+NotMe
+Numnutz
+One-Man Cheeseburger Apocalypse
+Poopy Joe
+Pow!
+RageQuit
+Ribs Grow Back
+Saxton Hale
+Screamin' Eagles
+SMELLY UNFORTUNATE
+SomeDude
+Someone Else
+Soulless
+Still Alive
+TAAAAANK!
+Target Practice
+ThatGuy
+The Administrator
+The Combine
+The Freeman
+The G-Man
+THEM
+Tiny Baby Man
+Totally Not A Bot
+trigger_hurt
+WITCH
+ZAWMBEEZ
+Ze Ubermensch
+Zepheniah Mann
+0xDEADBEEF
+10001011101
+// Bot Overhaul dev team and other ugly people
+Showin
+NirSixus
+Luki
+Lorenrosenhal
+Doctor Wildz
+Swaggin
+Chip
+Cepelinas
+Herr Doktor
+Zavok
+Agile
+Afonso
+Strider
+// The many names of *insert name here*
+Anal Crisps
+Good Ol' Davy
+E-Lane
+E-9163
+I can't decide on a name.
+I DECIDED ON A NAME!
+Kresen
+Kliesen143
+// New Bot Names
+Jeremy The Scout
+Jane Doe
+Tavish Finnegan DeGroot
+Mikhail Weapons Guy
+Dell Conagher
+Ludwig Humboldt
+Mr. Mundy
+Miss Pauling
+Blutarch Mann
+Redmond Mann
+Gray Mann
+Olivia Mann
+Director
+Zhanna
+Yana
+Abraham Lincoln
+George Washington
+Franklin D. Roosevelt
+Niels Bohr
+Albert Einstein
+Amodeo Avogadro
+Anders Angstrom
+Andre Ampere
+Andrew D. Huxley
+Benjamin Franklin
+Blaise Pascal
+Christian Doppler
+Daniel Bernoulli
+Enrico Fermi
+Ernst Mach
+Erwin Schrodinger
+Freeman Dyson
+Galileo Galilei
+Gaspard Coriolis
+Georg Ohm
+Issac Newton
+James Maxwell
+James Joule
+Johannes Kepler
+Joseph Louis Lagrange
+Leonardo DaVinci
+Leonhard Euler
+Marie Curie
+Pierre Curie
+Max Planck
+Michael Faraday
+Nicolaus Copernicus
+Nikola Tesla
+Paul Dirac
+Rene Descartes
+Richard Feynman
+Robert Oppenheimer
+Stephen Hawking
+Werner Heisenberg
+Merasmus
+Wheatley
+I want nachos
+I like you
+You like me
+Your pet turtle
+You smell nice
+You smell bad
+You smell decent
+You smell adequate
+You smell exceptional
+I'm real
+I hate you
+I love you
+Let's make children
+Your stupid
+Mr.Banana
+Potatoman
+Vitamin C
+Enjoying the respawn?
+A hacker
+Bob the Builder.
+Did you miss me?
+You ded.
+Sandvich make me strong.
+Onion.
+Trade Me
+Jesus
+Devil
+God
+I'm Naked
+Necklace of human ears
+Your mother.
+Your father.
+Your grandfather.
+Your grandmother.
+Your brother-in-law.
+Your sister-in-law.
+Your sister.
+Your brother.
+Your son.
+Your daughter.
+Your uncle.
+Your aunt.
+Your ex.
+Your wife.
+Your husband.
+This is a bucket
+Dear god
+There's more
+No
+Wanna do it?
+SEDUCE ME
+I TELEPORTED BREAD
+WE ARE GOING TO LIVE FOREVER
+Booty
+I wish I was real.
+Seriously?
+You suck.
+I'm better than you.
+Robin Walker
+Gabe Newell
+Terminator
+That one guy from highskool
+Banana nut
+Artificial Intelligence
+W+M1 takes skill
+You tried.
+Pantscada
+Ruby
+Weiss
+Blake
+Yang
+Jaune
+Sarge
+Donut
+Rollins
+Ziggler
+Dakota
+Fandango
+Cena
+Bryan
+Paige
+Kairi
+Admiral
+Dapper
+Newsie
+French
+Boss
+Flower
+The Fez
+Mon
+Fancy
+Pimpy
+Bandito
+Word
+Lyfe
+La Rey
+Joker
+Honey
+Safe T
+Silent
+Big Dawg
+Joe
+Heli-Topper
+Emerald
+You
+Biscuit
+Cox
+Heart
+McElroy
+Raven
+Cinder
+Jake
+Finn
+Bubblegum
+Marceline
+Simon
+Peppermint
+Gunter
+BMO
+Lemongrab
+Rainicorn
+Michael
+Gavin
+Ray
+Geoff
+Jeremy
+Jack
+Ryan
+Miku
+Rin
+Len
+Prii
+Rusev
+Mei
+Garnet
+Amethyst
+Dana
+Ember
+Becky
+Ambrose
+Reigns
+Squigly
+Zone
+Jill
+Dorothy
+*Kira* Miki
+Stella
+Sei
+Fore
+Anna
+Abigail
+Garoad
+Porter
+Clicktman
+Dante
+Hardy
+Nakamura
+Styles
+Ryder
+Balor
+Strowman
+Samus
+Sheik
+Falcon
+Pikachu
+Kirby
+Inkling
+Octoling
+Amitie
+Witch
+Knife
+Marie
+Marina
+Pearl
+Coeur de Pirate
+Snake
+Kirk
+Spock
+Picard
+Scotty
+Uhura
+xxxx2345545
+qwe51
+e151
+2e31
+3e345
+ewe123
+Kara
+Illana
+Kira
+Barak
+Royal soveit
+SuperHero
+DENGGO290
+xaldin | trade.tf
+Nightus
+Darknightmarewolf
+Yukari Akiyama
+cake :3
+LMAO
+TiTaniumTurd
+2655684893
+Poichie blw.tf
+ViPer
+Komomimi
+Sir Blockingtone
+ุAlien Murahan
+◢†☢Đ.Ęℭ.λ☢†◤
+Nate
+giraFFe
+uniqueid
+My name is Zak Bagans
+mickrave0329
+MKrap
+It's a Lie
+Scout_BONK123!!!
+Soldat
+Ladic
+smile!
+Only 7 cm
+Tiny Desk Engineer
+MrMuskyHusky
+ImBoosted
+PanzerKommandant|8thPanzer
+johnzeus19
+Dunnionringz
+The Helper
+annajnavarro
+Lévi
+Fat Whale
+God HATES you!
+vintige kratskrag
+Who?
+Demoman Takes Skill!
+DohnJoe
+Santa Claus Schoolgirl
+Botulism Betty
+Straight from botnames.txt!
+Blessed To Moonwalk
+Chris P. Bacon
+Consume your Calcium
+rubbedsaltwound
+Content Quality Control
+SpamCracker
+Alcohol + Poor Life Decisions
+salad
+i dont sleep
+Kritty Kat
+Headshot!
+ShanghaiDragon
+El JÃ¤germeister
+Hitler's Spellcheck.
+Mini-Biscuits Rights Activist.
+Rommel McDonald
+WellOfSpring
+I'm not gay, but $20 is $20
+Dr. Mantis Toboggan
+The Buttstaber
+TheNascarMasterRace
+2 FAST 4 U
+The Living Lawn Mower 
+Don't Fuckle With Shuckle
+Yolo Swaggins
+Suppository Breadcrumbs
+The Inhuman Scorch
+Honey I healed the Heavy
+Drinking + Driving
+spicy comments
+The Terrible Spicy Tea
+Thomas the Wank Engine
+North Korea rocket plan
+Terror that Faps in the Night.
+Dysentery.
+The drop-kicking midget.
+Special Needs Engineer
+touch my crocs
+A Strange Festive Newt Gingrich
+A Sexually Attractive Cactus
+Swaghetti Yolonaise
+butt soup 
+Alcoholic Fat Guy
+Afraid Egg
+It's Legal in Japan
+I'm So Meta Even This Acronym.
+Unusual Foppish Boner
+Awkward Cuddle Boner
+A Distinctive lack of YOU!
+The Spanish Inquisition
+Vavle's Spyware
+A Duck On Quack
+obesity related illness.
+Teh_pwn!
+ROFLSaurus Rex
+ASS PANCAKES!
+Bodyshots Johnson
+Nein Lives.
+Dispenser (Target Practice)
+Country-Steak:Sauce
+Sock Full of Shame
+An overdose of French Toast
+One Kawaii MotherFucker
+Smokey Joe
+The Spicy Meatball.
+I Eat Toddlers
+Cunning Linguist
+imgoingmid
+3DayOldTeleportedBread
+Replay
+Popular Meme
+The Intense Hoovy Main
+Sauceless
+Delirium
+Kick_Ass_Username
+nobody in particular
+Ayy + Lmao
+?
+Drug Wendy
+RoomGuy
+Fidel Castro's Dairy Adventures
+shaking my heADHD
+nasa
+S I K E
+sir_badass_the_third 
+About_30_ninjas
+Ithoughtshewaslvl18 
+404 GF not found  
+IfIDiedIWasAFK 
+Jimmies Rustler
+go go gadget aimbot 
+Neil, Intergalactic Grandpa
+General Steiner
+Crazy Dewfus
+Sympatriotic
+doge
+Warmachine
+Diarrhea On Wheels
+Roasty my Toasty
+Steve Handjobs
+the hottest cheeto ever, man
+Imagine actually dying to WM1
+Vince makes you say Shamwow
+PyrosAreAssholes
+Hilarious Bread
+poo c
+19 year old virgin
+Parasitic watermelon
+Welcome to Costco
+Sick Marmalade, Grandpa 
+buttsaggington
+Mother Fucking Oedipus
+I wonder what cum taste likes
+Money, Hoes and Spaghetti-O's
+Mister Lister the Sister Fister
+Jonk
+Diet Cocaine
+Suspiciously Slow Scout
+Space Gandhi
+urine for a treat
+Delusional Arsonist
+Yung Micheal
+Old Man of America
+Spam & Heals Inc.
+yes_u_suck
+I_YELL_ALOT
+DroolTool
+A very fat man named Minh
+heavy from team fortress 5
+Cheesus Evangelionist
+Just a noob
+WetHitter
+Unsubscribe
+WeThePizza
+LactoseTheIntolerant
+MagicLOL
+getVACburned
+BeatdownMachine
+Such_A_Noob
+Balloonicorn
+Phosuphi
+BeardNoMore
+CutthroatChicken
+YourNameOnMySword
+BarryMcKackiner
+MyAxeYourFace
+Bagelofdeath
+Window Maker
+Rock8Man
+UsedFood
+beepbeepimajeep
+bitpull 
+PatMaximum
+you snoze you loze
+I_fap_twohanded
+DixonCider
+NoChildSupport
+Don't Shoot I'm a virgin 
+Pvt. Parts 
+BigD_McGee 
+McD'sHashbrown 
+SnackBitesWillRule 
+Stalin's Organ.
+BadUsernameSince2015
+NoDadNotTheBelt
+BrokenBoneBroker
+DontTouchThat
+InfinityLag
+NullPointer 
+FrankTheCrank
+Mexican't 
+HouseOfChards
+Playing TF2 on A Toaster
+noob
+SpawnOfChaos
+I'm a Nokia 
+Solid Steak
+Killavanilla
+Tactical Toast
+OmgMyNameWontFi 
+Does you has? 
+niche one 
+he ded lol
+Testicular Thorsion 
+you_sun_of_a_beach 
+that's DOCTOR noob 4u 
+hoehoehoe
+PonySlaystation 
+suck my clock
+Muffled Fart 
+ClickSwitch
+GarbageRubberBand
+PennyUnwise
+Kacktus 
+Propanetankhank 
+HeyimGey. 
+Lol a shaved donkey
+De_stroyed
+i h8 myself
+eisoptrophobia.
+Respect your mom
+I wish i was dead
+CakeStealer
+KinosaurusRex
+Maximus
+SpyCrab
+MassTenderizer
+ParrotGal75
+Mentlegen Terrorist
+La Baguette Faguette
+Soup Can
+Lewdest Robot
+Hella Thicc
+Foot Lover Berry
+Hell is NOT okay
+unnamed
+Player
+HereComesThePainTrain
+lololol
+Nope.avi
+Snipping Tool
+Fax Machine
+m0tiVACation
+Just a Cardboard Box
+xXDark_LordXx
+expee
+????????
+nWord
+NotAnEngineer
+KidFromSchool
+Phone
+OmqItswOOdy
+canon father
+dart invader
+FreeeeeIpad
+nonuts
+E
+Carl Johnson
+Big Smoke
+CritsAreFair
+A Commie
+Prankster_Gangster
+Dad
+im going to area51
+AliveFace
+CornCakes
+Morgan
+goD
+Scunts_Sux
+Bruh231
+nikolai.thegamer 2019
+Pixels
+Mark
+Jon
+Garfield
+a pay 2 play
+a free 2 play
+yeet
+ESP
+a bunch of 0s and 1s
+Hitscan
+LmaoBox
+I DIE !
+Barny
+Gordon Freeman
+Drunken Wretch
+No
+IDontHaveAName
+PewDiePie
+Water Sheep
+Sandvich
+Mega dumboon
+MetalLegend
+A girl
+LessCrits
+Mario
+Loogi
+Sven
+Joergen
+'Merica fok ye
+Serbia
+Fonsi
+Despacito
+Pussy Memes
+Hail
+Bird
+SuperNatural
+SomeBruh
+This Guy
+Soulfull
+Undead
+Vehicle
+210Hill
+Bush-Dog
+The Wall
+The Bitch
+FishFace
+BFG 9000
+Bushman
+LucksMan
+Totally a human
+Shadows
+Nuclear Fruitcake
+Gold Steel
+scooteroni
+Mr.Poot
+liveMeat
+TalkyFan
+miss appauling
+Blue Man
+Red Man
+Gray Man
+Oblivious Man
+Rebel
+Havana OOONANA
+superguy
+Abraham da great
+George chopdowninnocenttree
+Franklin Deez nutz
+a wizard
+What
+thats nacho cheeze
+lesbian
+Gay
+papa Pete
+SpookyMint
+keegasp00ks
+Shock
+Im happy :D
+Im Sad D:
+Dead Meme
+Kohan-Kun
+Juan
+Chunky Joe
+Slyblindfox
+Trump
+Ronald
+Kortex
+Kim Jack Off
+Aimlocked
+KloGuy
+Chucky
+Volcano
+Doge Mint
+JackTheRipper
+Just a Cardboard Box
+~Erim~
+muesli
+Saiko
+aoihitsuji
+Reayr1
+Mekako
+ddaydeath
+Str00kerX
+Yuki
+Rena.
+cOnFuSeD
+terminator YD
+Kylin
+Seki
+Osmund
+Botulism Betty
+miyuki
+Pway pway
+TKO | gag0!
+Styx
+/sng/
+OWO
+Kr@zZy
+c0rsair
+nexcor
+pr3st0
+663
+V0id
+Killing Frenzy
+Campers Death
+You make me Laugh
+killaura
+Violently Happy
+Make my Day
+Pissed Off
+Bloodlust
+b02fof
+Zap!
+Dredd
+Fuzzey
+Bucus
+mokku
+A Professional With Standards
+Archimedes!
+Glorified Toaster with Legs
+Yana
+Your pet turtle
+You smell bad
+You smell nice
+I'm real
+Let's make children
+chen y
+NotDuckie
+De_stroyed
+nabongS
+h8 exam
+Crazii
+i h8 myself
+jowak1n
+beyluta
+natty_the_great
+ernest_aj
+bored
+hambug | buying skins
+Kiwino
+farn
+hezzy
+misty :3
+taFFy
+Kei
+I love you
+Sasucky
+eisoptrophobia.
+Yzui
+VKDrummer
+GDliZy
+Schizo x.O
+Yowza
+Hikari
+Niltf
+Kiruh
+caKuma
+Inkou PM
+I wish i was dead
+iamsleepless
+Hackyou
+Sokiy
+Kairu
+hatihati
+tarumaru
+berthe
+MB295
+Jumo
+kirkimedes
+Souless
+LamZee
+Aya-Chan
+gvek
+El Jägermeister
+ikitakunai
+Meti 
+VyLenT
+AlesTA
+Remi
+FTruby
+Touka_
+henkyyi
+Nitrogen09
+moyazou
+chamaji
+ramjam18
+VyYui
+tsumiki
+__dd
+Jushy
+TANUKANA
+Aeyonna | loving you hurts
+Alux.
+Young Jager
+Exhausted Life
+A E S T H E T I C
+Thomas_
+Ross Scarlet
+sonamed
+kuben
+Loord
+pasha
+Neo
+GoodRifle
+alex
+xF
+tb
+karl
+Virgo
+Savage
+rita
+prom1se
+xiaoe
+karrigan
+ArcadioN
+Friis
+wazorN
+suraNga
+minet
+j$
+zonic H$
+trace
+ave
+Sunde ACEEE
+Maximus
+Snappi
+xone
+luffeb
+katulen
+Strangelet
+AllThatGlitters21
+BreakingNYC
+DancingCrazy351
+Darkrogue20
+davedays
+DieAussenseiter
+DragonCharlz
+eddysson86
+ef12striker
+EllesGlitterGossip
+esmeedenters
+HeadsUpLisa | Lwoosers
+hotforwords
+Düktor
+IntelExtremeMasters
+Monarch5150
+mouzmovie
+LUlyuo
+NCIXcom
+RayWilliamJohnson
+RubberRoss 
+seductioncoach
+septinho
+soundlyawake
+Blacklegion104 
+ICANHAZHEADSHOT 
+so4p | Lwoosers
+gg_legol4s3rZ7
+Dert
+HDstarcraft 
+Husky
+h0N123
+Da-MiGhtY 4357
+NetManiac
+Kyu >3<
+>PartiZan<
+K!110grAmm
+SchtandartenFuhrer
+mu1ti-K!ll
+=ZL0Y=
+HeadKilla ==(oo)=>
+dub
+Kara
+Mechano!d
+3v!LKilla
+viz0r
+MiXa
+DiGGeR
+=GRoMoZeKA=
+ZveroBoy
+ahl.
+bds.
+brunk
+ElemenT
+fisker
+goseY
+Potti
+Morda
+n0name| S>Keys B>Knives
+NiTron
+[.71]TPAXTOP
+KaLbI4
+Rado
+NooK
+MadFan
+Rider
+Xen1tron
+iTuman
+Electric.eYe
+Romashka
+b0s7
+vesslan
+XeqtR
+Luciano
+quick
+Luccese
+StabiliZat0R
+MegaCamper
+[s!L3nt]xen0b1te
+DiGGeR
+nanuK
+-ZerG-
+-PerfoRaToR->
+V!C
+g00dDayToD!e
+K!llogr4mm
+MyXa
+Davilka
+Madyy
+BE45t
+gollum
+**Natashka**
+Ky4Ka
+-##.NeO.##-
+Gabizinea
+Hermy
+Argent
+blahzey
+deNNY
+idaymen
+La Baguette Faguette
+Aced
+Maciej
+Vsolid
+Suwa + etc. [SWF2]
+Goten_ssj3
+Lewdest Robot
+Nooters
+Orin
+HentaiSenpai
+Fio Germi (Galaxy Moon)
+eilene
+okuudere
+pprn
+tachibana
+mimiostro
+tuthinoko
+slark
+Miyu 
+Sashkokit
+-MajorEdu
+prosoldier123
+INSPECTOR
+vjm3
+Drantino
+ATB
+MARK Z
+AestheticDreamer
+jRenee
+PSYCHOM8
+>perfect aim >dies
+wakabayashi
+uNb0t
+luX Ya self
+NName
+Inc
+!nc3s!bl3
+certifed  quality
+coach  carter
+alvar.es
+GipsaN :]
+secret  of  mana
+hajau, lucked
+I AM LEGEND
+push my vocal
+FAKE ARAB FOR THE WALLSTREET
+flying shizzl3r
+hepenitzki
+multifrager
+PRELIFE
+Tabula Rasa
+blue  eye
+Gargamel
+nb
+ZeRoc00l
+FirstVirus
+Schl@mp3
+wenn ich spiele ist es voodoo!
+bunny77
+D3ATH
+DooM_MacHinE
+Kuesschen
+Lammer
+AlCapone
+,.l., ( o.o ) ,.l.,
+tod3sfo3rna
+TriForce2003|fabioff
+Lekarn<3hkr
+Kilbim
+51|/|c141/2
+hi
+Hohes-C
+ESL PRO SERIES PLAYER
+ESL EXTREM MASTERS PLAYER
+win.razorwh!
+win.niTiab
+b0t
+rbk
+unnamed
+K!LL3RM4SCH!N3R13
+chris
+Player
+gsdgerdffhd
+NGL-
+siX
+WWCL Player
+Linuxing
+ZeRr0us
+lala
+redrabbit
+neo.de
+HetfieldFan
+Dr.Mackay
+(:
+:)
+[:
+:]
+Dr. Rodney McKay
+The_Best
+gifSoTuRB
+General
+TrixXxw[0o]w~
+raidENN
+Young and Aspiring
+hide and seek
+nosound
+Sprite
+peace through power!
+schaap 	1721
+professional
+dKc
+j$
+q
+jojojo
+heat -.-
+ja som hroch
+LSD Cat on Tour
+lol
+n
+weep
+blub0r
+professional
+U CAN BE MY DANCER
+skyytti
+etcpp ^^
+FELDWEBEL SCHULTZ
+markeLOVE
+Sora
+kgpforever
+PHILIPP
+h3h3 j0
+zupzup
+UPSSolo
+nomonsta
+lololol
+baCCa
+ENTRAZ
+rumzigeunern
+hOFY
+iNERTiA
+oFFline
+lol32
+eyz
+boooya
+^_^
+bambabam
+alvar_jerky
+MurphY
+Dom Cobb
+.uNreaL
+crvN
+line
+APe SInth
+chup1n
+APe SInth
+daengle71
+redd0r
+C.C.
+M159852
+marcus
+wnb.
+Uchiha Itachi
+LEGENDE
+HoLLnDer
+IloveUuuw
+w8w8
+Hirschk4fer
+w00dy
+|Lonely|
+oky
+bucksN
+St4hl
+EvenMoreDeliciouz
+Ephi_
+TheDarkMessiah
+Son - mas - Goku
+turb0_booya
+[shzzL
+The j0k3r WAHAAHAHAHA
+veNoM BABY
+DANIEL P.
+aleKZa
+-=[F4F||FinalFighter]=-
+#MAXIMALELNGEBISHIER
+chr1zZo
+<ODIE>
+d0m AZ
+g3rdi
+shiddy
+ChRRRRRRRRRRRRRRRRp
+ninja
+Troubley
+RSK[86]
+pwl
+thoR
+crash
+blood <3
+ALIEN|foolisH
+avenue
+Tixo
+Blizzard
+Papa Schlumpf
+manne
+qp
+BARBARR
+pinne
+hyvlarn
+walle
+RobbaN
+allen
+face
+moddii
+cArn
+f0rest
+dsn
+GeT_RiGhT
+Gux
+kHRYSTAL***
+niko
+Xizt
+FYRR73
+threat JJ
+pop
+Zyppe
+.pronax
+lidde
+pita
+mUttt
+axoN
+f[o]x
+SHOUW
+coachi
+aDr
+Maluk3
+mch
+viol!
+dukka
+pEdRo
+shemp
+din0
+xpd YEAH!
+btt
+spacca
+cky
+prd
+mkr
+Falle_NN
+fnx
+bruno
+nak
+bit
+MusambaN1
+kairi
+FlipiN
+sioK
+xhiroz YDK
+Day 8)
+bjERKE
+zEn
+KORN
+REASTEN
+hellzerk
+Vertigo
+kalle
+tacky
+KF3
+sixeR
+MAJ3R
+rara <-
+Geno
+Yoshi
+ioRek
+_mSx_
+drizzer
+RiGo-
+HaRts
+Edward
+markeloff
+stariX
+ceh9
+[Zeus]
+(ANGE1)
+craft1k
+naSu
+axxorz
+Danka
+E-Lane
+Koro1
+Clearlove
+fj <3
+Gloretta
+moveihavekid
+AY SHIT
+COCK-A-DOODLE-DOO
+( U 3 U )
+( O W O )
+Mason
+Imagine dying to a w+m1
+2ch.hk
+4chan
+8
+8ch
+9gag
+argentina
+australia
+austria
+ayy lmao
+bait
+bangladesh
+belgium
+berlusconi
+blatter
+boris
+bosnia
+botswana
+brazil
+bulgaria
+bush
+byzantium
+cambodia
+cameron
+canada
+chaplin
+chavez
+chile
+china
+cia
+clinton
+confederate
+croatia
+cuba
+denmark
+dilma
+doge
+ea
+earth
+estonia
+european union
+facebook
+facepunch
+feminism
+fidel
+finland
+france
+french kingdom
+german empire
+germany
+greece
+hillary
+hollande
+hong kong
+hungary
+imperial japan
+india
+indiana
+indonesia
+iran
+iraq
+ireland
+irs
+italy
+jamaica
+japan
+kc
+kim jong-un
+latvia
+lithuania
+luxembourg
+maldivas
+mars
+matriarchy
+merkel
+mexico
+moon
+nasa
+netherlands
+nigeria
+north korea
+norway
+obama
+origin
+pakistan
+palin
+patriarchy
+peru
+piccolo
+pokerface
+poland
+portugal
+prodota
+prussia
+putin
+qing dynasty
+quebec
+queen
+receita federal
+reddit
+romania
+russia
+sanik
+satanist
+scotland
+sealand
+sir
+somalia
+south korea
+spain
+stalin
+steam
+stussy
+sweden
+switzerland
+taiwan
+texas
+thailand
+trump
+tsarist russia
+tsipras
+tumblr
+turkey
+ukraine
+united kingdom
+usa
+ussr
+venezuela
+vinesauce
+wojak
+yaranaika
+hoop
+-|NoS|-
+Chrono
+bobjones
+dawgz
+The BiG SMUT
+-CARDIAC-
+Wigger Vampire
+Zachalicious
+bob
+The Muffin Man
+intangible
+yoda
+Nikolai
+MeRCeNaRy
+-=Sh0rTy=-
+RaGe
+wind
+pyr0`
+{NoV}Fishbulb
+ChRoNo
+Brandon
+alldritc
+articwolf
+funk
+phobos
+BorHor
+xUTxJackFrost
+DrEdGe FuEgO
+wiggles
+dslodolce
+miesso
+CheezyPinoy
+butterfly
+Fat Matt
+aznfaijai
+Flying Martini
+thecounter_king
+SuperWaffle
+Killer apple
+Spriggan
+Counter123
+bling bling
+RAGE OF THE BOY
+aliendewd1
+AfluffyKitten
+n0k
+ultimo101
+SaVaGe_RuBy
+Anthology
+vittu
+INEOIVulture
+kingkilla
+Domo
+cG PHAXD
+Major
+Whatever
+Ender Wiggin
+Smok3
+thunder
+Twinner
+Ronin Marmot
+shooterman
+alan_cross2001
+[Saber]Psycho
+bussemann
+yoshi
+ffmcobalt
+kaosbob
+tHeCh0sEn0nE
+joem91606
+HappyKiD
+bisTEK
+kirby
+Serial_Victim
+sk8_sam_101
+BDM-WhiteViper
+Firestorm
+fury16
+omega
+DevilScream
+waeldreegia
+[SMUT]DarkDruid
+AttAckA
+dead weight
+Shadow-Death
+BHSbballer15
+Buddy101
+Helios
+thesofafox
+Sublime
+vampiress
+8|@@d$h@t
+Slayin
+red devil
+Chubbs
+Mushlafa
+DarkWarrior
+eGGfOO
+Dk-Unknown
+Nihility
+ksqueakj
+iamblazed
+Dori
+Counerstrike1
+phillip_style
+blueguile
+DROP DEAD FRED
+gixsir1000
+Galdalfus
+Deadlynome
+007
+goat
+peopleRpoop
+pimpjuice
+Texas
+FatManMGS2
+Death Knight
+bjaren
+bunkerking111
+Sh0oTeR
+simslater
+.e7`~Silent
+ewok
+Joe
+Hextor
+k0h0
+rolo123
+jakejake
+Slurr
+un4given
+Gilroy
+Magnus
+Savage|420|
+Jonny Matrix
+Tator
+Wangmaster
+Ghost
+Jumbo
+PokeR!
+I∞Cττ
+DAB
+💕SniiKz─💖
+☃ ƬяᎥɔҠSpℓⓘƬ  ☃
+n0psa
+noskin = nopro?
+遊㊣
+IEatBalls
+Cxxxxxx愛情
+An unnamed cell
+Crystal fan
+It's me Tempest
+👉ℬℒѦՏᙈՏ»ƳƬ👊
+㊄⇀ᴳʳᵃᵛᶤᵗʸ 﨔ᴿᵃᵍᵉ
+тυявσ  ᴳᵒᵈ
+NigNog
+POPSPLIT ME
+Harambeᴳᵒᵈ
+bulba
+<spy>
+ayy lmao
+𝓓𝐞𝒶𝕥𝐡™▬ ♲
+【𝓢𝓖】༺៣ครŧ℮ℛ༻
+<oculus_orbus>ƬψƬ ☢ ₡ᗑℕ
+Ƥɾøтøтуρє
+ℰ℟℩ѕє∂
+✿ǀϻｱﾒςｲ
+Ѕнα∂σω ❀
+𝓦𝓲𝓷𝔁♕
+Dandy ✧
+YOLO ✌ETZes♱y✧♋
+Simon㊗
+>Đαℵᖙƴ ✧
+Heяø ໓คຖฯคl
+ Ɲιяναηα
+ʞгＯᗯᑎ👑
+ㄈﾑ刀☢
+₡ᗑℕ✓ ♛
+Ƒยภ✌
+ρσρ⚡
+:緑🔒
+Şρy🐉
+Nαhz 🍬
+ƬψƬ ☢ ѕαѕqυαт¢н
+ƬψƬ ☢ Ɗαηgєя
+<pirate_girl>
+ƬψƬ ☢ Şoʀʀʏιωιɴ
+ηυ¢ℓєαя✓
+ℜɪsզ
+ƬψƬ ☢ ✟ ȼ℟ƶ :㍿
+Sℓαтєя★
+ㄚ工匚丹
+ℝ∆ℤ ✓
+$ατùr∩
+Aтαнαп ☪
+Ɗιαмσηɗ™
+ρяοсιsισи√ 
+ƝƖtƦƠƯ꒚_꒼Þ
+☢ Mєʅơɗყ ✓
+ภєรђเє 
+NeZ
+Sκ✟łłZ
+𝓐ρiηiту
+Aρiηiту ✌
+Ƒยภ ዘєᖇɔ ✓
+§₭↑ⱦ
+丅ＥмקEＳ丅
+ℳıℜⱥℭℓℯ
+丹刀刀工
+☡٩٩
+∂єνɨℓ✓
+愛-ک丹∪匚モ-嬡
+CнℝιsƤrØツ
+ƬψƬ☢₢₳₥₤R
+爪丨乙丨尺ㄒ尺ㄖ乂😈
+๖ۣۜǤнσsτ༻一�:緑🔒
+ۣۜᔕρคг𝑘Հ༻藝術
+<๖ۣۜ₳℘ᎥӾ༺ 一�: 线
+๖ۣۜ𝐉ᴀᘜยαƦƳƬ༻
+Đαא∂Ƴ
+Heяø
+★ηιтяø★
+Cαקтαιภ
+Koji妥
+Haz
+𝒲𝒾𝓃𝓍
+Zคภเคς表
+ℤคภเς
+RoYaL-头痛
+ETZes♰y✰♋
+⚡ Ѵσятєჯ
+CΔZΣ
+Ƭσxιηs ♛
+𝝠℟เӾ ツ
+Myro
+【≽ܫ≼】ᖫ✧WɅVΞ✧ᖭ
+【≽ܫ≼】ᖫ✧ᗩǤᗩᖇᎥᗝ✧ᖭ
+【≽ܫ≼】ᖫ✧Ǥяυиgє✧ᖭ
+【≽ܫ≼】ᖫ✧ΔИĐЯØƗĐ✧ᖭ
+【≽ܫ≼】✧ṃ!ṩҭ!ḱ✧
+【≽ܫ≼】ᖫ✧ᗷØŁŦ✧ᖭ
+【≽ܫ≼】♡✿KΔWΔI✿♡
+█▬█ █ ▀█▀
+【≽ܫ≼】ภє๏ภ קคฬ
+【≽ܫ≼】🎅 Μ€ŘŘ¥
+【≽ܫ≼】ΔᎥяclσυ∂ ☯🐉☯｟яєαl｠
+【≽ܫ≼】〘ᗰᗝᗪ〙ᗷᗴ丅ᗩ👑
+【≽ܫ≼】♏࿊ภร✞Ʃℜ惡終〖ℜƩɅＬ〗
+【≽ܫ≼】 💋⋞ΔŘƗŞŁΔ¥⋟💋
+【≽ܫ≼】 ΔᎥяωεв
+🇫🇮🇷🇪🔥
+乃‏Ǿษ
+✌ Magarro!
+MƓR! Pine
+AsumaCC
+ℂӇЩƗȠƬƵ ツ
+ＳＨᗩℜＫ༻™✌
+☠ ŦןŦΔᑎ
+ＫØᗷØ❄ツ
+oXiCxXX
+℘ℜℑ℉∌ℝ!
+<icecream_face>ᗯᗩᖇᗪ♜ ƬЯɅĢΞĐƳ
+<SkyFire
+Ƭίταηυs
+βαςση
+Nεgατίνεƒίηίτγ
+<♢ Pяσ ♋
+ƬℓƓ ♢ ƒυη ✅
+Đuηвαs
+Fσгcє
+Ađ₥ιηє♕
+Ƶαkє
+Šuвωσω
+Pєl₥єsнkα
+Elιsєy
+ΔCΣ♠ Ř€ҜŦ
+诶ʳᵉᵏᵗ
+ℱคƬคℒ 燮❥❥💞
+ƵŦ✿ ۑℕเเЌ𝕫✿ 
+ROYΛL❥™ 一тя ☘ 
+𝕄αυ𝕐т --�:緑🔒
+༺ᗪуᗪ༻ Ɗιαмσ—�練㊗
+ℬ𝓵𝓪𝓷𝒆❥
+✅𝓐𝓡𝐀𝐁𝐈𝐎✌ 
+รηιρεя™≈∆ε👽
+〖ᗩǤ〗ArcadeGo颣
+〖ØᎶ〗ƝῖϾӡ 
+ᗯαŁiΩ༻一�:緑🔓
+༺ŴΔŦ€ŘΜ€ŁØŇ❥查员༻
+𝒪𝓁𝓁𝒾𝑒 ❀
+〖ᗩᐯᗩ〗༺ƬemperYT
+阿
+爱 蔼
+安
+白百柏
+虹红弘鸿宏
+冠宇
+冠廷
+餘個簡體漢字
+國際標準碼
+水巷孑蠻
+成诚
+晨辰
+昌畅长
+家豪
+金锦津
+静怡
+菊巨
+娟
+静精晶京
+凯
+坤
+兰岚
+磊蕾
+理
+立
+黎
+力
+丽
+莲
+濂 
+廉
+涛
+素
+肃
+欣怡心怡
+翔祥湘香
+夏霞
+秀英
+洋
+阳
+雅雯
+雅筑
+宜毅义益
+怡仪
+泽东
+玉愉
+赞
+云允
+Вячеслав
+Абрам	
+Александрr
+Алексей
+Альберт
+Анатолий
+Андрей
+Антон
+Аркадий
+Арсений
+Артёмm
+Артур
+Афанасий
+Богдан
+Борисs
+Вадим
+Валентин
+Валерий
+Василий
+Вениамин
+Виктор
+Виталий
+Влад
+Владимир
+Владислав
+Гавриил
+Геннади
+Георгий
+Герасим
+Герман
+Глеб
+Григорий
+Давид
+Даниил
+Денис
+Дмитрий
+Евгений	
+Егор
+Ефим
+Захар
+Анастас
+Аня
+Диана
+Феофан
+Гала
+Галина
+Игнат
+Игнатий
+Игорь
+Илларион
+Илья
+Иммануил
+Иосиф
+Герман
+Илья
+Илья
+Иларий
+Иннокентий
+Катерина
+Карп
+Карина
+Юлия
+Кира
+Кларa
+Лариса
+Лара
+Лана
+Марина
+Мария
+Милена
+Михаил
+Милан
+Мила
+hecatia 
+lapislazuli
+hecatia lapislazuli
+aya
+Revelation Space 
+Ana Khouri
+John Brannigan
+Philip Lascaille
+The Mademoiselle
+Ilia Volyova
+Calvin Sylveste
+Dan Sylveste
+Chasm City 
+Tanner Mirabel
+Cahuella
+Sky Haussmann
+Redemption Ark 
+Antoinette Bax
+Nevil Clavain
+Skade
+Felka
+Galiana
+Remontoire
+Scorpio
+Absolution Gap
+Aura Khouri
+Rashmika Els
+Quaiche
+Grelier
+The Prefect 
+The Clockmaker
+Tom Dreyfus
+Ana Ng
+Diamond Dogs 
+Dr. Trintignant
+Century Rain 
+Wendell Floyd
+Andre Custine
+Verity Auger
+Pushing Ice 
+Bella Lind
+Svetlana Barseghian
+House of Suns 
+Abigail Gentian
+Campion
+Purslane
+Alastair Reynolds
+Julius
+Lil
+Dan
+DanAccelerando 
+Charles Stross
+Manfred Macx
+Aineko
+Bob Franklin
+Something Blue
+Annette Dimarcos
+Pamela Macx
+Gianni Vittoria
+Amber Macx
+Sadeq Khurasani
+Sirhan al-Khurasani
+The Diamond Age 
+Neal Stephenson
+Nell
+Harv
+John Percival Hackworth
+Fiona Hackworth
+Lord Alexander Finkle-McGraw
+Elizabeth Finkle-McGraw
+Judge Fang
+Dr. X
+Miranda
+Carl Hollywood
+Snow Crash
+Hiro Protagonist
+Y.T.
+Juanita Marquez
+Da5id Meier
+Emanuel Lagos
+Uncle Enzo
+L. Bob Rife
+Dmitri Ravinoff
+I, Robot 
+Issac Asimov
+Peter Bogert
+Susan Calvin
+Alfred Lanning
+Gregory Powell
+Mike Donovan
+Lawrence Robertson
+Arthur C. Clarke
+Heywood Floyd
+David Bowman
+Francis Poole
+HAL
+Carl Sagan
+Ellie Arroway
+Palmer Joss
+S.R. Hadden
+Unbuttered Popcorn
+Dusty Book
+Unwanted Attention
+Hark!
+New And Improved
+The One And Only
+Lizard Lips
+Consume
+A Nice Meal
+Four Feet In Regret
+Rusty Keys
+Colossal Failure
+Lad of the Century
+Gun Guy
+Fresh Fish Fry
+Project B.O.O.M.
+The Watch Mann
+Free to Play
+Anime Titties
+Incomplete Contracts
+Never Better
+Cow Tipping
+Holiday Cheer
+Bot of the Year
+A Bucket
+bot_name
+Stubbed Toe
+Potted Plant
+Knee Caps
+Save Changes?
+Clash of the Fortress
+Sarge SureShot
+Random_Crits.bullshit
+No More Ammo
+Falsely Accused
+@everyone
+Brain Blast
+The Prophet Shrek
+A Rather Long Cat
+100% Legit
+Cash Money
+Pumpkin Guts
+Tactical Nuke
+Fast and Faster
+Overly Complicated
+Slashing Slanders
+Clean Clock
+Prefrenced Potato
+Raven in the Haven
+Snot Rocket
+Jet High
+Four Hundred Thousand Dollars
+Swimming in Bullets
+I Can't Breathe
+Stupid Dog
+Technology
+Overpriced Sushi
+Nope
+Trick-Stab
+I Need To Eat
+Normal Human
+xXSniper_MainXx
+Left Foot In
+Right Foot Out
+Left Handed
+Calcium
+Dinnerbone
+Terrible Terror
+Shoot Me
+Aquatic Mammal
+Poopy Joe
+Free Stuff?
+Needs More Salt
+Duck Feet
+Impossibly Epic
+Joe Mamma
+Catapult of Pain
+Drunk and Scottish
+Half Life 3
+The Last Chip

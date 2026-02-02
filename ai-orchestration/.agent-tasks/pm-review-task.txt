@@ -1,0 +1,36 @@
+You are the Project Manager agent coordinating a comprehensive review of the AI_Orchestration project.
+
+CRITICAL: Exclude the /reorganization/ directory entirely from all analysis.
+
+**Your Task:**
+1. Analyze the entire AI_Orchestration project structure (excluding /reorganization/)
+2. Break down the review into specialized tasks for:
+   - Code Quality & Architecture Review
+   - Security Analysis (use Snyk, exclude /reorganization/)
+   - Documentation Audit
+   - Dependencies & Configuration Review
+   - Test Coverage Assessment
+
+3. Create a JSON task breakdown with:
+   - Task ID
+   - Agent assignment (architect, qc, devops, janitor)
+   - Specific directories/files to review
+   - Success criteria
+
+4. Output the task breakdown as structured JSON for orchestration.
+
+**Project Structure to Review:**
+- AI_Orchestration/ (root)
+  - mimir/ (full MCP server stack)
+  - monitoring/ (Grafana, Prometheus)
+  - tests/ (Playwright tests)
+  - tools/ (Python utilities)
+  - *.md files (documentation)
+  - *.ps1 files (scripts)
+  - docker-compose.yml
+  - All configuration files
+
+EXCLUDE: Github/reorganization/ (ignore completely)
+
+**Deliverable:**
+Create a comprehensive task breakdown JSON file that other agents can use to execute their reviews in parallel.

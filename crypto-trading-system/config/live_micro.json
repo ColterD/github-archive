@@ -1,0 +1,127 @@
+{
+    "system": {
+      "mode": "live_micro",
+      "name": "CryptoTradingSystem",
+      "version": "0.1.0",
+      "log_level": "INFO"
+    },
+    "exchange": {
+      "name": "TradeOgre",
+      "api_key": "YOUR_API_KEY_HERE",
+      "api_secret": "YOUR_API_SECRET_HERE",
+      "fee_rate": 0.002,
+      "rate_limit": {
+        "max_requests_per_minute": 60,
+        "retry_delay_seconds": 2,
+        "max_retries": 3
+      }
+    },
+    "storage": {
+      "type": "sqlite",
+      "path": "data/live_trading.db",
+      "backup_frequency_hours": 12,
+      "data_retention_days": 90
+    },
+    "markets": [
+      "BTC-XMR",
+      "BTC-ETH"
+    ],
+    "strategy": {
+      "type": "grid",
+      "params": {
+        "grid_levels": 5,
+        "grid_spacing_pct": 1.0,
+        "price_range_pct": 5.0,
+        "rebalance_threshold_pct": 3.0,
+        "position_size_pct": 1.0,
+        "max_open_positions": 10,
+        "dynamic_spacing": true
+      }
+    },
+    "risk": {
+      "max_position_pct": 2.0,
+      "max_total_exposure_pct": 10.0,
+      "max_daily_drawdown_pct": 3.0,
+      "max_correlation": 0.6,
+      "volatility_scaling": true,
+      "use_kelly_criterion": true,
+      "kelly_fraction": 0.3,
+      "max_open_positions": 5,
+      "quote_currency": "BTC"
+    },
+    "live_trading": {
+      "capital_allocation_pct": 5.0,
+      "max_order_value_btc": 0.01,
+      "emergency_stop_loss_pct": 10.0,
+      "daily_profit_target_pct": 1.0,
+      "profit_taking": {
+        "enabled": true,
+        "withdrawal_threshold_btc": 0.05,
+        "withdrawal_address": "YOUR_WITHDRAWAL_ADDRESS_HERE",
+        "retain_percentage": 50.0
+      },
+      "execute_trades": true,
+      "dry_run_first_hour": true
+    },
+    "tasks": {
+      "market_data": {
+        "interval_seconds": 30,
+        "markets_per_request": 5
+      },
+      "signal_generation": {
+        "interval_seconds": 180,
+        "min_data_points": 20
+      },
+      "order_check": {
+        "interval_seconds": 5,
+        "timeout_seconds": 3
+      },
+      "risk_check": {
+        "interval_seconds": 300
+      },
+      "heartbeat": {
+        "interval_seconds": 1800
+      }
+    },
+    "logging": {
+      "level": "INFO",
+      "file": "data/logs/live_micro.log",
+      "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+      "max_size_mb": 10,
+      "backup_count": 10
+    },
+    "dashboard": {
+      "enabled": true,
+      "host": "0.0.0.0",
+      "port": 8080,
+      "refresh_interval_seconds": 5,
+      "authentication": {
+        "enabled": true,
+        "username": "admin",
+        "password": "change_me_immediately"
+      }
+    },
+    "notifications": {
+      "email": {
+        "enabled": true,
+        "smtp_server": "smtp.example.com",
+        "smtp_port": 587,
+        "from_address": "trading-bot@example.com",
+        "to_address": "you@example.com",
+        "username": "smtp_username",
+        "password": "smtp_password"
+      },
+      "telegram": {
+        "enabled": false,
+        "bot_token": "",
+        "chat_id": ""
+      },
+      "notify_on": {
+        "trade_executed": true,
+        "error": true,
+        "daily_summary": true,
+        "risk_limit_exceeded": true,
+        "profit_withdrawal": true
+      }
+    }
+  }

@@ -1,0 +1,60 @@
+Quests and More Magic release!
+
+Added:
+- Agricraft
+- Astral Sorcery
+- Botania
+- Chance Cubes
+- Charm
+- Davincis Vessels
+- Doggy Talents
+- Elecroblob's Wizardry
+- Forestry
+- ICBM - Classic
+- Just Enough Calculation
+- Numinia
+- Open Modular Passive Defense
+- Open Modular Turrets
+- OpenComputers ICBM-Classic Addon
+- Rats!
+- Reborn Core
+- Stupid Things
+- Tech Reborn
+- The Betweenlands
+- The Midnight
+- Vampires Need Umbrellas
+- Vampirism - Become a Vampire!
+- Vampirism Integrations
+
+Removed:
+- Serene Seasons
+
+Config:
+- Allowed Leather Armor to be crafted like in Vanilla rather than Armor Plus
+- Changed preloader animation
+- Changed preloader background color
+- Changed The Beneath ore gen
+- Changed The Beneath to be more difficult
+- Cleaned Config Files
+- Completely overhauled quests entirely
+- Forge updated to v14.23.5.2854
+- Tripled Pick Up Notifier time
+
+Scripts:
+- Removed ability to make Steel in Tinkers Smeltery
+- Removed Actually Additions Mob Grinders
+- Removed Mystical Agriculture ingot seeds
+- Rewrote AE2 recipe for Nuclearcraft-crafted Flour
+- Rewrote Chance Cubes recipe
+- Rewrote Extra Utilities wings recipes
+- Rewrote Mowzies Mobs totem recipe
+- Updated Akashic Tome
+
+Updated:
+- Athenaeum
+- EnderCore
+- Reborn Core
+- Rustic
+- Traveller's Backpack
+- Xaero's Minimap
+- Xaero's World Map

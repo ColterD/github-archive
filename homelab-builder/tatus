@@ -1,0 +1,9 @@
+warning: in the working copy of 'CRITICAL_ISSUES_TRACKER.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'prisma/seed.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/routes/api/builds/discover/+server.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'src/routes/builds/discover/+page.svelte', LF will be replaced by CRLF the next time Git touches it
+CRITICAL_ISSUES_TRACKER.md
+prisma/schema.prisma
+prisma/seed.ts
+src/routes/api/builds/discover/+server.ts
+src/routes/builds/discover/+page.svelte

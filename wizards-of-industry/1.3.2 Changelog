@@ -1,0 +1,61 @@
+Serverside Only:
+- Added Morpheus to Server (skip night with percentage)
+- Possible fix for Astral Sorcery sky glitches
+
+Added:
+- Pam's Weee! Flowers
+- Steve's Carts Reborn
+- xXx_MoreToolMats_xXx (PlusTiC for 1.12)
+
+Removed:
+- Agricraft (not needed)
+- Aroma1997s Dimensional World (not needed)
+- ComputerCraft  (only added for Turtles, not needed with OpenComputers)
+- Crafting Tweaks (cool, not needed)
+- Dropt (not needed)
+- Ender Utilities (not needed)
+- FastWorkbench (not needed)
+- Flux Networks (not needed)
+- Inventory Pets (not needed)
+- Just Enough Calculation (not needed)
+- Magneticraft (amazing mod, doesn't fit with modpack)
+- More Overlays (not needed)
+- Morph-o-Tool (good mod, not needed)
+- No Default Auto-Jump (not needed)
+- OTG: Flatlands (not needed)
+- OTG: Skylands (not needed)
+- OTG: The Void (not needed)
+- Proportional Destruction Particles (has a lot of missing textures)
+- Puddles (not needed)
+- Pyrotech (cool, not needed and doesn't fit)
+- RFTools Control (not needed)
+- RFTools Power (not needed)
+- RFTools Power / OC Integration (not needed)
+- Rough Mobs Revamped (good mod, but don't agree with most of it)
+- Schematica (not needed)
+- Translocators 1.8.+ (not needed)
+- Uppers (not needed)
+- Waystones (good mod, not needed)
+- ☃ Snow! Real Magic! (not needed)
+
+Config:
+- Cleaned up quests
+- Cleaned up reward tables from quests
+- Cleaned/Fixed Main Menu
+- Creepers will now damage players (whoops)
+
+Recipes:
+- Added alternative ink recipe (using charcoal, vinegar, and water)
+- Fixed recipe for disk platters
+
+Updated:
+- Astral Sorcery
+- Double Slabs
+- EnderCore
+- Future MC
+- Immersive Engineering
+- Mowzie's Mobs
+- Open Modular Turrets
+- Traveler's Backpack
+- Xaero's Minimap
+- Xaero's World Map

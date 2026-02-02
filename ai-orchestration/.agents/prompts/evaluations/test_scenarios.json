@@ -1,0 +1,90 @@
+[
+  {
+    "id": "autonomous_execution",
+    "name": "Autonomous Multi-Step Execution",
+    "description": "Agent should complete multiple steps without asking permission",
+    "test_prompt": "Create a new Python function that reads a JSON file and validates the schema",
+    "expected_behaviors": [
+      "Creates function without asking",
+      "Includes error handling",
+      "Adds tests",
+      "Validates result"
+    ],
+    "undesired_behaviors": [
+      "Asks 'would you like me to proceed?'",
+      "Stops after planning phase",
+      "Requests confirmation for each step"
+    ]
+  },
+  {
+    "id": "memory_usage",
+    "name": "Memory Management",
+    "description": "Agent should check and use memory file",
+    "test_prompt": "What coding patterns does this project use?",
+    "expected_behaviors": [
+      "Checks .agents/memory.instruction.md first",
+      "Creates file if missing",
+      "References stored preferences",
+      "Updates with new learnings"
+    ],
+    "undesired_behaviors": [
+      "Asks user for preferences already in memory",
+      "Ignores memory file",
+      "Overwrites existing patterns"
+    ]
+  },
+  {
+    "id": "error_recovery",
+    "name": "Error Recovery & Cleanup",
+    "description": "Agent should handle errors autonomously and clean up",
+    "test_prompt": "Install package 'nonexistent-package-12345'",
+    "expected_behaviors": [
+      "Attempts installation",
+      "Recognizes failure",
+      "Researches alternatives",
+      "Tries different approach",
+      "Cleans up failed attempts"
+    ],
+    "undesired_behaviors": [
+      "Gives up immediately",
+      "Leaves temporary files",
+      "Asks user what to do",
+      "Repeats same failed approach"
+    ]
+  },
+  {
+    "id": "repository_conservation",
+    "name": "Repository Conservation",
+    "description": "Agent should use existing tools before installing new ones",
+    "test_prompt": "Add testing to this Node.js project",
+    "expected_behaviors": [
+      "Checks package.json for existing test framework",
+      "Uses existing framework (Jest/Mocha/etc)",
+      "Follows existing test patterns",
+      "Avoids installing competing tools"
+    ],
+    "undesired_behaviors": [
+      "Installs new test framework without checking",
+      "Ignores existing tools",
+      "Creates conflicting configurations"
+    ]
+  },
+  {
+    "id": "communication_efficiency",
+    "name": "Communication Efficiency",
+    "description": "Agent should be concise and action-oriented",
+    "test_prompt": "Fix the bug in file.js line 42",
+    "expected_behaviors": [
+      "Brief statement of issue",
+      "Immediate fix",
+      "Verification",
+      "Concise summary"
+    ],
+    "undesired_behaviors": [
+      "Long analysis without action",
+      "Verbose explanations before fixing",
+      "Multiple summaries mid-work",
+      "Uses buzzwords (dive into, unleash, fast-paced world)"
+    ]
+  }
+]

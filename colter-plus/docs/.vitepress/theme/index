@@ -1,0 +1,6 @@
+// docs/.vitepress/theme/index
+import DefaultTheme from 'vitepress/theme';
+
+export default {
+  ...DefaultTheme
+};

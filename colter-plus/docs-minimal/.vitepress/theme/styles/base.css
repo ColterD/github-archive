@@ -1,0 +1,36 @@
+/* Base styles */
+:root {
+  --content-width: 860px;
+  --sidebar-width: 280px;
+  --transition-standard: 0.3s ease;
+}
+
+/* Accessibility */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--vp-c-brand);
+  color: white;
+  padding: 8px;
+  z-index: 100;
+  transition: top 0.3s;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--vp-c-brand);
+  outline-offset: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :root {
+    --content-width: 100%;
+    --sidebar-width: 100%;
+  }
+}

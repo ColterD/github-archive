@@ -1,0 +1,10 @@
+{% if config.extra.social %}
+<div class="md-footer-social">
+    {% for social in config.extra.social %}
+    <a href="{{ social.link }}" target="_blank" rel="noopener" title="{{ social.name }}"
+        class="md-footer-social__link">
+        {% include ".icons/" ~ social.icon ~ ".svg" %}
+    </a>
+    {% endfor %}
+</div>
+{% endif %}

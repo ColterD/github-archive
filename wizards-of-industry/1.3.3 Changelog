@@ -1,0 +1,123 @@
+Note:  If you manually update mods, don't update Xaero's Minimap from what it currently is.  It's currently the latest version but shows it's not.
+Please create a new world if updating from 1.3.2 or below.
+Highly recommended to use the OTG Thaumic Traveler's Dream preset.
+
+Issues:
+-Sky still flickering.  Not sure how to fix.
+
+Forge:
+Updated to 14.23.5.2855
+
+Added:
+- Animania Extra Animals
+- Animania Farm
+- Animania Cats & Dogs
+- Ding
+- End Portal Recipe
+- HT's TreeChop
+- Macaw's Fences and Walls
+- Macaw's Trapdoors
+- Mute Villagers
+- Villager Market
+- Yet Another Recipe Conflict Fixer (YARCF)
+- YUNG's Better Caves (Forge)
+- YUNG's Better Mineshafts (Forge)
+
+Removed:
+- Aroma1997Core
+- AromaBackup
+- Bewitchment (Legacy)
+- Good Ol' Currency
+- Rats!
+- Tech Reborn
+
+Resource Packs:
+- Sortex Fanver - Modded (Updated)
+- Tinker's Tables (Added)
+- Unity: Dark Edition (Added)
+
+Updated:
+- [ANGRY PIXEL] The Betweenlands
+- Actually Additions
+- Animania Base
+- AppleSkin
+- Astral Sorcery
+- Athenaeum
+- AtomicStryker's Infernal Mobs
+- Bad Wither No Cookie - Reloaded
+- Better Animal Models
+- Botania
+- Brandon's Core
+- Carry On
+- Chance Cubes
+- Charm
+- Common Capabilities
+- Corail Tombstone
+- CraftPresence
+- CraftTweaker
+- Cyclic
+- Cyclops Core
+- Doggy Talents
+- Double Slabs
+- Draconic Evolution
+- Electroblob's Wizardry
+- End: Reborn
+- Ender IO
+- Ender IO Endergy
+- Engineer's Doors
+- Farseek
+- FoamFix
+- FPS Reducer
+- FTB Library (Forge) (Legacy)
+- FTB Quests (Forge)
+- FTB Utilities (Forge)
+- Future MC
+- Gauges and Switches
+- GunpowderLib
+- Hammer (Lib) Core
+- ICBM - Classic
+- Immersive Petroleum
+- InfinityLib
+- Integration Foregoing
+- Item Filters (Forge)
+- Just Enough HarvestCraft (JEHC)
+- Just Enough Items (JEI)
+- LibraryEx
+- LLibrary
+- Macaw's Bridges
+- Macaw's Doors
+- Mo' Bends
+- ModTweaker
+- MovingWorld
+- Mowzie's Mobs
+- MTLib
+- MysticalLib
+- NetherEx
+- NuclearCraft
+- Open Modular Passive Defense
+- Open Modular Turrets
+- Open Terrain Generator (OTG)
+- OpenSecurity
+- Patchouli
+- Pick Up Notifier
+- RandomPatches (Forge)
+- RandomTweaks
+- Reborn Core
+- Rustic
+- SimpleHarvest
+- Simply Jetpacks 2
+- SpatialCompat
+- Streams
+- Stupid Things
+- Tesla Core Lib
+- Thaumic Additions: Reconstructed
+- The Beneath
+- The Twilight Forest
+- Tinker I/O
+- Traveler's Backpack
+- UniDict
+- WanionLib
+- Water Strainer
+- Xaero's Minimap
+- Xaero's World Map
+- xXx_MoreToolMats_xXx (a PlusTiC fork without the evil, and apparently some new bugs idk)

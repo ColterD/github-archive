@@ -1,0 +1,88 @@
+# Site Metadata
+site_name: Colter+
+site_url: https://blog.colter.plus
+site_description: Personal blog and project portfolio of Colter Dahlberg.
+
+# Theme Configuration
+theme:
+  name: material
+  custom_dir: overrides/
+  palette:
+    - scheme: slate
+      primary: '#2f81f7'
+      accent: '#2f81f7'
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to Light Mode
+
+    - scheme: default
+      primary: '#2f81f7'
+      accent: '#2f81f7'
+      toggle:
+        icon: material/lightbulb
+        name: Switch to Dark Mode
+
+  # Theme Features
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+
+  # Branding
+  logo: assets/images/colterplus.png # Replace with your logo
+  favicon: assets/images/favicon.png
+
+# Copyright
+copyright: Copyright © 2024 - 2025 Colter Dahlberg
+
+# Plugins
+plugins:
+  - search
+  - blog:
+      path: blog
+      date_format: "%B %d, %Y"
+      recent_posts: 5
+  - social
+
+# Navigation
+nav:
+  - Home: index.md
+  - Blog: blog/index.md
+  - Projects:
+      - Project 1: projects/project1.md
+      - Project 2: projects/project2.md
+  - About: about.md
+
+# Extra Configuration
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/colter-dahlberg
+      name: Colter Dahlberg on GitHub
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/colter-dahlberg
+      name: Colter Dahlberg on LinkedIn
+
+# Extensions
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+# Custom CSS
+extra_css:
+  - assets/stylesheets/style.css

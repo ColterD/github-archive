@@ -1,0 +1,17 @@
+{
+    "api": {
+        "enabled": true,
+        "port": 7000,
+        "ipv4_only": true,
+        "ipv6_disabled": true,
+        "password": ""
+    },
+    "log_file": "/var/log/srbminer.log",
+    "log_level": 2,
+    "gpu_threads": [],
+    "cpu_threads": 0,
+    "setup_mode": true,
+    "watchdog": {
+        "disabled": true
+    }
+}

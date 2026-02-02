@@ -1,0 +1,271 @@
+# Blue-Green Deployment Workflow for Emily Sovereign
+#
+# This workflow automates the deployment process with the following stages:
+# 1. Build - Build application artifacts
+# 2. Test - Run smoke tests
+# 3. Deploy - Deploy to green node
+# 4. Verify - Run integration tests
+# 5. Switch - Switch traffic to green
+# 6. Monitor - Monitor for 30 minutes
+# 7. Rollback - Automatic rollback if issues detected
+
+version: '3.8'
+
+stages:
+  - build
+  - test
+  - deploy
+  - verify
+  - switch
+  - monitor
+  - rollback
+
+variables:
+  DEPLOYMENT_TIMEOUT: 1800  # 30 minutes
+  MONITOR_DURATION: 1800     # 30 minutes
+  ERROR_RATE_THRESHOLD: 0.05
+  RESPONSE_TIME_THRESHOLD: 5.0
+
+services:
+  docker:
+    image: docker:24-dind
+    privileged: true
+
+stages:
+  build:
+    stage: build
+    script:
+      - echo "Building Emily Sovereign application..."
+      - docker-compose -f docker-compose.prod.yml build
+      - docker tag emily-sovereign:latest $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    artifacts:
+      paths:
+        - docker-compose.prod.yml
+    cache:
+      paths:
+        - .docker/
+    only:
+      - main
+      - develop
+
+  test:
+    stage: test
+    dependencies:
+      - build
+    script:
+      - echo "Running smoke tests..."
+      - docker-compose -f docker-compose.prod.yml up -d
+      - sleep 30
+      - python tests/smoke_tests.py
+      - docker-compose -f docker-compose.prod.yml down
+    artifacts:
+      when: always
+      paths:
+        - test-results/
+    only:
+      - main
+      - develop
+    allow_failure: false
+
+  deploy_green:
+    stage: deploy
+    dependencies:
+      - build
+      - test
+    script:
+      - echo "Deploying to green node..."
+      - |
+        ssh emily-green << 'ENDSSH'
+          cd /opt/emily-sovereign
+          docker-compose pull
+          docker-compose down
+          docker-compose up -d
+          sleep 30
+          ./health_check.sh
+        ENDSSH
+      - echo "Deployment to green completed"
+    environment:
+      name: green
+      url: http://green.emily.local
+    only:
+      - main
+    when: manual
+
+  verify_green:
+    stage: verify
+    dependencies:
+      - deploy_green
+    script:
+      - echo "Running integration tests on green node..."
+      - |
+        ssh emily-green << 'ENDSSH'
+          cd /opt/emily-sovereign
+          python tests/integration_tests.py
+        ENDSSH
+      - echo "Integration tests passed"
+    only:
+      - main
+
+  switch_traffic:
+    stage: switch
+    dependencies:
+      - verify_green
+    script:
+      - echo "Switching traffic to green node..."
+      - |
+        # Determine current active node
+        CURRENT_NODE=$(grep -A 2 "upstream emily_active" /etc/nginx/conf.d/emily-blue-green.conf | grep server | awk '{print $2}')
+        
+        if [[ $CURRENT_NODE == *"green"* ]]; then
+          echo "Already on green node, no switch needed"
+          exit 0
+        fi
+        
+        # Switch to green
+        sed -i 's/10.0.0.10:8000/10.0.0.11:8000/g' /etc/nginx/conf.d/emily-blue-green.conf
+        
+        # Test nginx config
+        nginx -t
+        
+        if [ $? -eq 0 ]; then
+          nginx -s reload
+          echo "Traffic switched to green node"
+        else
+          echo "Nginx config test failed"
+          exit 1
+        fi
+      - echo "Traffic switch completed"
+    environment:
+      name: production
+      url: http://emily.local
+    only:
+      - main
+    when: manual
+
+  monitor_rollout:
+    stage: monitor
+    dependencies:
+      - switch_traffic
+    script:
+      - echo "Monitoring rollout for $MONITOR_DURATION seconds..."
+      - |
+        END_TIME=$(($(date +%s) + MONITOR_DURATION))
+        
+        while [ $(date +%s) -lt $END_TIME ]; do
+          # Check error rate
+          ERROR_RATE=$(curl -s http://localhost:9090/api/v1/query \
+            -d 'query=rate(http_requests_total{status=~"5.."}[5m])' | \
+            jq '.data.result[0].value[1]' | tr -d '"')
+          
+          ERROR_RATE=${ERROR_RATE:-0}
+          
+          if (( $(echo "$ERROR_RATE > $ERROR_RATE_THRESHOLD" | bc -l) )); then
+            echo "ERROR: Error rate too high: $ERROR_RATE"
+            exit 1  # Trigger rollback
+          fi
+          
+          # Check response time
+          RESPONSE_TIME=$(curl -s http://localhost:9090/api/v1/query \
+            -d 'query=histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))' | \
+            jq '.data.result[0].value[1]' | tr -d '"')
+          
+          RESPONSE_TIME=${RESPONSE_TIME:-0}
+          
+          if (( $(echo "$RESPONSE_TIME > $RESPONSE_TIME_THRESHOLD" | bc -l) )); then
+            echo "WARNING: Response time high: $RESPONSE_TIME"
+          fi
+          
+          echo "$(date +%H:%M:%S) - Error rate: $ERROR_RATE, Response time: $RESPONSE_TIME"
+          sleep 60
+        done
+      - echo "Rollout monitoring completed successfully"
+    only:
+      - main
+    timeout: ${DEPLOYMENT_TIMEOUT}s
+
+  rollback:
+    stage: rollback
+    script:
+      - echo "Initiating rollback..."
+      - |
+        # Switch traffic back to blue
+        sed -i 's/10.0.0.11:8000/10.0.0.10:8000/g' /etc/nginx/conf.d/emily-blue-green.conf
+        nginx -t && nginx -s reload
+        
+        # Restart blue node services
+        ssh emily-blue "systemctl restart emily-*"
+        
+        # Verify rollback
+        python tests/smoke_tests.py
+      - echo "Rollback completed"
+    when: on_failure
+    only:
+      - main
+
+# Success notification
+after_success:
+  stage: .post
+  script:
+    - echo "Deployment successful, sending notification..."
+    - |
+      curl -X POST "https://hooks.slack.com/services/YOUR/WEBHOOK/URL" \
+        -H 'Content-Type: application/json' \
+        -d '{
+          "text": "Emily Sovereign deployment successful!",
+          "attachments": [{
+            "color": "good",
+            "title": "Deployment to green node",
+            "fields": [{
+              "title": "Version",
+              "value": "'"$CI_COMMIT_SHA"'",
+              "short": true
+            }, {
+              "title": "Deployer",
+              "value": "'"$GITLAB_USER_NAME"'",
+              "short": true
+            }]
+          }]
+        }'
+  when: on_success
+  only:
+    - main
+
+# Failure notification
+after_failure:
+  stage: .post
+  script:
+    - echo "Deployment failed, sending alert..."
+    - |
+      curl -X POST "https://hooks.slack.com/services/YOUR/WEBHOOK/URL" \
+        -H 'Content-Type: application/json' \
+        -d '{
+          "text": "Emily Sovereign deployment failed!",
+          "attachments": [{
+            "color": "danger",
+            "title": "Deployment to green node",
+            "fields": [{
+              "title": "Version",
+              "value": "'"$CI_COMMIT_SHA"'",
+              "short": true
+            }, {
+              "title": "Failed Stage",
+              "value": "'"$CI_JOB_STAGE"'",
+              "short": true
+            }]
+          }]
+        }'
+      curl -X POST "https://api.pagerduty.com/incidents" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Token token=YOUR_PAGERDUTY_TOKEN" \
+        -H "Accept: application/vnd.pd.v2+json" \
+        -d '{
+          "incident": {
+            "type": "incident",
+            "title": "Emily Sovereign deployment failed",
+            "service": {"id": "YOUR_SERVICE_ID", "type": "service_reference"},
+            "urgency": "high"
+          }
+        }'
+  when: on_failure
+  only:
+    - main

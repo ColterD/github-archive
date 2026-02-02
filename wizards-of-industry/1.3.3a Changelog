@@ -1,0 +1,23 @@
+Note:
+Please create a new world if updating from 1.3.2 or below.
+Highly recommended to use the OTG Thaumic Traveler's Dream preset.
+
+Config:
+- Extended Days was the problem of the sun/moon flickering, fixed!
+
+Scripting:
+- Cleaned up some Tooltip text
+- Rewrote Mekanism basic universal cable recipe to be gated more difficult (and allowed!)
+- Readded EnderIO Solar Panels and associated tech
+
+Added:
+- YAMDA - Yet Another Mining Dimension Attempt
+
+Removed:
+- HT's TreeChop (didn't work as expected)
+- JEI Hider (for future debugging)
+- Tech Reborn (simply not needed)
+- Villager Market (didn't work as expected)
+
+Resource Packs:
+- Silent Nether Portals (added)

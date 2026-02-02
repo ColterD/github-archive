@@ -1,0 +1,36 @@
+/* Align header elements in a single row */
+.md-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  /* Adjust spacing between the logo, title, navigation, and search bar */
+  .md-logo {
+    margin-right: 15px;
+  }
+  
+  .md-header__title {
+    font-size: 1.25em;
+    font-weight: bold;
+    margin-right: auto; /* Push navigation and search bar to the right */
+  }
+  
+  .md-header__navigation {
+    margin-right: 20px;
+    text-align: right;
+    flex-grow: 1;
+  }
+  
+  .md-header__search {
+    display: flex;
+    align-items: center;
+  }
+  
+  .md-header__search input {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  

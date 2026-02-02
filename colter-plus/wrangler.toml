@@ -1,0 +1,16 @@
+# wrangler.toml
+name = "colterplus"
+type = "webpack"
+account_id = "${CLOUDFLARE_ACCOUNT_ID}"
+workers_dev = true
+route = ""
+zone_id = "${CLOUDFLARE_ZONE_ID}"
+pages_build_output_dir = "docs-minimal/.vitepress/dist"
+
+[site]
+bucket = "docs-minimal/.vitepress/dist"
+entry-point = "workers-site"
+
+[build]
+command = "./build.sh"
+upload.format = "service-worker"

@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+vendor/
+bower_components/
+__pycache__/
+*.pyc
+
+# Build artifacts
+dist/
+build/
+*.o
+*.so
+*.dll
+*.smx
+
+# Game assets
+*.bsp
+*.vpk
+*.vtf
+*.vmt
+*.mdl
+*.phy
+*.vvd
+*.vtx
+*.nav
+*.wav
+*.mp3
+
+# Databases
+*.sq3
+*.sqlite
+*.sqlite3
+*.db
+
+# Logs
+*.log
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

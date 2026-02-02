@@ -1,0 +1,13 @@
+"CountryShow"
+{
+	"Messages"
+	{
+		"playerjoin"		"{GREEN}+ {ORANGE}{PLAYERNAME} {default}is connecting from {PLAYERCOUNTRY}."
+		"playerdisc"		"{RED}× {ORANGE}{PLAYERNAME} {DEFAULT}has disconnected. {GREY}({DISC_REASON}){default}"
+	}
+	"messages_admin"
+	{
+		"playerjoin"		"{GREEN}+ {ORANGE}{PLAYERNAME} {default}is connecting from {PLAYERCOUNTRY}."
+		"playerdisc"		"{RED}× {ORANGE}{PLAYERNAME} {DEFAULT}has disconnected. {GREY}({DISC_REASON}){default}"
+	}
+}

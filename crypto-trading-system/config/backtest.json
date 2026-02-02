@@ -1,0 +1,87 @@
+{
+    "system": {
+      "mode": "backtest",
+      "name": "CryptoTradingSystem",
+      "version": "0.1.0",
+      "log_level": "INFO"
+    },
+    "exchange": {
+      "name": "TradeOgre",
+      "fee_rate": 0.002
+    },
+    "storage": {
+      "type": "sqlite",
+      "path": "data/backtest_data.db"
+    },
+    "markets": [
+      "BTC-XMR",
+      "BTC-ETH",
+      "BTC-LTC"
+    ],
+    "strategy": {
+      "type": "grid",
+      "params": {
+        "grid_levels": 10,
+        "grid_spacing_pct": 1.0,
+        "price_range_pct": 10.0,
+        "rebalance_threshold_pct": 5.0,
+        "position_size_pct": 2.0,
+        "max_open_positions": 20,
+        "dynamic_spacing": true
+      }
+    },
+    "risk": {
+      "max_position_pct": 5.0,
+      "max_total_exposure_pct": 30.0,
+      "max_daily_drawdown_pct": 5.0,
+      "max_correlation": 0.7,
+      "volatility_scaling": true,
+      "use_kelly_criterion": true,
+      "kelly_fraction": 0.5,
+      "max_open_positions": 10,
+      "quote_currency": "BTC"
+    },
+    "backtest": {
+      "start_date": "2023-01-01T00:00:00Z",
+      "end_date": "2023-03-01T00:00:00Z",
+      "time_step_minutes": 60,
+      "initial_balances": {
+        "BTC": 1.0,
+        "XMR": 0.0,
+        "ETH": 0.0,
+        "LTC": 0.0
+      },
+      "slippage_model": "fixed",
+      "slippage_params": {
+        "fixed": 0.001,
+        "percentage": 0.01,
+        "order_book_impact": 0.5
+      },
+      "execution_delay_seconds": 60,
+      "include_fees": true,
+      "report_file": "data/backtest_results/report_{datetime}.json",
+      "plot_charts": true,
+      "save_trade_history": true,
+      "optimize_parameters": false,
+      "optimization": {
+        "method": "grid",
+        "parameters": {
+          "grid_levels": [5, 10, 15, 20],
+          "grid_spacing_pct": [0.5, 1.0, 1.5, 2.0],
+          "price_range_pct": [5.0, 10.0, 15.0]
+        },
+        "optimization_metric": "sharpe_ratio",
+        "parallel_jobs": 4
+      }
+    },
+    "logging": {
+      "level": "INFO",
+      "file": "data/logs/backtest.log",
+      "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    },
+    "dashboard": {
+      "enabled": true,
+      "host": "0.0.0.0",
+      "port": 8080
+    }
+  }

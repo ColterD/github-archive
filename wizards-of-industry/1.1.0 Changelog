@@ -1,0 +1,133 @@
+>Rebuilt Config folder
+>Remade Custom Main Menu into something less.... ugly
+
+>Corrected Paxel durabilities
+>Corrected Stone tools recipes
+>Dilithium now spawns in overworld (again)
+>Disabled Coral Reefs from Biomes O' Plenty  (ugly lighting effects)
+>Disabled End Islands from Overworld (can be kind of game breaking material wise)
+>Disabled Thermal Foundation tools
+>Disabled village marketplace POI
+>Increased distance between dungeons
+>Increased distance between magma islands
+>Increased distance between ruins/landmarks
+>Increased distance between slime islands
+>LOTS of tiny config changes for balancing
+>Mining Dimension will not randomly spawn mobs outside of actual mob spawners, use Hunting Dimension for that
+
+>Removed Better Records (if you need music, just go to spotify or youtube)
+>Removed Better Builders Wands (this is a hardcore pack)
+>Removed Blood Magic (might bring this back eventually)
+>Removed Controlling (its a matter of laziness on the player, just scroll)
+>Removed Deep Mob Learning - Blood Magic Addon (not required since dependency gone)
+>Removed Dirt2Path (not needed since AIOT can do this)
+>Removed DiscordSuite  (replaced w/ CraftPresence)
+>Removed Embers Rekindled (cool but redundant)
+>Removed Embersified (addon for Embers)
+>Removed Extreme Reactors (not needed with Nuclearcraft)
+>Removed Fast Crafting Mod (this is a hardcore pack, work damn it!)
+>Removed Hopper Ducts (not needed with the handful of item ducts)
+>Removed Immersive Railroading (really cool mod, but might bring it back when I create server packs for this pack)
+>Removed Industrial Wires (while cool, not needed)
+>Removed Magic Bees (we do lose the Thermal Expansion part of this mod, but I don't think it's significant enough to keep)
+>Removed Not Enough Wands (its basically cheating)
+>Removed OldJavaWarning (not needed really)
+>Removed Platforms (nothing you can't do with other mods)
+>Removed Progressive Difficlty (not needed with mod changes)
+>Removed Reliquary (magic, and items in it not even needed with tech)
+>Removed SlimyBoyos (due to crashing bugs)
+>Removed Waila Harvestability (this is a hardcore modpack plus with changes, it gets complicated)
+>Removed ZeroCore (ER dependency)
+
+>Added AI Improvements
+>Added Aroma Backups
+>Added Born in a Barn
+>Added CraftPresence
+>Added Cyclic
+>Added Deconstruction Table
+>Added Default Options
+>Added Dynamic Trees
+	*Dynamic Trees - Biomes O' Plenty Compat
+	*Dynamic Trees - Pam's Harvestcraft Compat
+	*Dynamic Trees - Traverse Compat
+>Added End: Reborn
+>Added FastFurnace
+>Added Flux Networks
+>Added Fullscreen Borderless for Minecraft (hit F11 like normal)
+>Added GLASS
+>Added In-Game Wiki Mod
+>Added Initial Inventory
+>Added Inspirations
+>Added JAOPCA-Agriculture
+>Added JustTheTips
+>Added Lycanites Mobs
+>Added MPUtils
+>Added MPUtils: Basic Tools
+>Added Neat
+>Added Passable Leaves
+>Added Passive Aggression
+>Added Patchouli
+>Added PlusTiC
+>Added ProjectE
+>Added Recurrent Complex
+>Added Ruins
+>Added YNot
+
+>Updated Actually Additions
+>Updated Advanced Rocketry
+>Updated Akashic Tome
+>Updated AppliedEnergistics2
+	*AE2 Wireless Terminal Library
+>Updated AutoRegLib
+>Updated B.A.S.E.
+>Updated Biomes O' Plenty
+>Updated Bookshelf
+>Updated Brandon's Core
+>Updated Carry On
+>Updated Compact Machines
+>Updated Construct's Armory
+>Updated Content Tweaker
+>Updated CoroUtil
+>Updated CraftPresence
+>Updated Cucumber Library
+>Updated Cyclic
+>Updated Dark Utilities
+>Updated Draconic Evolution
+>Updated Dynamic Trees
+>Updated End: Reborn II
+>Updated EnderIO
+>Updated Extra Cells 2
+>Updated Forestry
+>Updated FTB Utilities
+>Updated FTBLib
+>Updated Guide-API
+>Updated Immersive Engineering
+>Updated Industrial Foregoing
+>Updated Integration Foregoing
+>Updated Iron Chests
+>Updated JAOPCA
+>Updated LibEx
+>Updated Lycanites Mobs
+>Updated McCrayfish's Furniture Mod
+>Updated Minecolonies
+>Updated Morph-o-Tool
+>Updated Mystical Agradditions
+>Updated Mystical Agriculture
+>Updated NuclearCraft
+>Updated OpenComputers Drivers for Tinkers Construct
+>Updated p455w0rd's Library
+>Updated Pam's HarvestCraft
+>Updated Patchouli
+>Updated Quark
+>Updated RandomTweaks
+>Updated Reborn Core
+>Updated Reborn Storage
+>Updated Rustic
+>Updated SimpleHarvest
+>Updated Sonar Core
+>Updated Soul Shards Respawn
+>Updated UniDict
+>Updated WanionLib
+>Updated Wawla
+>Updated Wireless Crafting Terminal
+>Updated ZeroCore

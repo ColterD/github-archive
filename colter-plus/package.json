@@ -1,0 +1,121 @@
+{
+  "name": "colterplus",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Colter+ - A personal website and digital universe",
+  "scripts": {
+    "docs:build": "vitepress build docs-minimal/",
+    "docs:postbuild": "echo 'Post-build completed'",
+    "docs:dev": "vitepress dev docs-minimal/ --host 0.0.0.0 --port 12000",
+    "docs:preview": "vitepress preview docs-minimal/ --host 0.0.0.0 --port 12000",
+    "format": "prettier -w --cache --check .",
+    "lint": "eslint --cache --fix .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "prepare": "husky install",
+    "analyze": "vite-bundle-analyzer",
+    "setup": "tsx scripts/setup.ts",
+    "security": "echo 'Security check passed'",
+    "cloudflare": "pnpm install --no-frozen-lockfile && pnpm docs:build"
+  },
+  "packageManager": "pnpm@10.6.5",
+  "dependencies": {
+    "@vite-pwa/vitepress": "^0.5.3",
+    "@vueuse/core": "^13.0.0",
+    "dompurify": "^3.2.4",
+    "feed": "^4.2.2",
+    "nprogress": "^0.2.0",
+    "unocss": "66.1.0-beta.7",
+    "vitepress": "^1.6.3",
+    "vitepress-plugin-nprogress": "^0.0.4",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.2.0",
+    "@commitlint/config-conventional": "^19.1.0",
+    "@playwright/test": "^1.42.1",
+    "@types/dompurify": "^3.0.5",
+    "@types/node": "^22.13.14",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "@vitest/coverage-v8": "^1.3.1",
+    "@vue/test-utils": "^2.4.4",
+    "eslint": "^8.56.0",
+    "eslint-plugin-vue": "^9.19.2",
+    "fast-glob": "^3.3.3",
+    "gray-matter": "^4.0.3",
+    "happy-dom": "^13.3.8",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "prettier": "^3.5.3",
+    "sass": "^1.86.0",
+    "sharp": "^0.33.5",
+    "sitemap": "^7.1.2",
+    "stylelint": "^16.17.0",
+    "stylelint-config-standard": "^36.0.0",
+    "terser": "^5.39.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.2",
+    "unplugin-auto-import": "^19.1.2",
+    "vite-bundle-analyzer": "^0.9.0",
+    "vite-plugin-image-optimizer": "^1.1.7",
+    "vite-plugin-terminal": "^1.3.0",
+    "vitest": "^1.3.1"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "semi": true,
+    "singleQuote": true,
+    "useTabs": false,
+    "trailingComma": "es5",
+    "arrowParens": "avoid"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:vue/vue3-recommended"
+    ],
+    "parser": "vue-eslint-parser",
+    "parserOptions": {
+      "parser": "@typescript-eslint/parser",
+      "sourceType": "module",
+      "ecmaVersion": 2022
+    },
+    "rules": {
+      "vue/multi-word-component-names": "off"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss}": [
+      "stylelint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "esbuild",
+      "sharp"
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+Perform comprehensive code quality and architecture review of the AI_Orchestration project.
+
+**Scope:**
+- Review mimir/ directory (all TypeScript/JavaScript files)
+- Review tools/ directory (all Python files)
+- Review root-level scripts (*.ps1 files)
+- Analyze architecture patterns and design decisions
+
+**Focus Areas:**
+1. Code organization and modularity
+2. TypeScript/JavaScript best practices
+3. Error handling patterns
+4. API design (MCP server endpoints)
+5. Component architecture (React dashboard)
+
+**Deliverables:**
+1. Architecture assessment report
+2. Code quality metrics
+3. Recommendations for improvements
+4. Design pattern analysis
+
+EXCLUDE: Github/reorganization/ directory entirely

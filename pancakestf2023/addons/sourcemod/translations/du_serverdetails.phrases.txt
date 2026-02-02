@@ -1,0 +1,104 @@
+"Phrases"
+{
+	"DateTime_Format"
+	{
+		"en"		"{DATE}-{MONTH}-{YEAR} {HOUR}:{MINUTES}:{SECONDS}"
+	}
+	"LastEdited"
+	{
+		"#format"	"{1:s}"
+		"en"		"Last Edited: {1} [GMT +5:30]"
+		"ru"		"Последние обновление: {1} [GMT +5:30]"
+	}
+	"TeamScore"
+	{
+		"#format"	"{1:i},{2:i}"
+		"en"		"CT: {1} | T: {2}"
+	}
+	"Unknown"
+	{
+		"en"		"N/A"
+	}
+	"Warmup"
+	{
+		"en"		"WARMUP"
+		"ru"		"РАЗМИНКА"
+	}
+	"RoundsLeft"
+	{
+		"#format"	"{1:i}"
+		"en"		"{1} rounds left"
+		"ru"		"{1} Раундов осталось"
+	}
+	"LastRound"
+	{
+		"en"		"This is the last round"
+		"ru"		"Последний раунд"
+	}
+	"CurrentMap"
+	{
+		"en"		"Current Map:"
+		"ru"		"Текущая карта:"
+	}
+	"OnlinePlayers"
+	{
+		"en"		"Online Players:"
+		"ru"		"Игроков онлайн:"
+	}
+	"TeamScoreTitle"
+	{
+		"en"		"Team Score:"
+		"ru"		"Командный счет:"
+	}
+	"RoundTimeleft"
+	{
+		"en"		"Round Timeleft:"
+		"ru"		"Оставшееся время раунда:"
+	}
+	"Timeleft"
+	{
+		"en"		"Timeleft:"
+		"ru"		"Оставшееся время:"
+	}
+	"DirectConnect"
+	{
+		"en"		"Direct Connect:"
+		"ru"		"Подключиться:"
+	}
+	"TimeleftFormat1"
+	{
+		"#format"	"{1:i},{2:i}" 			// 1 - Hour | 2 - minutes [Used in timeleft]
+		"en"		"{1} h. {2} m. left"
+		"ru"		"{1} ч. {2} мин. прошло"
+	}
+	"TimeleftFormat2"
+	{
+		"#format"	"{1:i}" 				// 1 - minutes [Used in timeleft]
+		"en"		"{1} m. left"
+		"ru"		"{1} мин. прошло"
+	}
+	"TimeleftFormat3"
+	{
+		"#format"	"{1:i}" 				// 1 - seconds [Used in timeleft]
+		"en"		"{1} s. left"
+		"ru"		"{1} с. прошло"
+	}
+	"RoundTimeleftFormat1"
+	{
+		"#format"	"{1:i},{2:i},{3:i}"		 // 1 - Hour | 2 - minutes | 3 - seconds [Used in timeleft]
+		"en"		"{1} h. {2} m. {3} s."
+		"ru"		"{1} ч. {2} мин. {3} с."
+	}
+	"RoundTimeleftFormat2"
+	{
+		"#format"	"{1:i},{2:i}" 			// 1 - minutes | 2 - seconds [Used in timeleft]
+		"en"		"{1} m. {2} s."
+		"ru"		"{1} мин. {2} c."
+	}
+	"RoundTimeleftFormat3"
+	{
+		"#format"	"{1:i}" 				// 1 - seconds [Used in timeleft]
+		"en"		"{1} s."
+		"ru"		"{1} c."
+	}
+}

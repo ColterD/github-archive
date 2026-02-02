@@ -1,0 +1,145 @@
+# SGLang Configuration for Emily Sovereign V4
+# Platform: CloudLab c220g5 (Tesla P4, 8GB GDDR5, Pascal)
+# Correction: Tesla P4 is INCOMPATIBLE with vLLM (requires compute capability 7.0+)
+
+runtime:
+  # Model Configuration
+  model_path: models/phi-3-mini-4k-instruct-awq
+  
+  # Quantization (required for 8GB VRAM)
+  quantization: awq  # 4-bit activation-aware weight quantization
+  
+  # Context length (reduced from 4096 to 2048 due to VRAM)
+  max_model_len: 2048
+  
+  # Tensor parallelism (Tesla P4 single GPU)
+  tp: 1
+  
+  # GPU memory utilization (conservative to avoid OOM)
+  gpu_memory_utilization: 0.85
+  
+  # Trust remote code (for Hugging Face models)
+  trust_remote_code: true
+
+# API Server Configuration
+server:
+  # Host binding
+  host: 0.0.0.0
+  port: 8000
+  
+  # OpenAI-compatible API
+  api_type: openai
+  
+  # CORS (for Langfuse integration)
+  cors_origins:
+    - http://langfuse.cloudlab.internal
+    - http://inference.cloudlab.internal
+  
+  # API keys (optional, enable for multi-tenant)
+  api_keys_enabled: false
+  api_keys_file: /etc/sglang/api_keys.txt
+
+# Performance Tuning (Tesla P4 Optimizations)
+performance:
+  # Continuous batching (improves throughput)
+  continuous_batching: true
+  
+  # Schedule policy: Longest-Priority-Maximum-First (LPM)
+  schedule_policy: lpm
+  
+  # Max batch size (limited by 8GB VRAM)
+  max_batch_size: 8
+  
+  # Prefill decode disaggregation (better utilization)
+  prefill_decode_disaggregation: true
+  
+  # Speculative decoding (speedup on supported models)
+  speculative_decoding: true
+  
+  # KV cache settings
+  kv_cache:
+    enabled: true
+    max_seq_len: 2048
+    cache_dtype: fp16  # Use FP16 for KV cache (saves memory)
+  
+  # Parallel sampling (for multiple policies)
+  parallel_sampling: true
+  max_parallel_samples: 4
+
+# Structured Output (for Active Inference JSON generation)
+structured_output:
+  enabled: true
+  format: json
+  grammar_path: /etc/sglang/policy_grammar.gbnf
+
+# Monitoring (Langfuse integration)
+monitoring:
+  # OpenTelemetry endpoint
+  otlp:
+    enabled: true
+    endpoint: http://langfuse.cloudlab.internal:4318
+    
+  # Prometheus metrics
+  prometheus:
+    enabled: true
+    listen_address: :9091
+  
+  # Logging
+  logging:
+    level: info
+    format: json
+    include_timestamp: true
+
+# Model Download Configuration
+download:
+  # Hugging Face hub
+  huggingface:
+    enabled: true
+    cache_dir: /var/lib/sglang/cache
+    use_auth_token: false
+  
+  # Model parallelism (for future multi-GPU)
+  tensor_parallel_size: 1
+
+# Safety and Limits
+safety:
+  # Rate limiting
+  rate_limit:
+    enabled: true
+    requests_per_second: 20
+  
+  # Token limit
+  max_tokens_per_request: 512
+  
+  # Timeout
+  request_timeout: 60s
+  
+  # Concurrency limit
+  max_concurrent_requests: 10
+
+# Environment Variables (set via .env or systemd)
+# CUDA_VISIBLE_DEVICES=0
+# TORCH_CUDA_ARCH_LIST=6.1  # Pascal architecture
+
+# Performance Benchmarks (Tesla P4, 8GB VRAM, AWQ 4-bit):
+# - Tokens/Second: 15-25 (Phi-3-mini)
+# - Time to First Token (TTFT): 100-200ms
+# - Per-Token Latency: 40-67ms
+# - Throughput: 10-15 requests/second
+# - VRAM Usage: 6.5GB (81%)
+
+# Latency Budget for Active Inference:
+# - SGLang inference: 200-300ms (within <500ms budget)
+# - Total Triune loop: ~2-3s (within <5s target)
+
+# Corrections Applied:
+# 1. Using SGLang instead of vLLM (Tesla P4 incompatible)
+# 2. AWQ 4-bit quantization (fit model in 8GB VRAM)
+# 3. Reduced context length (4096 → 2048)
+# 4. Conservative GPU utilization (85% instead of 95%)
+
+# References:
+# - SGLang Documentation: https://docs.sglang.io/
+# - Tesla P4 Specs: https://www.nvidia.com/en-us/data-center/tesla-p4/
+# - REVIEW_AGENT_4_NOVEL_TECH.md: SGLang vs vLLM comparison
+

@@ -1,0 +1,26 @@
+"Phrases"
+{
+	"Time"
+	{
+		"#format"	"{1:d}"
+		"en"		"{frozen}[Boss] {orange}The next boss will spawn in {1} seconds."
+	}
+	"Boss_Spawn"
+	{
+		"#format"	"{1:s}"
+		"en"		"{frozen}[Boss] {orange}{1} has spawned!"
+	}
+	"Boss_Slain"
+	{
+		"en"		"{frozen}[Boss] {orange}All bosses has been slain!"
+	}
+	"No_Boss"
+	{
+		"en"		"{frozen}[Boss] {orange}There are not active bosses alive to slay."
+	}
+	"Boss_Left"
+	{
+		"#format"	"{1:s}"
+		"en"		"{frozen}[Boss] {orange}{1} has left the map due to boredom."
+	}
+}

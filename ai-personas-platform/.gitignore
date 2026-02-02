@@ -1,0 +1,10 @@
+backend/package-lock.json
+backend/prisma/migrations
+backend/.env
+backend/package-lock.json
+server.c
+/database
+backend/src/auth/guards/twitter-oauth.guard.ts
+backend/src/auth/strategies/twitter.strategy.ts
+# .env
+database

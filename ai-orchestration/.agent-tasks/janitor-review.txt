@@ -1,0 +1,30 @@
+Code cleanup and maintenance review.
+
+**Scope:**
+- Identify unused files and dependencies
+- Find duplicate code patterns
+- Review code formatting consistency
+- Check for TODO/FIXME comments
+- Analyze import statements and dead code
+
+**Focus Areas:**
+1. Unused imports and exports
+2. Dead code (unreachable functions)
+3. Console.log statements left in code
+4. Commented-out code blocks
+5. Temporary test files
+6. Duplicate utility functions
+7. Inconsistent naming conventions
+
+**Tools:**
+- ESLint for JavaScript/TypeScript
+- Pylint for Python files
+- Manual code review
+
+**Deliverables:**
+1. List of files that can be deleted
+2. Duplicate code report
+3. Cleanup recommendations
+4. Formatting inconsistencies
+
+EXCLUDE: Github/reorganization/ directory

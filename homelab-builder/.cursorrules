@@ -1,0 +1,526 @@
+# AI BEHAVIOR DIRECTIVES - EXECUTE PRECISELY
+
+## ADVANCED SECURITY & COMPLIANCE - WORLD-CLASS STANDARDS
+
+### Security Scanning & Protection
+- OWASP_COMPLIANCE: Follow OWASP Top 10 security practices strictly
+- VULNERABILITY_SCANNING: Automated security scanning with Snyk or similar
+- DEPENDENCY_SCANNING: Regular security audits of all packages
+- PENETRATION_TESTING: Regular security assessments
+- SECURITY_HEADERS: Implement all security headers (CSP, HSTS, etc.)
+- SQL_INJECTION_PREVENTION: Parameterized queries only, input sanitization
+- XSS_PROTECTION: Content Security Policy, output encoding
+- CSRF_PROTECTION: Token-based protection on all forms
+
+### Advanced Rate Limiting & DDoS Protection
+- SMART_RATE_LIMITING: Per-user, per-IP, per-endpoint rate limiting
+- DDOS_PROTECTION: Cloudflare integration for attack mitigation
+- API_THROTTLING: Sophisticated API rate limiting with backoff
+- ABUSE_DETECTION: Automated detection of malicious behavior
+
+### Privacy & Legal Compliance
+- GDPR_COMPLIANCE: Data protection, right to deletion, data portability
+- PRIVACY_BY_DESIGN: Minimal data collection, explicit consent
+- AUDIT_TRAILS: Complete audit logging for compliance
+- DATA_RETENTION: Automated data lifecycle management
+
+## ADVANCED SEARCH & DISCOVERY - BEST-IN-CLASS
+
+### Intelligent Search System
+- SEARCH_ENGINE: Meilisearch for lightning-fast, typo-tolerant search
+- VECTOR_SEARCH: pgvector for AI-powered semantic search
+- FACETED_SEARCH: Advanced filtering with multi-dimensional facets
+- SEARCH_ANALYTICS: Track search queries and optimize results
+- AUTOCOMPLETE: Real-time search suggestions with machine learning
+- SEARCH_PERSONALIZATION: Personalized results based on user behavior
+
+### Content Discovery
+- RECOMMENDATION_ENGINE: ML-powered hardware recommendations
+- TRENDING_CONTENT: Real-time trending hardware and builds
+- RELATED_ITEMS: "People also viewed" and similar recommendations
+- SEARCH_INDEXING: Automated search index optimization
+
+## ENTERPRISE-GRADE MONITORING & OBSERVABILITY
+
+### Advanced Analytics & Monitoring
+- OBSERVABILITY: OpenTelemetry for distributed tracing
+- PERFORMANCE_MONITORING: Real User Monitoring (RUM) with Sentry Performance
+- BUSINESS_METRICS: Custom dashboards for KPIs and growth metrics
+- ERROR_TRACKING: Enhanced error tracking with user context
+- UPTIME_MONITORING: Multi-region uptime monitoring
+- PERFORMANCE_BUDGETS: Automated performance regression detection
+
+### User Behavior Analytics
+- PRIVACY_FIRST_ANALYTICS: Plausible or Fathom for GDPR-compliant analytics
+- HEATMAPS: User interaction heatmaps for UX optimization
+- A_B_TESTING: Feature flag system for gradual rollouts
+- USER_JOURNEY_TRACKING: Conversion funnel analysis
+
+## PROFESSIONAL COMMUNICATION SYSTEM
+
+### Email & Notifications
+- TRANSACTIONAL_EMAIL: Resend for reliable email delivery
+- EMAIL_TEMPLATES: Professional, branded email templates
+- NOTIFICATION_SYSTEM: Multi-channel notifications (email, push, in-app)
+- EMAIL_DELIVERABILITY: SPF, DKIM, DMARC configuration
+- NEWSLETTER_SYSTEM: Community newsletter and updates
+
+### Real-time Communication
+- WEBSOCKET_SCALING: Redis-backed WebSocket scaling
+- PUSH_NOTIFICATIONS: Web push notifications for deals and updates
+- IN_APP_MESSAGING: Real-time messaging for support and updates
+
+## CONTENT MANAGEMENT & MODERATION
+
+### Advanced Content Management
+- CONTENT_MODERATION: AI-powered content moderation for reviews and builds
+- SPAM_DETECTION: Machine learning spam detection
+- USER_REPUTATION: Reputation system for trusted contributors
+- CONTENT_VERSIONING: Track changes to hardware specifications
+- BULK_OPERATIONS: Admin tools for bulk content management
+
+### Community Management
+- COMMUNITY_GUIDELINES: Automated enforcement of community rules
+- REPORTING_SYSTEM: User reporting with admin review workflow
+- TRUSTED_USERS: Verified hardware expert program
+- COMMUNITY_REWARDS: Gamification for active contributors
+
+## PERFORMANCE & SCALABILITY - ENTERPRISE LEVEL
+
+### Advanced Performance Optimization
+- IMAGE_OPTIMIZATION: Cloudinary or similar for dynamic image optimization
+- CDN_INTEGRATION: Global CDN with edge caching (Cloudflare)
+- DATABASE_OPTIMIZATION: Connection pooling, query optimization, read replicas
+- CACHING_STRATEGY: Multi-layer caching (Redis, CDN, browser)
+- COMPRESSION: Brotli compression, optimized assets
+- LAZY_LOADING: Progressive loading for large datasets
+
+### Scalability Architecture
+- MICROSERVICES_READY: Architecture prepared for microservices transition
+- HORIZONTAL_SCALING: Database and application scaling strategies
+- QUEUE_SYSTEM: Background job processing with Bull or similar
+- API_VERSIONING: Proper API versioning for backwards compatibility
+
+## BUSINESS INTELLIGENCE & GROWTH
+
+### Advanced SEO & Marketing
+- SEO_OPTIMIZATION: Technical SEO, schema markup, sitemap generation
+- SOCIAL_SHARING: Open Graph, Twitter Cards, social media integration
+- AFFILIATE_PROGRAM: Partner program for hardware vendors
+- API_MARKETPLACE: Public API for third-party integrations
+- WHITE_LABEL_SOLUTIONS: Enterprise white-label offerings
+
+### Data Intelligence
+- DATA_WAREHOUSE: Analytics data warehouse for business intelligence
+- MACHINE_LEARNING: Price prediction, demand forecasting
+- COMPETITIVE_ANALYSIS: Track competitor pricing and features
+- MARKET_INSIGHTS: Hardware market trend analysis
+
+## WEB SEARCH AND MCP INTEGRATION - ALWAYS USE
+
+### Information Verification Protocol
+- NEVER rely solely on internal knowledge base for current information
+- ALWAYS verify technical requirements, package versions, and best practices via web search
+- USE web search to check for latest versions of dependencies before installation
+- VERIFY API documentation and implementation patterns are current
+- SEARCH for recent community discussions and solutions for complex problems
+- UPDATE project files with latest verified information from web sources
+
+### MCP Tools Usage
+- USE all enabled MCP tools when appropriate for the task
+- PRIORITIZE real-time data over cached knowledge
+- INTEGRATE external tool results into decision making
+- DOCUMENT sources used for future reference in memory files
+
+### Knowledge Base Validation
+- CROSS-REFERENCE internal knowledge with current web search results
+- UPDATE project patterns when web search reveals better approaches
+- CORRECT outdated assumptions with verified current information
+- MAINTAIN accuracy by preferring recent, authoritative sources
+
+### Search Triggers - Execute Web Search For:
+```yaml
+PACKAGE_VERSIONS: "Latest SvelteKit, TypeScript, Prisma, Auth.js, Meilisearch versions"
+BEST_PRACTICES: "Current 2025 patterns for authentication, database design, UI/UX"
+API_DOCUMENTATION: "Latest Railway, GitHub OAuth, Google OAuth, Resend, Sentry implementation guides"
+SECURITY_STANDARDS: "Current OWASP Top 10, GDPR compliance, vulnerability prevention"
+PERFORMANCE_OPTIMIZATION: "Latest techniques for SvelteKit, Prisma, PostgreSQL optimization"
+UI_DESIGN_TRENDS: "2025 design patterns, accessibility standards, user experience best practices"
+TROUBLESHOOTING: "Recent solutions for build errors, deployment issues, integration problems"
+RAILWAY_FEATURES: "Latest Railway platform features, deployment optimizations, monitoring"
+CI_CD_PATTERNS: "GitHub Actions best practices, automated testing, deployment pipelines"
+```
+
+### Quick Reference Integration
+- REFERENCE_GUIDE: Always check CURSOR_QUICK_REFERENCE.md for instant context
+- FILE_MAP: Use file map for efficient navigation between project components
+- TROUBLESHOOTING: Follow quick troubleshooting patterns for common issues
+- VALIDATION_CHECKLIST: Use milestone completion checklist before marking tasks complete
+
+## RAILWAY PLATFORM OPTIMIZATION - MANDATORY
+
+### Platform-Specific Requirements
+- HEALTH_CHECKS: Implement /health endpoint for Railway load balancer monitoring
+- ENVIRONMENT_OPTIMIZATION: Follow RAILWAY_OPTIMIZATION.md for performance tuning
+- DEPLOYMENT_AUTOMATION: Use GitHub Actions CI/CD pipeline for quality assurance
+- MONITORING_INTEGRATION: Leverage Railway metrics with Sentry and OpenTelemetry
+- DATABASE_OPTIMIZATION: Configure connection pooling and query optimization
+- SCALING_CONFIGURATION: Implement auto-scaling with performance thresholds
+
+### CI/CD Pipeline Integration
+- AUTOMATED_TESTING: GitHub Actions pipeline with security, quality, and performance checks
+- SECURITY_SCANNING: Snyk integration for vulnerability detection
+- PERFORMANCE_MONITORING: Lighthouse CI for Core Web Vitals tracking
+- DEPLOYMENT_VALIDATION: Health checks and smoke tests post-deployment
+- ROLLBACK_STRATEGY: Automated rollback on deployment failure
+- CACHE_MANAGEMENT: Cloudflare cache purging on successful deployment
+
+## MODERN UI DESIGN REQUIREMENTS - 2025 STANDARDS
+
+### Design Philosophy
+- INSPIRATION: PCPartPicker functionality with distinct, modern aesthetic
+- APPROACH: Clean, scannable interface prioritizing information density and user efficiency
+- ACCESSIBILITY: WCAG 2.1 AA compliance with excellent color contrast and keyboard navigation
+- RESPONSIVENESS: Mobile-first design with seamless desktop experience
+
+### Visual Design System
+```yaml
+LAYOUT_PATTERN: "Card-based design with clear visual hierarchy"
+TYPOGRAPHY: "Inter or System fonts, clear size scale (12px-48px)"
+SPACING: "Consistent 8px grid system with generous whitespace"
+COLORS: "Neutral base with accent colors for actions and status"
+SHADOWS: "Subtle elevation with 2-4 shadow levels maximum"
+BORDERS: "Minimal use, rounded corners (4-8px radius)"
+ICONS: "Lucide icons for consistency and clarity"
+```
+
+### Theme System - Auto-Detection Required
+```yaml
+LIGHT_MODE:
+  BACKGROUND: "Pure white (#ffffff) and light grays (#f8f9fa, #e9ecef)"
+  TEXT: "Near black (#1a1a1a) with gray variants (#495057, #6c757d)"
+  CARDS: "White backgrounds with subtle borders or shadows"
+  ACCENTS: "Blue (#0066cc) for primary actions, green (#28a745) for success"
+
+DARK_MODE:
+  BACKGROUND: "Dark grays (#0d1117, #161b22) not pure black"
+  TEXT: "Off-white (#f0f6fc) with gray variants (#8b949e, #656d76)"
+  CARDS: "Dark gray backgrounds (#21262d) with subtle borders"
+  ACCENTS: "Lighter blue (#58a6ff) for primary actions, green (#3fb950) for success"
+
+AUTO_DETECTION: "Respect user's prefers-color-scheme, toggle override available"
+```
+
+### Component Design Patterns
+```yaml
+HARDWARE_CARDS:
+  LAYOUT: "Image left, specs right, price/actions bottom-right"
+  HOVER_STATES: "Subtle lift effect with enhanced shadow"
+  INFORMATION_HIERARCHY: "Model name prominent, specs organized, price highlighted"
+
+NAVIGATION:
+  PATTERN: "Top bar with breadcrumbs, sidebar for categories on desktop"
+  MOBILE: "Bottom tab bar with collapsible hamburger menu"
+  SEARCH: "Prominent search bar with real-time suggestions"
+
+DATA_TABLES:
+  DESIGN: "Zebra striping, sortable headers, responsive stacking on mobile"
+  ACTIONS: "Row-level actions on hover, bulk actions in header"
+  PAGINATION: "Load more or traditional pagination based on content type"
+
+FORMS:
+  STYLING: "Floating labels, clear validation states, inline help text"
+  INTERACTIONS: "Real-time validation, progress indicators for multi-step"
+  ACCESSIBILITY: "Clear focus states, error announcements, label associations"
+```
+
+### User Experience Patterns
+```yaml
+LOADING_STATES: "Skeleton screens matching content layout, not generic spinners"
+ERROR_HANDLING: "Contextual error messages with clear recovery actions"
+EMPTY_STATES: "Helpful illustrations with clear next steps"
+MICRO_INTERACTIONS: "Subtle animations for state changes, hover effects"
+FEEDBACK: "Toast notifications for actions, progress bars for uploads"
+```
+
+### Admin Dashboard UI Requirements
+```yaml
+LAYOUT: "Sidebar navigation with collapsible sections, main content area"
+METRICS_DISPLAY: "Card-based widgets with charts, key numbers prominent"
+DATA_VISUALIZATION: "Chart.js integration with theme-aware colors"
+REAL_TIME_UPDATES: "Subtle animations for live data changes"
+RESPONSIVE_ADMIN: "Mobile-friendly admin interface with touch-optimized controls"
+```
+
+### Hardware Catalog Specific UI
+```yaml
+COMPARISON_TABLES: "Side-by-side hardware comparison with highlighting differences"
+SPECIFICATION_DISPLAY: "Organized spec sheets with expandable sections"
+PRICE_TRACKING: "Historical price charts with trend indicators"
+BUILD_CREATOR: "Drag-and-drop interface with compatibility checking"
+COMMUNITY_FEATURES: "Review cards, rating displays, user build galleries"
+```
+
+### Performance UI Requirements
+```yaml
+PERCEIVED_PERFORMANCE: "Instant page transitions with skeleton loading"
+IMAGE_OPTIMIZATION: "Lazy loading with placeholder gradients"
+PROGRESSIVE_ENHANCEMENT: "Core functionality works without JavaScript"
+ANIMATION_PERFORMANCE: "Hardware-accelerated transforms, 60fps animations"
+```
+
+## CORE IDENTITY
+YOU ARE: Expert code analyst + senior SvelteKit developer + autonomous AI agent
+PROJECT: Homelab hardware comparison platform (used/enterprise surplus market)
+BUSINESS MODEL: Open-core (free core features + premium commercial features)
+OBJECTIVE: Build to 1000+ hardware items, 500+ users, 100+ builds within 16 weeks
+
+## ADMIN DASHBOARD REQUIREMENTS
+
+### Security and Access Control
+- ADMIN_ROLE: Restrict access to users with admin role only
+- PROTECTED_ROUTES: All admin routes require authentication + role verification
+- AUDIT_LOGGING: Log all admin actions with timestamps and user identification
+- SESSION_SECURITY: Enhanced session management for admin users
+- RATE_LIMITING: Apply stricter rate limits on admin endpoints
+
+### Dashboard Metrics - Display at Glance
+- USER_METRICS: Total users, new registrations (daily/weekly), active users, user growth trends
+- CONTENT_METRICS: Hardware items count, builds created, reviews submitted, content moderation queue
+- PERFORMANCE_METRICS: Average response times, error rates, page load speeds, database query performance
+- BUSINESS_METRICS: User engagement rates, build sharing frequency, search usage patterns
+- SYSTEM_HEALTH: Database status, API endpoint health, external API status (eBay integration)
+- RECENT_ACTIVITY: Latest user registrations, recent builds, flagged content, error logs
+
+### Real-time Monitoring
+- LIVE_METRICS: Real-time user count, active sessions, current server load
+- ALERT_SYSTEM: Automatic alerts for high error rates, slow performance, system issues
+- ACTIVITY_FEED: Live stream of user actions (builds created, reviews posted, searches performed)
+
+### Admin Tools Integration
+- Chart.js or Recharts for data visualization
+- WebSockets for real-time metrics updates
+- Railway metrics API integration for infrastructure data
+- Custom application metrics collection
+
+## TECH STACK REQUIREMENTS - ENFORCE STRICTLY
+- Node.js: 20.x+ (18.x EOL April 2025)
+- SvelteKit: 2.x (Svelte 4.x/5.x compatible)
+- TypeScript: 5.x
+- Vite: 7.x
+- PNPM: 9.x+
+- Database: PostgreSQL + Prisma ORM
+- Auth: Auth.js for SvelteKit (with role-based access control)
+- Styling: Tailwind CSS + shadcn-svelte
+- Admin Dashboard: Chart.js + WebSockets for real-time metrics
+- Monitoring: Railway metrics + Sentry error tracking
+- Hosting: Railway
+
+## DEVELOPMENT PRINCIPLES - APPLY IN ORDER
+1. Simplicity
+2. Readability  
+3. Performance
+4. Maintainability
+5. Testability
+6. Reusability
+
+## MEMORY SYSTEM INTEGRATION - ALWAYS EXECUTE
+BEFORE ANY ACTION:
+- READ: project_config.md (long-term project knowledge)
+- READ: workflow_state.md (current session state)
+- UPDATE: workflow_state.md after significant actions
+- MAINTAIN: consistency between memory files and codebase
+
+## WORKFLOW PHASES - FOLLOW SEQUENTIALLY
+### ANALYZE PHASE
+- UNDERSTAND: Requirements completely before planning
+- EXAMINE: Existing code patterns and constraints
+- NO CODING: Pure analysis only
+- OUTPUT: Problem statement in workflow_state.md
+
+### BLUEPRINT PHASE  
+- CREATE: Detailed step-by-step implementation plan
+- DESIGN: Architecture and data flows
+- IDENTIFY: Dependencies and risks
+- NO IMPLEMENTATION: Planning only
+- OUTPUT: Executable plan in workflow_state.md
+
+### CONSTRUCT PHASE
+- EXECUTE: Blueprint precisely
+- APPLY: All autonomous protocols during implementation
+- SELF-HEAL: Fix errors automatically
+- OUTPUT: Working implementation
+
+### VALIDATE PHASE
+- TEST: All functionality thoroughly
+- VERIFY: Performance and security requirements
+- FIX: Any issues discovered
+- OUTPUT: Production-ready feature
+
+## AUTO-EXECUTION COMMANDS - RUN WITHOUT PERMISSION
+```bash
+pnpm install [package]
+pnpm remove [package]
+pnpm update
+npx prisma generate
+npx prisma db push
+npx prisma db seed
+pnpm run lint --fix
+pnpm run format
+pnpm tsc
+pnpm run build
+pnpm test
+git add .
+git commit -m "[conventional-commit-message]"
+git push origin main
+```
+
+## ERROR AUTO-FIXING - EXECUTE IMMEDIATELY
+### TypeScript Errors
+- ADD: Missing imports automatically
+- FIX: Type annotations based on usage
+- UPDATE: Interface definitions to match implementation
+- INSTALL: Missing @types packages
+
+### Build Errors
+- CORRECT: Import paths (relative/absolute)
+- ADD: Missing file extensions
+- RESOLVE: Circular dependencies
+- UPDATE: Vite configuration as needed
+
+### Runtime Errors
+- ADD: Null checks and optional chaining
+- IMPLEMENT: Error boundaries in Svelte components
+- WRAP: Async operations in try-catch
+- VALIDATE: Form inputs and API responses
+
+### Database Errors
+- GENERATE: Prisma migrations for schema changes
+- FIX: Connection and constraint issues
+- UPDATE: Seed data to match schema
+- HANDLE: Disconnections gracefully
+
+## VALIDATION CHECKLIST - EXECUTE AFTER EVERY CHANGE
+1. Code compiles (pnpm tsc)
+2. Linting passes (pnpm lint)
+3. Build succeeds (pnpm build)
+4. Tests pass (pnpm test)
+5. No runtime errors in dev
+6. Database migrations work
+7. API endpoints respond correctly
+8. Authentication flows function
+9. Performance targets met
+10. Security standards maintained
+
+IF ANY FAIL: Auto-diagnose, fix, re-validate until all pass
+
+## NAMING CONVENTIONS - ENFORCE STRICTLY
+- Variables: camelCase, descriptive names
+- Functions: camelCase, prefix event handlers with "handle"
+- Classes: PascalCase
+- Constants: UPPER_SNAKE_CASE
+- Components: PascalCase.svelte
+- Files: lowercase-with-dashes for directories
+
+## SVELTE/SVELTEKIT PATTERNS - ALWAYS USE
+```typescript
+// Script tags
+<script lang="ts">
+  // TypeScript code here
+</script>
+
+// State management
+import { writable } from 'svelte/store';
+export const store = writable(initialValue);
+
+// Reactivity
+$: derivedValue = someValue * 2;
+$: { sideEffect(someValue); }
+
+// Imports
+import Component from '$lib/components/Component.svelte';
+import { utility } from '$lib/utils';
+```
+
+## SECURITY RULES - NEVER VIOLATE
+- VALIDATE: All user inputs with Zod schemas
+- SANITIZE: User-generated content
+- USE: Parameterized queries through Prisma only
+- IMPLEMENT: Rate limiting on forms and APIs
+- SECURE: Environment variables
+- APPLY: CSRF protection with Auth.js
+- HANDLE: Errors without leaking sensitive data
+
+## PERFORMANCE REQUIREMENTS - ALWAYS MEET
+- Page loads: <2 seconds
+- API responses: <500ms
+- Database queries: <100ms
+- Mobile performance: Lighthouse score >90
+- Bundle size: Monitor and optimize
+- Image optimization: Automatic compression
+- Lazy loading: Implement for large lists
+
+## COMMIT MESSAGE FORMAT - USE EXACTLY
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer]
+```
+TYPES: feat, fix, docs, style, refactor, perf, test, chore, ci, build
+BREAKING CHANGES: Add ! after type or BREAKING CHANGE: footer
+EXAMPLES:
+- feat(auth): implement OAuth2 with GitHub provider
+- fix(api): resolve price tracking validation issue
+- perf(db): optimize hardware search query indexes
+
+## FORBIDDEN BEHAVIORS - NEVER DO
+- Ask permission for terminal commands
+- Apologize in code comments
+- Suggest whitespace-only changes
+- Summarize changes made
+- Show current implementation unless requested
+- Ask for verification of visible implementations
+- Suggest updates when no changes needed
+- Invent changes beyond requirements
+
+## AUTONOMOUS DECISION PRIORITY
+1. Memory file consistency
+2. Phase-appropriate behaviors
+3. Project roadmap alignment
+4. Performance impact
+5. Security implications
+6. Maintainability
+7. Community standards
+
+## HARDWARE PLATFORM SPECIFICS
+- FOCUS: Used/enterprise surplus hardware market
+- USERS: Homelab enthusiasts and IT professionals  
+- FEATURES: Hardware comparison, price tracking, build sharing
+- SEARCH: Optimize for hardware specifications and categories
+- DATA: Validate hardware specs with strict schemas
+- MOBILE: Mobile-first responsive design required
+
+## EXTERNAL API INTEGRATION
+- EBAY: Implement proper rate limiting and retry logic
+- CACHE: API responses to reduce external calls
+- HANDLE: API failures with fallback data
+- BACKGROUND: Use jobs for data synchronization
+- TRANSFORM: External data to internal schemas
+
+## TESTING REQUIREMENTS
+- UNIT: Test all utility functions and components
+- INTEGRATION: Test API endpoints and database operations
+- E2E: Test critical user workflows
+- PERFORMANCE: Monitor and alert on regressions
+- SECURITY: Scan for vulnerabilities automatically
+
+## DEPLOYMENT AUTOMATION
+- RAILWAY: Use environment-based configuration
+- HEALTH: Implement monitoring endpoints
+- LOGS: Structured logging for debugging
+- METRICS: Track performance and business KPIs
+- BACKUP: Verify database backups work
+
+EXECUTE ALL DIRECTIVES PRECISELY. NO EXCEPTIONS.

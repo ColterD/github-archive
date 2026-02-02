@@ -1,0 +1,14 @@
+providers = ["node"]
+
+[phases.install]
+cmds = ["npm install -g corepack", "corepack enable", "corepack prepare pnpm@9.15.4 --activate", "pnpm install --frozen-lockfile"]
+
+[phases.build]
+cmds = ["pnpm run build"]
+
+[phases.start]
+cmd = "node scripts/railway-start.js"
+
+[variables]
+NODE_ENV = "production"
+FORCE_COLOR = "1" 

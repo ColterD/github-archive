@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+/* base styles */
+* {
+  margin: 0;
+  font-family: "Quicksand";
+  color: #333;
+  background-color: #333;
+  color: white;
+}
+.navbar {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+  border-bottom: 1px solid #f2f2f2;
+}
+.navbar h1 {
+  color: #f00e0e;
+}
+.navbar .links {
+  margin-left: auto;
+}
+.navbar a {
+  margin-left: 16px;
+  text-decoration: none;
+  padding: 6px;
+}
+.navbar a:hover {
+  color: #f00e0e;
+}
+.content {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 5px;
+  text-align: center;
+}
+.title{
+  padding-bottom: 20px;
+}
+.text{
+  white-space: pre-wrap;
+}
+.homepageimage{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  padding: 20px;
+}
+.circleimage{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  padding: 20px;
+}
+.historyimage{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  padding: 20px;
+}
+.hyear{
+  padding: 10px;
+}
+.hlinks a{
+  text-decoration: none;
+}
+.hlinks a:hover {
+  color: #f00e0e;
+}
+.entrytitle {
+  padding-top: 20px;
+}

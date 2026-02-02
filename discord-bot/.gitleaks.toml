@@ -1,0 +1,74 @@
+# Gitleaks configuration
+# https://github.com/gitleaks/gitleaks
+
+[extend]
+useDefault = true
+
+# Ignore all test files completely
+[allowlist]
+description = "Global allowlist"
+paths = [
+    '''tests/''',
+    '''\.test\.ts$''',
+    '''\.test\.js$''',
+    '''\.spec\.ts$''',
+    '''\.spec\.js$''',
+    '''\.env\.example$''',
+]
+
+# Specific fingerprints to ignore (from gitleaks output)
+# These are commits containing dummy/test credentials for CI
+commits = []
+stopwords = [
+    "MTE2NTI4NDgzNjE3ODQyMjg4OA",
+    "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAx",
+    "_test_token_not_real_do_not_use_",
+    "123456789012345678",  # Dummy Discord client ID for CI tests
+    "test-token-for-ci",   # Dummy Discord token for CI tests
+]
+
+# Ignore placeholder tokens in documentation
+[[allowlists]]
+description = "Ignore placeholder tokens"
+regexTarget = "match"
+regexes = [
+    '''your_.*_here''',
+    '''your-.*-here''',
+    '''<your.*>''',
+    '''EXAMPLE_.*''',
+]
+
+# Ignore npm package registry URLs that might look like tokens
+[[allowlists]]
+description = "Ignore npm registry URLs"
+regexTarget = "match"
+regexes = [
+    '''registry\.npmjs\.org''',
+]
+
+# Ignore fake Discord tokens in test files
+[[allowlists]]
+description = "Ignore test Discord token patterns"
+paths = [
+    '''tests/integration/orchestrator\.test\.ts''',
+    '''tests/integration/security\.test\.ts''',
+]
+regexTarget = "match"
+regexes = [
+    '''MTE2NTI4NDgzNjE3ODQyMjg4OA\..*''',
+    '''Here's a token:.*''',
+    '''FAKE_TOKEN.*''',
+    '''TEST_ONLY_NOT_REAL''',
+]
+
+# Ignore dummy credentials in CI workflow files
+[[allowlists]]
+description = "Ignore dummy Discord credentials in CI workflows"
+paths = [
+    '''\.github/workflows/integration\.yml''',
+]
+regexTarget = "match"
+regexes = [
+    '''123456789012345678''',  # Dummy client ID for CI
+    '''test-token-for-ci''',   # Dummy token for CI
+]

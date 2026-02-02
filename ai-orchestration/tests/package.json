@@ -1,0 +1,15 @@
+{
+  "name": "mimir-playwright-tests",
+  "version": "1.0.0",
+  "description": "Playwright tests for Mimir AI Orchestration Stack",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:codegen": "playwright codegen"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.10.0"
+  }
+}

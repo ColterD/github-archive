@@ -1,0 +1,69 @@
+v1.2.2:
+Changes:
+
+Upgraded:
+- Forge to v14.23.5.2823
+
+Known Issues:
+- AE2 Stuff Advanced Inscribers not working as intended anymore, won't receive power. Use regular inscribers. AE2 Stuff needs an update badly (they haven't updated since 10/17)
+- EnderIO ME Conduits (for ae2) don't directly connect to machines with input/export/etc blocks.  Use 1 regular fluix cable to connect initially, then you can run conduit off that.
+- Mekanism still doesn't show some physical items in the world, but it still works
+- Wheat and Barley seeds placed in a Farmer machine creates Natura cotton, I have zero clue why this is happening.
+
+Important Mod Updates:
+ -Fixed Thaumcraft quest tree rewards to be actually claimable
+- Woot now spawns the next tier "crystals" so you don't actually need 36 blaze rods for a Tier 2 factory (for example).  Makes factories a LOT easier to deal with.
+
+Removed:
+- Deconstruction Table (not working as intended)
+
+Configuration Changes:
+- Added recipe to create AE2 cable anchors (for facades)
+- Added recipe to make and cook End Stone
+- All hoes can till soul sand
+- Allowed Diamond Armor to be craftable again for Draconium Armor
+- Allowed Robosurgeon to be craftable
+- Changed NetherEx config to use Lava to moist soil instead of Ichor
+- Changed Wireless Network Terminal to use old method instead (no charges)
+- Created recipe for AE2 Network Tool (was missing, needed for Wireless Tool)
+- Disabled Abaias from spawning (very massive, very spammy)
+- Disabled Triffids from spawning (farmers rejoice!)
+- Halved the spawn rate for Geonachs
+- Remade Net and Dense Net recipes to be actually working
+
+Updated:
+- ArmorPlus
+- Bookshelf
+- Chisels & Bits
+- Common Capabilities
+- Corail Tombstone
+- CoroUtil
+- CraftPresence
+- CraftTweaker
+- Cyclic
+- CyclopsCore
+- FastFurnace
+- Forestry
+- FTB Quests
+- FTB Utilities
+- FTBLib
+- HammerCore
+- Industrial Foregoing
+- Inspirations
+- Mekanism
+- Mekanism Generators
+- Mekanism Tools
+- NuclearCraft
+- Overloaded Armor Bar
+- MTLib
+- Patchouli
+- PlusTiC
+- RandomPatches
+- RebornCore
+- RecurrentComplex
+- Refined Storage
+- Refined Storage Addons
+- SimplyJetpacks2
+- Thaumic Energistics
+- Tinkers' Complement
+- Woot

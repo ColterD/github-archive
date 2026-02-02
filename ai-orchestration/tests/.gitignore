@@ -1,0 +1,17 @@
+# Playwright Test Dependencies
+node_modules/
+package-lock.json
+
+# Test Results
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Screenshots and Videos
+screenshots/
+videos/
+traces/
+
+# OS
+.DS_Store
+Thumbs.db

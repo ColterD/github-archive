@@ -1,0 +1,12 @@
+"!group"	"PancakesTF"	https://steamcommunity.com/groups/pancakestf
+"/group"	"PancakesTF"	https://steamcommunity.com/groups/pancakestf
+"!wedoitlive" "We Do It Live! | PancakesTF Owner"	https://steamcommunity.com/profiles/76561197983001567
+"!owner"	"We Do It Live! | PancakesTF Owner"	https://steamcommunity.com/profiles/76561197983001567
+"!youtube"	"PancakesTF Official Channel | Youtube"	https://gaming.youtube.com/c/LivesHouseofPancakes
+"!steamgroup"	"PancakesTF"	https://steamcommunity.com/groups/pancakestf
+"!join"	"PancakesTF | Steam"	https://steamcommunity.com/groups/pancakestf
+"/join"	"PancakesTF | Steam"	https://steamcommunity.com/groups/pancakestf
+"!member"	"PancakesTF | Steam"	https://steamcommunity.com/groups/pancakestf
+"/member"	"PancakesTF | Steam"	https://steamcommunity.com/groups/pancakestf
+"!discord"	"PancakesTF Discord"	https://discord.com/invite/SCkasdswst
+"/discord"	"PancakesTF Discord"	https://discord.com/invite/SCkasdswst

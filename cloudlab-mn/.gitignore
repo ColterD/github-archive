@@ -1,0 +1,18 @@
+# Local endpoint/credentials
+ops/utah.env
+ops/*.env
+
+# Keys / certs
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Common local noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local timestamped backups (generated during patching)
+scripts/*.bak-*

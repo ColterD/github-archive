@@ -1,0 +1,27 @@
+# Autonomous Development Rules
+
+## Auto-Fix Triggers
+- TypeScript errors → automatically fix and verify
+- Linting errors → apply fixes and run linter
+- Build failures → diagnose and resolve
+- Test failures → debug and fix root cause
+- Import errors → update imports and dependencies
+
+## Verification Commands
+- Always run `pnpm tsc` after TypeScript fixes
+- Always run `pnpm lint` after code changes  
+- Always run `pnpm test` after logic changes
+- Always run `pnpm build` to verify deployment readiness
+
+## Self-Healing Priorities
+1. Security vulnerabilities (immediate fix)
+2. Build/compilation errors (immediate fix)
+3. Test failures (high priority)
+4. Performance issues (medium priority)
+5. Code style issues (low priority)
+
+## Learning & Memory
+- Remember successful fix patterns
+- Store debugging solutions in Memories
+- Apply proven patterns to similar issues
+- Continuously improve fix accuracy

@@ -1,0 +1,14 @@
+"Games"
+{
+	"tf"
+	{
+		"Offsets"
+		{
+			"CTFPlayer::ResetScores"
+			{
+				"windows"	"448"
+				"linux"		"449"
+			}
+		}
+	}
+}

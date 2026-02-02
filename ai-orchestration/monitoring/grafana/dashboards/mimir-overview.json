@@ -1,0 +1,92 @@
+{
+  "dashboard": {
+    "title": "Mimir AI Orchestration Overview",
+    "tags": [
+      "mimir",
+      "ai-orchestration"
+    ],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Container Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=\"mimir-mcp\"}",
+            "legendFormat": "Mimir MCP"
+          },
+          {
+            "expr": "up{job=\"neo4j\"}",
+            "legendFormat": "Neo4j"
+          },
+          {
+            "expr": "up{job=\"prometheus\"}",
+            "legendFormat": "Prometheus"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "Memory Operations Rate",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(mimir_memory_operations_total[5m])",
+            "legendFormat": "Operations/sec"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        }
+      },
+      {
+        "id": 3,
+        "title": "Neo4j Query Performance",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(neo4j_query_execution_time_sum[5m])",
+            "legendFormat": "Query Time"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        }
+      },
+      {
+        "id": 4,
+        "title": "Mimir Response Time",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "p95 Response Time"
+          }
+        ],
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        }
+      }
+    ],
+    "refresh": "10s",
+    "schemaVersion": 38,
+    "version": 1
+  },
+  "title": "Mimir AI Orchestration Overview"
+}

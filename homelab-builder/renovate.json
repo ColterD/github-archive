@@ -1,0 +1,187 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    "security:openssf-scorecard",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":automergeDigest",
+    ":automergeBranch"
+  ],
+  "timezone": "UTC",
+  "schedule": ["before 6am on monday"],
+  "labels": ["dependencies"],
+  "assignees": [],
+  "reviewers": [],
+  "prConcurrentLimit": 3,
+  "prHourlyLimit": 2,
+  "packageRules": [
+    {
+      "description": "Security updates - high priority",
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["patch"],
+      "matchCurrentVersion": "!/^0/",
+      "vulnerabilityAlerts": true,
+      "labels": ["security", "dependencies"],
+      "reviewers": [],
+      "assignees": [],
+      "automerge": true,
+      "schedule": ["at any time"]
+    },
+    {
+      "description": "Critical security vulnerabilities",
+      "matchPackagePatterns": ["*"],
+      "vulnerabilityAlerts": true,
+      "labels": ["security", "critical", "dependencies"],
+      "reviewers": [],
+      "assignees": [],
+      "automerge": false,
+      "schedule": ["at any time"],
+      "prPriority": 10
+    },
+    {
+      "description": "SvelteKit and core framework updates",
+      "matchPackageNames": [
+        "@sveltejs/kit",
+        "@sveltejs/adapter-auto",
+        "@sveltejs/adapter-node",
+        "@sveltejs/vite-plugin-svelte",
+        "svelte",
+        "vite"
+      ],
+      "labels": ["framework", "dependencies"],
+      "reviewers": [],
+      "assignees": [],
+      "automerge": false,
+      "schedule": ["before 6am on monday"],
+      "prPriority": 5
+    },
+    {
+      "description": "TypeScript and tooling updates",
+      "matchPackageNames": [
+        "typescript",
+        "@types/node",
+        "eslint",
+        "prettier",
+        "@typescript-eslint/eslint-plugin",
+        "@typescript-eslint/parser"
+      ],
+      "labels": ["tooling", "dependencies"],
+      "automerge": true,
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Database and ORM updates",
+      "matchPackageNames": ["prisma", "@prisma/client"],
+      "labels": ["database", "dependencies"],
+      "reviewers": [],
+      "assignees": [],
+      "automerge": false,
+      "schedule": ["before 6am on monday"],
+      "prPriority": 4
+    },
+    {
+      "description": "Authentication and security packages",
+      "matchPackageNames": [
+        "@auth/sveltekit",
+        "@auth/prisma-adapter",
+        "@auth/core",
+        "rate-limiter-flexible",
+        "@sentry/sveltekit"
+      ],
+      "labels": ["security", "auth", "dependencies"],
+      "reviewers": [],
+      "assignees": [],
+      "automerge": false,
+      "schedule": ["before 6am on monday"],
+      "prPriority": 6
+    },
+    {
+      "description": "UI and styling packages",
+      "matchPackageNames": [
+        "tailwindcss",
+        "@tailwindcss/typography",
+        "lucide-svelte",
+        "clsx",
+        "tailwind-merge"
+      ],
+      "labels": ["ui", "dependencies"],
+      "automerge": true,
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Development dependencies",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "labels": ["dev-deps", "dependencies"],
+      "automerge": true,
+      "schedule": ["before 6am on monday"]
+    },
+    {
+      "description": "Major version updates - manual review required",
+      "matchUpdateTypes": ["major"],
+      "labels": ["major-update", "dependencies"],
+      "reviewers": [],
+      "assignees": [],
+      "automerge": false,
+      "schedule": ["before 6am on monday"],
+      "prPriority": 2
+    },
+    {
+      "description": "Pin Docker digests",
+      "matchDatasources": ["docker"],
+      "pinDigests": true,
+      "labels": ["docker", "dependencies"],
+      "automerge": true
+    },
+    {
+      "description": "Group ESLint packages",
+      "matchPackagePatterns": ["eslint"],
+      "groupName": "ESLint packages",
+      "labels": ["eslint", "dependencies"],
+      "automerge": true
+    },
+    {
+      "description": "Group Prisma packages",
+      "matchPackagePatterns": ["prisma", "@prisma"],
+      "groupName": "Prisma packages",
+      "labels": ["prisma", "dependencies"],
+      "automerge": false
+    },
+    {
+      "description": "Group Auth.js packages",
+      "matchPackagePatterns": ["@auth"],
+      "groupName": "Auth.js packages",
+      "labels": ["auth", "dependencies"],
+      "automerge": false
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security", "vulnerability"],
+    "assignees": [],
+    "reviewers": [],
+    "schedule": ["at any time"],
+    "prPriority": 10
+  },
+  "osvVulnerabilityAlerts": true,
+  "suppressNotifications": ["prIgnoreNotification"],
+  "rebaseWhen": "conflicted",
+  "platformAutomerge": true,
+  "ignorePaths": ["**/node_modules/**", "**/dist/**", "**/.svelte-kit/**"],
+  "ignoreDeps": [],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on monday"],
+    "labels": ["lockfile", "dependencies"],
+    "automerge": true
+  },
+  "rangeStrategy": "bump",
+  "semanticCommits": "enabled",
+  "commitMessagePrefix": "chore(deps):",
+  "commitMessageAction": "update",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+  "prTitle": "{{commitMessagePrefix}} {{commitMessageAction}} {{commitMessageTopic}} {{commitMessageExtra}}",
+  "prBodyTemplate": "This PR contains the following updates:\n\n| Package | Change | Age | Adoption | Passing | Confidence |\n|---|---|---|---|---|---|\n{{#each upgrades as |upgrade|}}\n| {{upgrade.depName}} | {{upgrade.currentVersion}} → {{upgrade.newVersion}} | [![age](https://badges.renovateapi.com/packages/npm/{{upgrade.depName}}/{{upgrade.newVersion}}/age-slim)](https://docs.renovatebot.com/merge-confidence/) | [![adoption](https://badges.renovateapi.com/packages/npm/{{upgrade.depName}}/{{upgrade.newVersion}}/adoption-slim)](https://docs.renovatebot.com/merge-confidence/) | [![passing](https://badges.renovateapi.com/packages/npm/{{upgrade.depName}}/{{upgrade.newVersion}}/compatibility-slim/{{upgrade.currentVersion}})](https://docs.renovatebot.com/merge-confidence/) | [![confidence](https://badges.renovateapi.com/packages/npm/{{upgrade.depName}}/{{upgrade.newVersion}}/confidence-slim/{{upgrade.currentVersion}})](https://docs.renovatebot.com/merge-confidence/) |\n{{/each}}\n\n---\n\n### Release Notes\n\n{{#each upgrades as |upgrade|}}\n{{#if upgrade.hasReleaseNotes}}\n<details>\n<summary>{{upgrade.depName}}</summary>\n\n{{upgrade.releaseNotes}}\n</details>\n{{/if}}\n{{/each}}\n\n---\n\n### Configuration\n\n📅 **Schedule**: {{schedule}}\n\n🚦 **Automerge**: {{automerge}}\n\n♻ **Rebasing**: {{rebaseWhen}}\n\n🔕 **Ignore**: Close this PR and you won't be reminded about {{#if isSingleUpdate}}this update{{else}}these updates{{/if}} again.\n\n---\n\n{{#if hasErrors}}\n### Errors\n\nThe following errors occurred while processing this update:\n\n{{#each errors as |error|}}\n- {{error.message}}\n{{/each}}\n{{/if}}\n\nThis PR has been generated by [Renovate Bot](https://github.com/renovatebot/renovate)."
+}

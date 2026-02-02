@@ -1,0 +1,137 @@
+{
+  "name": "Homelab Hardware Platform",
+  "short_name": "Homelab Builder",
+  "description": "Community-driven platform for discovering, comparing, and sharing enterprise hardware for homelabs",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "categories": ["productivity", "utilities", "business"],
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-home.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Homelab Hardware Platform - Desktop View"
+    },
+    {
+      "src": "/screenshots/mobile-hardware.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Hardware Discovery - Mobile View"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Browse Hardware",
+      "short_name": "Hardware",
+      "description": "Discover enterprise hardware for your homelab",
+      "url": "/hardware",
+      "icons": [
+        {
+          "src": "/icons/shortcut-hardware.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Community Builds",
+      "short_name": "Builds",
+      "description": "Explore community hardware configurations",
+      "url": "/builds",
+      "icons": [
+        {
+          "src": "/icons/shortcut-builds.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Build Creator",
+      "short_name": "Create",
+      "description": "Create your own hardware build",
+      "url": "/build-creator",
+      "icons": [
+        {
+          "src": "/icons/shortcut-create.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Price Tracking",
+      "short_name": "Prices",
+      "description": "Track hardware prices and deals",
+      "url": "/price-tracking",
+      "icons": [
+        {
+          "src": "/icons/shortcut-prices.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+}

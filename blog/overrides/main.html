@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+<!-- Add any extra head elements here (e.g., custom meta tags) -->
+{% endblock %}
+
+{% block header %}
+<!-- Header Override -->
+<header class="pg-header">
+    <div class="md-header__inner">
+        {% block header_content %}
+            <!-- Add logo and navigation here -->
+            <div class="md-header__title">
+                <a href="{{ config.site_url }}" title="{{ config.site_name }}">
+                    {% if config.theme.logo %}
+                    <img src="{{ config.theme.logo | url }}" alt="Logo" class="md-logo">
+                    {% endif %}
+                    <span class="md-header__title-text">{{ config.site_name }}</span>
+                </a>
+            </div>
+            {% include "partials/nav.html" %}
+        {% endblock %}
+    </div>
+</header>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<!-- Add any custom scripts here -->
+{% endblock %}
+
+{% block footer %}
+<!-- Footer Override -->
+<footer class="md-footer">
+    <div class="md-footer-meta md-typeset">
+        <div class="md-footer-meta__inner md-grid">
+            {% block copyright %}
+            <div class="md-footer-copyright">
+                {% if config.copyright %}
+                <div class="md-footer-copyright__highlight">
+                    {{ config.copyright }}
+                </div>
+                {% endif %}
+            </div>
+            {% endblock %}
+            {% include "partials/social.html" %}
+        </div>
+    </div>
+</footer>
+{% endblock %}

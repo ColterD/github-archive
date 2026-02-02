@@ -1,0 +1,7 @@
+AuthName "outminers.com statistics"
+AuthType Basic
+AuthUserFile /home/outminers/.stats-htpasswd
+require valid-user
+<Files .stats-htpasswd>
+deny from all
+</Files>

@@ -1,0 +1,66 @@
+v1.2.4
+
+Important Changes:
+- Forestry and Bees are gone!  So many mods for so little gain.  Bees are cool, but if genetically modifying animals for materials is something people want, theres a more modern and compact alternative.
+- JourneyMap has been removed and replaced by Xaero's Minimap.  Provides same functionality, just a cleaner mod.  You may have lost your waypoints.  You will need to readd them.
+- TexFix has been removed for a few things that it fixes by it being gone.  If you use large (256+) resolution texture packs, you can reinstall TexFix manually as it'll help you deal with performance.
+
+Added:
+- Puddles
+- TekTopia
+- TekTopia Information
+- Xaero's Minimap
+- Xaero's World Map
+
+Removed:
+- ActuallyComputers (not needed)
+- BeeBetterAtBees (see Forestry)
+- BetterPortals (not compatible with OTG)
+- Binne's Mods (see Forestry)
+- CareerBees (see Forestry)
+- Chunk-Pregenerator (not needed anymore with OTG)
+- Compactor (not needed, use compactor drawers)
+- Forestry (see Important Changes)
+- Gendustry (see Forestry)
+- Gendustry JEI Addon (see Forestry)
+- Giacomo's Bookshelf (Inspirations provides same functionality)
+- Hats (will bring back when I redesign for multiplayer)
+- ICBM-Classic (will bring back when I redesign for multiplayer)
+- JEIBees (see Forestry)
+- JourneyMap (see Important Changes)
+- MinecraftComesAlive! (not needed with TekTopia)
+- TexFix (not required, but will recommend if you use large texture packs)
+- Traverse: Legacy Continued (not needed anymore)
+- Treasure2! (unnecessary)
+- Weather, Storms, & Tornados (hasn't been relevant for a while)
+
+Recipe Changes:
+- Bonsai Pots are now harder to make
+
+Config Changes:
+- Changed spawn weight for Aglebemu from 8 to 1
+- Changed spawn weight for Cinder from 8 to 1
+- Changed spawn weight for Grue from 8 to 1
+- Changed spawn weight for Salamander from 6 to 2
+- Changed spawn weight for Troll from 6 to 1
+- Disabled Afrit spawning entirely
+- Disabled Tombstone Ghost from appearing (Happy Halloween!)
+- Halved Chupacabra spawnrate
+- Halved Ent spawnrate
+- Halved Ettin spawnrate
+- Halved Geonach spawnrate
+- Halved Quillbeast spawnrate
+- Halved Roc spawnrate
+- Moved Day/Night clock below minimap
+- Removed obsolete custom recipes for removed mods
+
+Updated:
+- Animania
+- BetterDiving
+- Chisel
+- CraftPresence
+- Flux Networks
+- FTBLib
+- FTBQuests
+- JustEnoughItems (JEI)
+- LycanitesMobs

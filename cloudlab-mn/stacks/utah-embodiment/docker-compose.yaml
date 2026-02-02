@@ -1,0 +1,23 @@
+# Utah Embodiment Stack - Emily's Sensory Layer
+# Managed by Coolify on emily-core-ut (Tesla P4, 8GB)
+
+services:
+  # Kokoro TTS - Text-to-Speech
+  kokoro-tts:
+    image: kokoro-tts-p4:v0.2.4
+    container_name: kokoro_tts
+    restart: unless-stopped
+    ports:
+      - "8890:8880"
+    devices:
+      - nvidia.com/gpu=all
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+    networks:
+      - sovereign-net
+
+volumes: {}
+
+networks:
+  sovereign-net:
+    external: true

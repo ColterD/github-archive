@@ -1,0 +1,119 @@
+# Minnesota LFM Stack - Emily's Primary Embodiment
+# Managed by Coolify on minnesota-training (RTX 4090, 24GB)
+#
+# Services:
+# - LFM-Audio-1.5B: Speech-to-Speech (primary)
+# - LFM-VL-1.6B: Vision-Language (REFLEX + DEEP modes)
+# - LFM-Thinking-1.2B: Edge reasoning
+#
+# These are the primary, full-quality models. Utah (P4) runs
+# quantized fallbacks for when Minnesota is unavailable.
+#
+# VRAM Budget (24GB):
+# - LFM-Audio: ~4GB
+# - LFM-Vision: ~4GB
+# - LFM-Thinking: ~3GB
+# - Headroom for training: ~13GB
+#
+# Deploy via Coolify or: docker compose -f docker-compose.yaml up -d
+
+services:
+  # LFM-Audio-1.5B: Speech-to-Speech
+  # VRAM: ~4GB
+  lfm-audio:
+    image: vllm/vllm-openai:latest
+    container_name: lfm_audio
+    restart: unless-stopped
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+      - HF_TOKEN=${HF_TOKEN}
+      - TORCH_CUDA_ARCH_LIST=8.9  # RTX 4090
+    command: >
+      --model LiquidAI/lfm-audio-1.5b
+      --port 8892
+      --dtype bfloat16
+      --max-model-len 4096
+      --gpu-memory-utilization 0.15
+    ports:
+      - "8892:8892"
+    volumes:
+      - lfm_models:/root/.cache/huggingface
+    networks:
+      - emily-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8892/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+  # LFM-VL-1.6B: Vision-Language
+  # VRAM: ~4GB
+  # Supports both REFLEX (60fps) and DEEP (5fps) modes
+  lfm-vision:
+    image: vllm/vllm-openai:latest
+    container_name: lfm_vision
+    restart: unless-stopped
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+      - HF_TOKEN=${HF_TOKEN}
+      - TORCH_CUDA_ARCH_LIST=8.9
+      - LFM_VISION_MODE=dual  # 4090 can handle both REFLEX and DEEP
+    command: >
+      --model LiquidAI/lfm-vl-1.6b
+      --port 8893
+      --dtype bfloat16
+      --max-model-len 4096
+      --gpu-memory-utilization 0.15
+    ports:
+      - "8893:8893"
+    volumes:
+      - lfm_models:/root/.cache/huggingface
+    networks:
+      - emily-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8893/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+  # LFM-Thinking-1.2B: Edge Reasoning
+  # VRAM: ~3GB
+  lfm-thinking:
+    image: vllm/vllm-openai:latest
+    container_name: lfm_thinking
+    restart: unless-stopped
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+      - HF_TOKEN=${HF_TOKEN}
+      - TORCH_CUDA_ARCH_LIST=8.9
+    command: >
+      --model LiquidAI/lfm-thinking-1.2b
+      --port 8894
+      --dtype bfloat16
+      --max-model-len 4096
+      --gpu-memory-utilization 0.12
+    ports:
+      - "8894:8894"
+    volumes:
+      - lfm_models:/root/.cache/huggingface
+    networks:
+      - emily-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8894/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+volumes:
+  lfm_models:
+    driver: local
+
+networks:
+  emily-net:
+    external: true

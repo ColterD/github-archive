@@ -1,0 +1,33 @@
+"Phrases"
+{
+	"EmbedTitle"
+	{
+		"en"			"New Report"
+		"lv"			"Jauna Sūdzība/Ieteikums"
+		"ru"			"Новый репорт"
+	}
+	"Reporter"
+	{
+		"en"			"Reporter:"
+		"lv"			"Ziņotājs:"
+		"ru"			"Жалоба от:"
+	}
+	"Map"
+	{
+		"en"			"Map:"
+		"lv"			"Karte:"
+		"ru"			"Карта:"
+	}
+	"Reason"
+	{
+		"en"			"Reason:"
+		"lv"			"Iemesls:"
+		"ru"			"Причина:"
+	}
+	"DirectConnect"
+	{
+		"en"		"Direct Connect:"
+		"lv"		"Pievienoties serverim:"
+		"ru"		"Подключиться:"
+	}
+}

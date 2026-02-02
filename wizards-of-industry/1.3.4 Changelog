@@ -1,0 +1,82 @@
+Partnered with Bisect Hosting!
+Changed biome generation to Biomes O' Plenty w/ Traverse.
+Last time i'm messing with biome generation forever.™
+
+Server is available to play on, but whitelisted.
+Join the Discord to get access!
+
+Known Issues:
+- After a while with lots of chunks being loaded, it'll start lagging periodically and require a complete restart of game.  Not sure why.
+- Known issue with VanillaFix (Mixins), mod name appended with underscore to fix bug issue.  See more: https://github.com/DimensionalDevelopment/VanillaFix/issues/265
+- Swapping Nuclearcraft versions will *probably* break reactors or machines requiring replacement.
+
+Quests:
+- Cleaned up broken quests
+- Cleaned up broken quest rewards
+
+
+Main Menu:
+- Changed main menu background
+
+Config:
+- Disabled Forestry starter book, check Akashic Tome
+- Disabled Mekanism Teleporters, use Stargate
+- Disabled Nuclearcraft Guidebook starter book
+- Disabled Quark Limestone, Marble, and Slate ores from spawning
+- Disabled Simply Jetpacks 2 useless achievement
+- Disabled Stymphalian birds spawning
+- Disabled Totemic Skeletons attacking Buffalos
+- Disabled Totemic Tipi spawning in Villages
+- Dragon (Ice and Fire) damage limited to weak blocks. (cobblestone, dirt, wood, etc)
+- Drastically decreased the spawn rate of Ice and Fire Sea Serpents
+- Enabled AE2 Quartz cutting knives (for cable anchors/facades)
+- Modified Industrial Foregoing Meat Feeder recipe
+- Modified Mekanism machine sounds to be super quieter (but not silent)
+- Modified Vampirism Vampire Hunters to be extremely more rare
+- Modified Vampirism Vampires to be more rare
+- Modified world gen amplication by 1.5x
+
+Swapped:
+- Nuclearcraft for Nuclearcraft Overhauled
+
+Added:
+- Better Ping Display
+- BetterPortals
+- Biomes O' Plenty
+- Electroblob's Wizardry: Twilight Forest Spell Pack
+- Engineer's Decor
+- Gas conduits (EnderIO)
+- Industrial Renewal
+- MineColonies (Tektopia abandoned)
+- NetherEx
+- QMD
+- Stargate Network
+- Stygian End: Biome Expansion
+- Traverse
+
+Removed:
+- Biome Bundle (OTG)
+- Blur (VanillaFix bug)
+- Bonsai Trees (for difficulty, use cloches or naturally)
+- Davinci's Vessels (for server stability)
+- DoubleSlabs (bug)
+- General Layman's Aesthetic Spying Screen (GLASS) (cool but not needed, use portals?)
+- ICBM Classic
+- Open Terrain Generator (change in generation)
+- Just Enough Dimensions (unused)
+- Snad (not needed)
+- Tektopia (abandoned)
+- Tektopia Information (abandoned)
+- Thaumic Traveler's Dream (OTG)
+
+Resource Packs:
+- Blinking Ender Eyes
+
+Updated:
+- Collective
+- MysticalLib
+- OpenSecurity
+- Xaero's World Map
+
+Misc:
+- Cleaned up Config folder

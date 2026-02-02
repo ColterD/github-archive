@@ -1,0 +1,224 @@
+modules:
+  # HTTP 2xx probe
+  http_2xx:
+    prober: http
+    timeout: 5s
+    http:
+      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+      valid_status_codes: []
+      method: GET
+      headers:
+        Host: vhost.example.com
+        Accept-Language: en-US
+        User-Agent: "Blackbox Exporter"
+      no_follow_redirects: false
+      fail_if_ssl: false
+      fail_if_not_ssl: false
+      fail_if_body_matches_regexp: []
+      fail_if_body_not_matches_regexp: []
+      fail_if_header_matches: []
+      fail_if_header_not_matches: []
+      tls_config:
+        insecure_skip_verify: false
+      preferred_ip_protocol: "ip4"
+      ip_protocol_fallback: true
+
+  # HTTP POST probe
+  http_post_2xx:
+    prober: http
+    timeout: 5s
+    http:
+      method: POST
+      headers:
+        Content-Type: application/json
+      body: '{"key": "value"}'
+      valid_status_codes: []
+
+  # HTTPS probe with SSL verification
+  https_2xx:
+    prober: http
+    timeout: 5s
+    http:
+      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+      method: GET
+      tls_config:
+        insecure_skip_verify: false
+      preferred_ip_protocol: "ip4"
+      ip_protocol_fallback: true
+
+  # HTTP probe with basic auth
+  http_basic_auth:
+    prober: http
+    timeout: 5s
+    http:
+      method: GET
+      basic_auth:
+        username: "username"
+        password: "password"
+      valid_status_codes: []
+
+  # TCP probe
+  tcp_connect:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      preferred_ip_protocol: "ip4"
+      ip_protocol_fallback: true
+
+  # ICMP probe
+  icmp:
+    prober: icmp
+    timeout: 5s
+    icmp:
+      preferred_ip_protocol: "ip4"
+      source_ip_address: ""
+
+  # DNS probe
+  dns_udp:
+    prober: dns
+    timeout: 5s
+    dns:
+      query_name: "example.com"
+      query_type: "A"
+      valid_rcodes:
+        - NOERROR
+      validate_answer_rrs:
+        fail_if_matches_regexp: []
+        fail_if_not_matches_regexp: []
+      validate_authority_rrs:
+        fail_if_matches_regexp: []
+        fail_if_not_matches_regexp: []
+      validate_additional_rrs:
+        fail_if_matches_regexp: []
+        fail_if_not_matches_regexp: []
+      preferred_ip_protocol: "ip4"
+      ip_protocol_fallback: true
+
+  # DNS over TCP probe
+  dns_tcp:
+    prober: dns
+    timeout: 5s
+    dns:
+      transport_protocol: "tcp"
+      preferred_ip_protocol: "ip4"
+      query_name: "example.com"
+      query_type: "A"
+
+  # SSL certificate expiry probe
+  ssl_expiry:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      tls: true
+      tls_config:
+        insecure_skip_verify: false
+      preferred_ip_protocol: "ip4"
+      ip_protocol_fallback: true
+
+  # HTTP probe for API endpoints
+  http_api:
+    prober: http
+    timeout: 10s
+    http:
+      method: GET
+      headers:
+        Accept: application/json
+        User-Agent: "Blackbox Exporter API Check"
+      valid_status_codes: [200, 201, 202]
+      fail_if_body_not_matches_regexp:
+        - '"status"\s*:\s*"(ok|healthy|success)"'
+      preferred_ip_protocol: "ip4"
+      ip_protocol_fallback: true
+
+  # HTTP probe for health checks
+  http_health:
+    prober: http
+    timeout: 10s
+    http:
+      method: GET
+      headers:
+        Accept: application/json
+        User-Agent: "Blackbox Exporter Health Check"
+      valid_status_codes: [200]
+      fail_if_body_not_matches_regexp:
+        - '"status"\s*:\s*"healthy"'
+      preferred_ip_protocol: "ip4"
+      ip_protocol_fallback: true
+
+  # HTTP probe for login pages
+  http_login:
+    prober: http
+    timeout: 10s
+    http:
+      method: GET
+      headers:
+        User-Agent: "Blackbox Exporter Login Check"
+      valid_status_codes: [200, 401, 403]
+      fail_if_body_matches_regexp:
+        - "Internal Server Error"
+        - "500"
+        - "502"
+        - "503"
+        - "504"
+      preferred_ip_protocol: "ip4"
+      ip_protocol_fallback: true
+
+  # SMTP probe
+  smtp_starttls:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      query_response:
+        - expect: "^220 "
+        - send: "EHLO prober\r\n"
+        - expect: "^250-STARTTLS"
+        - send: "STARTTLS\r\n"
+        - expect: "^220"
+        - starttls: true
+        - send: "EHLO prober\r\n"
+        - expect: "^250-AUTH"
+        - send: "QUIT\r\n"
+
+  # SSH probe
+  ssh_banner:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      query_response:
+        - expect: "^SSH-2.0-"
+        - send: "SSH-2.0-blackbox-ssh-check\r\n"
+
+  # PostgreSQL probe
+  postgres:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      query_response:
+        - send: "\x00\x00\x00\x17\x00\x03\x00\x00user\x00test\x00\x00"
+        - expect: "^R"
+
+  # Redis probe
+  redis:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      query_response:
+        - send: "*1\r\n$4\r\nping\r\n"
+        - expect: "+PONG"
+
+  # MySQL probe
+  mysql:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      query_response:
+        - expect: "^\x00\x00\x00\x0a"
+
+  # MongoDB probe
+  mongodb:
+    prober: tcp
+    timeout: 5s
+    tcp:
+      query_response:
+        - send: "\x3a\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\xd4\x07\x00\x00\x00\x00\x00\x00test.$cmd\x00\x00\x00\x00\x00\x01\x00\x00\x00\x1b\x00\x00\x00\x01ismaster\x00\x00\x00\x00\x00\x00\x00\xf0\x3f\x00"
+        - expect: "^\x00\x00\x00"

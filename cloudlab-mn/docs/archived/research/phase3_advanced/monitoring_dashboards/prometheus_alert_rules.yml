@@ -1,0 +1,272 @@
+# Prometheus Alert Rules for Emily Sovereign
+#
+# This file defines alerting rules for monitoring:
+# - Application performance
+# - Resource usage
+# - IPFS health
+# - Backup status
+# - DeepFlow metrics
+#
+
+groups:
+  # Group 1: Application Health
+  - name: emily_application
+    interval: 30s
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"5.."}[5m]))
+            /
+            sum(rate(http_requests_total[5m]))
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes"
+          
+      - alert: HighResponseTime
+        expr: |
+          histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 5
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value }}s"
+          
+      - alert: LowRequestRate
+        expr: |
+          sum(rate(http_requests_total[5m])) < 10
+        for: 15m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Low request rate detected"
+          description: "Request rate is {{ $value | humanize }}/s"
+
+  # Group 2: Resource Usage
+  - name: emily_resources
+    interval: 30s
+    rules:
+      - alert: HighCPUUsage
+        expr: |
+          (
+            100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+          ) > 90
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High CPU usage"
+          description: "CPU usage is {{ $value }}% on {{ $labels.instance }}"
+          
+      - alert: CriticalCPUUsage
+        expr: |
+          (
+            100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+          ) > 95
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Critical CPU usage"
+          description: "CPU usage is {{ $value }}% on {{ $labels.instance }}"
+          
+      - alert: HighMemoryUsage
+        expr: |
+          (
+            1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)
+          ) > 0.85
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+          
+      - alert: CriticalMemoryUsage
+        expr: |
+          (
+            1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)
+          ) > 0.95
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Critical memory usage"
+          description: "Memory usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}"
+          
+      - alert: DiskSpaceLow
+        expr: |
+          (
+            1 - (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"})
+          ) > 0.85
+        for: 15m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Low disk space"
+          description: "Disk {{ $labels.device }} on {{ $labels.instance }} is {{ $value | humanizePercentage }} full"
+          
+      - alert: DiskSpaceCritical
+        expr: |
+          (
+            1 - (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"})
+          ) > 0.95
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Critical disk space"
+          description: "Disk {{ $labels.device }} on {{ $labels.instance }} is {{ $value | humanizePercentage }} full"
+
+  # Group 3: IPFS Health
+  - name: emily_ipfs
+    interval: 30s
+    rules:
+      - alert: IPFSRepoSizeHigh
+        expr: |
+          ipfs_repo_size_bytes > 2147483648000  # 2TB
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "IPFS repository size high"
+          description: "IPFS repository is {{ $value | humanize1024 }}B"
+          
+      - alert: IPFSPeerCountLow
+        expr: |
+          ipfs_peers_count < 10
+        for: 30m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Low IPFS peer count"
+          description: "IPFS has only {{ $value }} peers connected"
+          
+      - alert: IPFSBandwidthHigh
+        expr: |
+          rate(ipfs_bandwidth_out_bytes[5m]) > 10485760  # 10MB/s
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High IPFS bandwidth usage"
+          description: "IPFS outbound bandwidth is {{ $value | humanize1024 }}B/s"
+
+  # Group 4: Backup Status
+  - name: emily_backups
+    interval: 1m
+    rules:
+      - alert: BackupFailed
+        expr: |
+          backup_success == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Backup failed"
+          description: "Last backup attempt failed"
+          
+      - alert: BackupNotRunning
+        expr: |
+          time() - backup_last_run_timestamp > 90000  # 25 hours
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Backup not running"
+          description: "Last successful backup was {{ $value | humanizeDuration }} ago"
+          
+      - alert: BackupDurationHigh
+        expr: |
+          backup_duration_seconds > 3600  # 1 hour
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Backup taking too long"
+          description: "Backup has been running for {{ $value | humanizeDuration }}"
+
+  # Group 5: DeepFlow Metrics
+  - name: emily_deepflow
+    interval: 30s
+    rules:
+      - alert: DeepFlowHighLatency
+        expr: |
+          histogram_quantile(0.95, rate(deepflow_trace_duration_seconds_bucket[5m])) > 1
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High DeepFlow latency"
+          description: "95th percentile trace duration is {{ $value }}s"
+          
+      - alert: DeepFlowHighTraceRate
+        expr: |
+          rate(deepflow_traces_total[5m]) > 10000
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "High DeepFlow trace rate"
+          description: "Trace rate is {{ $value }} traces/s"
+
+  # Group 6: Container Health
+  - name: emily_containers
+    interval: 30s
+    rules:
+      - alert: ContainerRestarting
+        expr: |
+          rate(kube_pod_container_status_restarts_total[15m]) > 0
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Container restarting"
+          description: "Container {{ $labels.container }} in {{ $labels.pod }} is restarting"
+          
+      - alert: ContainerOOMKilled
+        expr: |
+          increase(kube_pod_container_status_terminated_reason{reason="OOMKilled"}[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Container OOM killed"
+          description: "Container {{ $labels.container }} was killed due to OOM"
+
+  # Group 7: Workflow Status
+  - name: emily_workflows
+    interval: 1m
+    rules:
+      - alert: PrefectFlowFailed
+        expr: |
+          prefect_flow_runs{status="Failed"} > 0
+        for: 1m
+        labels:
+          severity: warning
+          team: platform
+        annotations

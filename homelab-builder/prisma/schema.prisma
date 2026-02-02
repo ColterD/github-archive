@@ -1,0 +1,424 @@
+// HOMELAB HARDWARE PLATFORM - PRODUCTION SCHEMA
+// PostgreSQL-compatible version for Railway deployment
+// Updated: 2025-01-11 - Fixed for Railway deployment
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================================
+// USER MANAGEMENT & AUTHENTICATION
+// =============================================================================
+
+enum UserRole {
+  USER
+  VERIFIED
+  MODERATOR
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+  DEACTIVATED
+}
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  emailVerified DateTime?
+  name          String?
+  username      String?       @unique
+  avatar        String?
+  bio           String?
+  role          UserRole      @default(USER)
+  status        AccountStatus @default(ACTIVE)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  lastLoginAt   DateTime?
+
+  // Relations
+  accounts          Account[]
+  sessions          Session[]
+  builds            Build[]
+  reviews           Review[]
+  favorites         Favorite[]
+  priceAlerts       PriceAlert[]
+  searches          SearchLog[]
+  buildLikes        BuildLike[]
+  reportsSubmitted  ModerationReport[] @relation("ReportedBy")
+  reportsModerated  ModerationReport[] @relation("ModeratedBy")
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// =============================================================================
+// HARDWARE & MANUFACTURERS
+// =============================================================================
+
+model Manufacturer {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  logoUrl     String?
+  website     String?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  hardwareItems HardwareItem[]
+
+  @@map("manufacturers")
+}
+
+enum HardwareCategory {
+  SERVER
+  STORAGE
+  NETWORKING
+  VIRTUALIZATION
+  COMPONENTS
+  ACCESSORIES
+}
+
+enum HardwareStatus {
+  ACTIVE
+  INACTIVE
+  DISCONTINUED
+  OUT_OF_STOCK
+}
+
+enum HardwareCondition {
+  NEW
+  REFURBISHED
+  USED_EXCELLENT
+  USED_GOOD
+  USED_FAIR
+  FOR_PARTS
+}
+
+model HardwareItem {
+  id                   String            @id @default(cuid())
+  name                 String
+  slug                 String            @unique
+  model                String
+  description          String?
+  images               String?           // JSON array of image URLs
+  category             HardwareCategory
+  subcategory          String?
+  manufacturerId       String
+  manufacturerName     String            // Denormalized for search performance
+  modelNumber          String?           // Specific model number for price tracking
+  specifications       String?           // JSON object with specs
+  features             String?           // JSON array of features
+  condition            HardwareCondition
+  rackUnits            Int?              // Rack units for server hardware
+  currentPrice         Float?
+  msrp                 Float?
+  lowestPrice          Float?            // Lowest price seen
+  highestPrice         Float?            // Highest price seen
+  priceLastUpdated     DateTime?         // When price was last updated
+  priceTrackingEnabled Boolean           @default(false) // Enable price tracking
+  averageRating        Float?            @default(0)
+  reviewCount          Int               @default(0)
+  viewCount            Int               @default(0)
+  favoriteCount        Int               @default(0)
+  status               HardwareStatus    @default(ACTIVE)
+  isActive             Boolean           @default(true) // For filtering active items
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  publishedAt          DateTime?
+
+  // Relations
+  manufacturer   Manufacturer   @relation(fields: [manufacturerId], references: [id])
+  reviews        Review[]
+  favorites      Favorite[]
+  buildItems     BuildItem[]
+  priceHistory   PriceHistory[]
+  priceAlerts    PriceAlert[]
+
+  // Performance Indexes for Query Optimization
+  @@index([category, status, isActive]) // Category filtering with status
+  @@index([manufacturerId, status, isActive]) // Manufacturer filtering with status
+  @@index([condition, status, isActive]) // Condition filtering with status
+  @@index([currentPrice, status, isActive]) // Price sorting with status
+  @@index([averageRating, status, isActive]) // Rating sorting with status
+  @@index([createdAt, status, isActive]) // Date sorting with status
+  @@index([viewCount, status, isActive]) // Trending/popular items
+  @@index([favoriteCount, status, isActive]) // Popular items by favorites
+  @@index([manufacturerName, status, isActive]) // Search by manufacturer name
+  @@index([name, status, isActive]) // Search by name
+  @@index([category, currentPrice, status, isActive]) // Category + price filtering
+  @@index([status, isActive, publishedAt]) // Published items query
+  @@map("hardware_items")
+}
+
+model PriceHistory {
+  id         String   @id @default(cuid())
+  hardwareId String
+  price      Float
+  vendor     String   // eBay, Amazon, Newegg, etc.
+  url        String?
+  timestamp  DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  // Relations
+  hardware HardwareItem @relation(fields: [hardwareId], references: [id], onDelete: Cascade)
+
+  @@index([hardwareId, timestamp])
+  @@index([vendor, timestamp])
+  @@map("price_history")
+}
+
+// =============================================================================
+// BUILDS & REVIEWS
+// =============================================================================
+
+enum BuildDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+model Build {
+  id            String          @id @default(cuid())
+  name          String
+  slug          String          @unique
+  description   String?
+  images        String?         // JSON array of image URLs
+  category      String?
+  tags          String?         // JSON array of tags
+  difficulty    BuildDifficulty?
+  totalPrice    Float?
+  totalCost     Float?          // Keep for backward compatibility
+  averageRating Float?          @default(0)
+  isPublic      Boolean         @default(true)
+  isFeatured    Boolean         @default(false)
+  isDeleted     Boolean         @default(false)
+  isHidden      Boolean         @default(false)
+  viewCount     Int             @default(0)
+  likeCount     Int             @default(0)
+  userId        String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  // Relations
+  user            User                @relation(fields: [userId], references: [id])
+  buildItems      BuildItem[]         // Renamed from items
+  reviews         Review[]            @relation("BuildReviews")
+  likes           BuildLike[]
+  moderationReports ModerationReport[] @relation("BuildReports")
+
+  @@index([category, isDeleted, isHidden])
+  @@index([userId, isDeleted])
+  @@index([averageRating, isDeleted, isHidden])
+  @@index([viewCount, isDeleted, isHidden])
+  @@index([likeCount, isDeleted, isHidden])
+  @@map("builds")
+}
+
+model BuildItem {
+  id             String @id @default(cuid())
+  buildId        String
+  hardwareItemId String
+  quantity       Int    @default(1)
+  notes          String?
+
+  // Relations
+  build        Build        @relation(fields: [buildId], references: [id], onDelete: Cascade)
+  hardwareItem HardwareItem @relation(fields: [hardwareItemId], references: [id])
+
+  @@unique([buildId, hardwareItemId])
+  @@map("build_items")
+}
+
+model Review {
+  id             String   @id @default(cuid())
+  rating         Int      // 1-5 stars
+  title          String?
+  content        String
+  pros           String?  // JSON array
+  cons           String?  // JSON array
+  wouldRecommend Boolean? // Would recommend this item
+  verified       Boolean  @default(false)
+  helpful        Int      @default(0)
+  isDeleted      Boolean  @default(false)
+  isHidden       Boolean  @default(false)
+  userId         String
+  hardwareItemId String?
+  buildId        String?  // For build reviews
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  user              User                @relation(fields: [userId], references: [id])
+  hardwareItem      HardwareItem?       @relation(fields: [hardwareItemId], references: [id], onDelete: Cascade)
+  build             Build?              @relation("BuildReviews", fields: [buildId], references: [id], onDelete: Cascade)
+  moderationReports ModerationReport[]  @relation("ReviewReports")
+
+  @@index([hardwareItemId, isDeleted, isHidden])
+  @@index([buildId, isDeleted, isHidden])
+  @@index([userId, isDeleted])
+  @@index([rating, isDeleted, isHidden])
+  @@map("reviews")
+}
+
+// =============================================================================
+// USER INTERACTIONS
+// =============================================================================
+
+model Favorite {
+  id             String   @id @default(cuid())
+  userId         String
+  hardwareItemId String
+  createdAt      DateTime @default(now())
+
+  // Relations
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hardwareItem HardwareItem @relation(fields: [hardwareItemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, hardwareItemId])
+  @@map("favorites")
+}
+
+model PriceAlert {
+  id             String    @id @default(cuid())
+  userId         String
+  hardwareId     String
+  targetPrice    Float
+  isActive       Boolean   @default(true)
+  lastTriggered  DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Relations
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hardware HardwareItem @relation(fields: [hardwareId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, hardwareId])
+  @@index([hardwareId, isActive])
+  @@index([userId, isActive])
+  @@map("price_alerts")
+}
+
+model BuildLike {
+  id      String   @id @default(cuid())
+  userId  String
+  buildId String
+  createdAt DateTime @default(now())
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  build Build @relation(fields: [buildId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, buildId])
+  @@map("build_likes")
+}
+
+// =============================================================================
+// MODERATION SYSTEM
+// =============================================================================
+
+enum ModerationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  RESOLVED
+}
+
+enum ReportType {
+  REVIEW
+  BUILD
+}
+
+model ModerationReport {
+  id            String           @id @default(cuid())
+  type          ReportType
+  reason        String
+  description   String?
+  status        ModerationStatus @default(PENDING)
+  moderatorNotes String?
+  reporterId    String
+  moderatorId   String?
+  reviewId      String?
+  buildId       String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  resolvedAt    DateTime?
+
+  // Relations
+  reporter  User    @relation("ReportedBy", fields: [reporterId], references: [id])
+  moderator User?   @relation("ModeratedBy", fields: [moderatorId], references: [id])
+  review    Review? @relation("ReviewReports", fields: [reviewId], references: [id], onDelete: Cascade)
+  build     Build?  @relation("BuildReports", fields: [buildId], references: [id], onDelete: Cascade)
+
+  @@index([status, type])
+  @@index([reporterId])
+  @@index([moderatorId])
+  @@map("moderation_reports")
+}
+
+// =============================================================================
+// ANALYTICS & SEARCH
+// =============================================================================
+
+model SearchLog {
+  id        String   @id @default(cuid())
+  query     String
+  filters   String?  // JSON object with applied filters
+  results   Int      @default(0)
+  userId    String?
+  sessionId String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("search_logs")
+}

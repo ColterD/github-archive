@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  srbminer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: srbminer-multi
+    restart: unless-stopped
+    ports:
+      - "7000:7000"  # API port
+      - "8080:8080"  # Web UI port
+    volumes:
+      - ./config:/srbminer/config
+      - ./logs:/var/log
+      - ./backups:/srbminer/backups
+    environment:
+      # Web UI settings - enabled by default
+      - WEB_UI=true
+      - WEB_UI_PORT=8080
+      - API_PORT=7000
+      - DARK_MODE=true
+      - REFRESH_INTERVAL=30
+      - LOG_LINES=100
+      # Update settings
+      - UPDATE_CHECK_INTERVAL=4  # Check for updates every 4 hours
+    
+    # GPU configuration is handled automatically through the web UI setup
+    # For advanced users who want to specify hardware directly, uncomment ONE of these sections:
+    
+    # # NVIDIA GPU Configuration
+    # runtime: nvidia
+    # environment:
+    #   - NVIDIA_VISIBLE_DEVICES=all
+    #   - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    
+    # # AMD GPU Configuration
+    # devices:
+    #   - /dev/kfd:/dev/kfd
+    #   - /dev/dri:/dev/dri
+    # group_add:
+    #   - video
+    
+    # # Intel GPU Configuration
+    # devices:
+    #   - /dev/dri:/dev/dri
+    # group_add:
+    #   - video

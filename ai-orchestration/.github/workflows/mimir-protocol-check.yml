@@ -1,0 +1,77 @@
+name: Mimir Protocol Compliance Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - '**/*.md'
+      - '**/AGENTS.md'
+      - '**/.agents/**'
+      - '**/copilot-instructions.md'
+
+jobs:
+  mimir-protocol-check:
+    name: Verify Mimir Query Protocol
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Check for Mimir Protocol Violations
+        run: |
+          echo "🔍 Scanning PR for Mimir protocol compliance..."
+          
+          # Get changed files in PR
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          
+          # Check for AI-related files
+          AI_FILES=$(echo "$CHANGED_FILES" | grep -E '(AGENTS\.md|copilot-instructions\.md|\.agents/)' || true)
+          
+          if [ -n "$AI_FILES" ]; then
+            echo "⚠️  AI instruction files modified:"
+            echo "$AI_FILES"
+            echo ""
+            echo "📋 MANUAL REVIEW REQUIRED:"
+            echo "  1. Did conversations include Mimir queries at START?"
+            echo "  2. Were 3 parallel queries executed?"
+            echo "     - mcp_mimir_vector_search_nodes"
+            echo "     - mcp_mimir_memory_node (type=memory)"
+            echo "     - mcp_mimir_memory_node (type=concept)"
+            echo ""
+            echo "✅ Mark this check as passed if protocol followed"
+          else
+            echo "✅ No AI instruction files modified, skipping check"
+          fi
+      
+      - name: Check for Protocol Documentation
+        run: |
+          echo "📖 Verifying protocol documentation exists..."
+          
+          if [ ! -f ".github/copilot-instructions.md" ]; then
+            echo "❌ Missing copilot-instructions.md"
+            exit 1
+          fi
+          
+          if ! grep -q "MANDATORY.*Mimir" .github/copilot-instructions.md; then
+            echo "❌ copilot-instructions.md missing MANDATORY Mimir protocol"
+            exit 1
+          fi
+          
+          echo "✅ Protocol documentation verified"
+      
+      - name: Summary
+        run: |
+          echo "═══════════════════════════════════════════════════════════"
+          echo "MIMIR PROTOCOL COMPLIANCE SUMMARY"
+          echo "═══════════════════════════════════════════════════════════"
+          echo "✅ Documentation present"
+          echo "⚠️  Manual verification: Query protocol followed in conversations"
+          echo ""
+          echo "Reviewer checklist:"
+          echo "  [ ] Conversations show Mimir queries at START"
+          echo "  [ ] Three parallel queries executed"
+          echo "  [ ] Cross-project context retrieved"
+          echo "═══════════════════════════════════════════════════════════"

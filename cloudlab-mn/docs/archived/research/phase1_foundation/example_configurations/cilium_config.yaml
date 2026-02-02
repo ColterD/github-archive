@@ -1,0 +1,184 @@
+# Cilium Configuration for Emily Sovereign V4
+# Platform: CloudLab c220g5 (Standalone mode)
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cilium-config
+  namespace: kube-system
+data:
+  # Cilium Agent Configuration
+  cilium: |
+    # Enable Hubble observability
+    hubble:
+      enabled: true
+      
+      # Flow recording
+      listen-address: ":4244"
+      socket-path: /var/run/cilium/hubble.sock
+      
+      # Metrics (Prometheus)
+      metrics:
+        enabled: true
+        metrics-server: ":9090"
+      
+      # UI (Grafana)
+      ui:
+        enabled: true
+        labels:
+          app.kubernetes.io/name: hubble
+      
+      # Relay (multi-cluster)
+      relay:
+        enabled: false  # Single node, no relay needed
+    
+    # eBPF Datapath
+    bpf:
+      # Map sizes (tuned for CloudLab)
+      # Based on REVIEW_AGENT_1_INFRASTRUCTURE.md recommendations
+      preallocate-bpf-maps: false  # Dynamically allocate
+      
+      # Connection tracking
+      ct-timeout-udp: 30s
+      ct-timeout-tcp-established: 86400s  # 24 hours
+      
+      # Policy enforcement
+      policy-enforcement: default
+    
+    # Monitor API
+    monitor:
+      enabled: true
+      aggregation-level: pod
+      
+      # Rate limiting (prevent log spam)
+      rate-limit:
+        flows: 100  # flows/sec
+        trace-events: 1000  # events/sec
+    
+    # Tunnel mode (disabled for better performance)
+    tunnel: disabled
+    
+    # Native routing (bypass VXLAN)
+    native-routing-cidr: 10.0.0.0/16
+    
+    # IPAM mode
+    ipam:
+      mode: kubernetes
+    
+    # Auto-direct node routes (faster pod-to-pod)
+    auto-direct-node-routes: true
+    
+    # Endpoint routing
+    endpoint-routes: true
+
+---
+# eBPF TracingPolicy for Zenoh Traffic Monitoring
+# Aligns with Emily Sovereign architecture (Zenoh pub/sub on port 7447)
+
+apiVersion: cilium.io/v1alpha1
+kind: TracingPolicy
+metadata:
+  name: zenoh-traffic-monitoring
+  namespace: default
+spec:
+  # Monitor Zenoh TCP traffic
+  kprobes:
+    - call: "tcp_sendmsg"
+      selectors:
+        - matchArgs:
+            - index: 0
+              operator: "Equal"
+              values: ["7447"]  # Zenoh TCP port
+      returnArgs:
+        - index: 0  # sk_buff pointer
+        - index: 2  # destination port
+      filter:
+        matchPorts:
+          - 7447
+    
+    - call: "tcp_recvmsg"
+      selectors:
+        - matchArgs:
+            - index: 0
+              operator: "Equal"
+              values: ["7447"]
+      returnArgs:
+        - index: 0  # sk_buff pointer
+        - index: 2  # destination port
+      filter:
+        matchPorts:
+          - 7447
+  
+  # Monitor Zenoh UDP traffic (QUIC support)
+  kprobes:
+    - call: "udp_sendmsg"
+      selectors:
+        - matchArgs:
+            - index: 0
+              operator: "Equal"
+              values: ["7447"]
+      returnArgs:
+        - index: 0
+        - index: 2
+      filter:
+        matchPorts:
+          - 7447
+    
+    - call: "udp_recvmsg"
+      selectors:
+        - matchArgs:
+            - index: 0
+              operator: "Equal"
+              values: ["7447"]
+      returnArgs:
+        - index: 0
+        - index: 2
+      filter:
+        matchPorts:
+          - 7447
+  
+  # Filter by process (Zenoh daemon)
+  matchNamespaces:
+    - namespace: default
+  
+  matchPIDs:
+    - execPath: ".*/zenohd"  # Zenoh daemon process
+  
+  # Output format
+  formats:
+    - event: "trace"
+      format: "Zenoh: {} {} -> {}:{} ({})"
+        .arg1 = @timestamp
+        .arg2 = .comm  # Process name
+        .arg3 = .saddr  # Source address
+        .arg4 = .daddr  # Destination address
+        .arg5 = .dport  # Destination port
+        .arg6 = .retval  # Return value
+  
+  # Rate limiting (100 traces/second max)
+  rateLimit:
+    maxEventsPerSec: 100
+
+---
+# Hubble Flow Configuration
+
+apiVersion: cilium.io/v1alpha1
+kind: HubbleFlow
+metadata:
+  name: hubble-flows
+  namespace: kube-system
+spec:
+  # Flow filters
+  filters:
+    # Monitor all flows
+    - namespace:
+        name: default
+      
+      # Exclude health checks
+      - labelSelector: "app.kubernetes.io/name!=health-check"
+  
+  # Export to Prometheus
+  prometheus:
+    enabled: true
+    listen-address: ":9777"
+

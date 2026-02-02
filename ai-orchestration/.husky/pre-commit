@@ -1,0 +1,30 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# ═══════════════════════════════════════════════════════════════════════
+# MIMIR PROTOCOL ENFORCEMENT - PRE-COMMIT HOOK
+# ═══════════════════════════════════════════════════════════════════════
+# Validates that Copilot conversations include Mimir queries
+# Blocks commits if protocol violations detected
+# ═══════════════════════════════════════════════════════════════════════
+
+echo "🔍 Checking Mimir Protocol Compliance..."
+
+# Check for conversation logs or AI-generated files with protocol violations
+if git diff --cached --name-only | grep -E '(\.md|\.txt|AGENTS\.md|copilot-instructions\.md)'; then
+  echo "✅ Files being committed may contain AI instructions"
+  echo "⚠️  Manual verification required: Did you query Mimir at the START?"
+  echo "   Required queries:"
+  echo "   1. mcp_mimir_vector_search_nodes (with user keywords)"
+  echo "   2. mcp_mimir_memory_node (operation=query, type=memory)"
+  echo "   3. mcp_mimir_memory_node (operation=query, type=concept)"
+  echo ""
+  echo "Press ENTER to confirm compliance, or Ctrl+C to abort"
+  read -r confirmation
+fi
+
+# Run normal pre-commit checks
+npm run lint --if-present
+npm run format:check --if-present
+
+echo "✅ Pre-commit checks passed"

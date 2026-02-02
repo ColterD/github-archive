@@ -1,0 +1,360 @@
+# 🤖 Claude Code AI Environment Setup Guide
+
+This guide will walk you through setting up your `.env.local` file with all the necessary API keys and tokens for Claude Code AI to autonomously manage your homelab infrastructure.
+
+## 🎯 What This Enables
+
+With these environment variables configured, Claude Code AI will be able to:
+
+- **Deploy applications** automatically to Railway
+- **Manage GitHub repositories** and create pull requests
+- **Send emails** for notifications and user management
+- **Track errors** and monitor application health
+- **Cache data** for improved performance
+- **Search content** with full-text search capabilities
+- **Secure your application** with proper authentication
+
+## 📋 Required Environment Variables
+
+### 🔑 Core Authentication (REQUIRED)
+
+#### `GITHUB_TOKEN`
+
+**What it does:** Allows Claude Code AI to interact with GitHub on your behalf
+**Permissions needed:**
+
+- `repo` - Access to repositories
+- `workflow` - Manage GitHub Actions
+- `write:packages` - Upload packages
+- `admin:repo_hook` - Manage webhooks
+- `user:email` - Access email addresses
+
+**How to get it:**
+
+1. Go to [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens)
+2. Click "Generate new token (classic)"
+3. Set expiration to 90 days (or "No expiration" for permanent use)
+4. Select the scopes listed above
+5. Click "Generate token"
+6. **Copy the token immediately** (you won't see it again!)
+
+**Format:** `ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+
+#### `RAILWAY_TOKEN`
+
+**What it does:** Allows Claude Code AI to deploy and manage applications on Railway
+**Permissions:** Full access to your Railway account
+
+**How to get it:**
+
+1. Go to [Railway → Account Settings → Tokens](https://railway.app/account/tokens)
+2. Click "New Token"
+3. Give it a name like "Claude Code AI"
+4. Click "Create Token"
+5. Copy the token immediately
+
+**Format:** `xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx` (32+ characters)
+
+#### `DATABASE_URL`
+
+**What it does:** Connection string for your PostgreSQL database
+**Required for:** All data persistence in your application
+
+**Options:**
+
+**Option 1: Railway PostgreSQL (Recommended)**
+
+1. Go to your Railway dashboard
+2. Create a new project or use existing
+3. Click "New Service" → "Database" → "Add PostgreSQL"
+4. Go to the PostgreSQL service → "Variables" tab
+5. Copy the `DATABASE_URL` value
+
+**Option 2: Neon (Great free tier)**
+
+1. Go to [neon.tech](https://neon.tech) and sign up
+2. Create a new project
+3. Go to "Connection Details"
+4. Copy the connection string
+
+**Option 3: Supabase**
+
+1. Go to [supabase.com](https://supabase.com) and sign up
+2. Create a new project
+3. Go to Settings → Database
+4. Copy the connection string
+
+**Format:** `postgresql://username:password@host:port/database`
+
+### 🚀 External Services (RECOMMENDED)
+
+#### `SENTRY_DSN`
+
+**What it does:** Error tracking and performance monitoring
+**Why you need it:** See all errors and performance issues in real-time
+
+**How to get it:**
+
+1. Go to [sentry.io](https://sentry.io) and create an account (free tier available)
+2. Create a new project
+3. Select "SvelteKit" as the platform
+4. Copy the DSN from the project settings
+
+**Format:** `https://examplePublicKey@o0.ingest.sentry.io/0`
+
+#### `RESEND_API_KEY`
+
+**What it does:** Email delivery service for notifications and user management
+**Why you need it:** Send transactional emails, password resets, notifications
+
+**How to get it:**
+
+1. Go to [resend.com](https://resend.com) and create an account
+2. Go to "API Keys" section
+3. Create a new API key
+4. Copy the API key
+
+**Format:** `re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+
+#### `REDIS_URL`
+
+**What it does:** Caching and session storage for improved performance
+**Why you need it:** Faster response times and better user experience
+
+**Options:**
+
+**Option 1: Railway Redis**
+
+1. Go to your Railway project
+2. Click "New Service" → "Database" → "Add Redis"
+3. Go to the Redis service → "Variables" tab
+4. Copy the `REDIS_URL` value
+
+**Option 2: Upstash Redis (Great free tier)**
+
+1. Go to [upstash.com](https://upstash.com) and create an account
+2. Create a new Redis database
+3. Copy the Redis URL from the database details
+
+**Option 3: Local Redis (Development only)**
+
+- Install Redis locally
+- Use: `redis://localhost:6379`
+
+**Format:** `redis://username:password@host:port` or `redis://host:port`
+
+### 🔍 Search & Analytics (OPTIONAL)
+
+#### `MEILISEARCH_HOST` & `MEILISEARCH_MASTER_KEY`
+
+**What it does:** Full-text search capabilities for your application
+**Why you need it:** Fast, typo-tolerant search functionality
+
+**How to get it:**
+
+1. Deploy Meilisearch to Railway or use [Meilisearch Cloud](https://meilisearch.com/cloud)
+2. Get the host URL and master key from your deployment
+
+**Format:**
+
+- `MEILISEARCH_HOST`: `https://your-meilisearch-instance.railway.app`
+- `MEILISEARCH_MASTER_KEY`: `your-master-key-here`
+
+### 🔐 Security (AUTO-GENERATED)
+
+These are automatically generated by the setup script:
+
+- `SESSION_SECRET` - For session management
+- `JWT_SECRET` - For JWT token signing
+- `ENCRYPTION_KEY` - For encrypting sensitive data
+
+## 🛠️ Setup Methods
+
+### Method 1: Interactive Setup Script (Recommended)
+
+```bash
+chmod +x claude-setup.sh
+./claude-setup.sh
+```
+
+This script will:
+
+- Guide you through creating each token
+- Test each token to ensure it works
+- Create your `.env.local` file automatically
+- Set up all necessary CLI tools
+- Validate your entire setup
+
+### Method 2: Manual Setup
+
+1. Create `.env.local` file in your project root
+2. Add all the variables from the template below
+3. Fill in your actual values
+
+```env
+# =============================================================================
+# CLAUDE CODE AI - AUTONOMOUS DEVELOPMENT ENVIRONMENT CONFIGURATION
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# AUTHENTICATION TOKENS (REQUIRED FOR AUTONOMOUS OPERATION)
+# -----------------------------------------------------------------------------
+
+# GitHub Personal Access Token
+GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Railway API Token
+RAILWAY_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# -----------------------------------------------------------------------------
+# DATABASE CONFIGURATION
+# -----------------------------------------------------------------------------
+
+# PostgreSQL connection string
+DATABASE_URL="postgresql://username:password@host:port/database"
+
+# -----------------------------------------------------------------------------
+# EXTERNAL SERVICES
+# -----------------------------------------------------------------------------
+
+# Resend API Key for email functionality
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Meilisearch configuration for search functionality
+MEILISEARCH_HOST=https://your-meilisearch-instance.railway.app
+MEILISEARCH_MASTER_KEY=your-master-key-here
+
+# Redis connection for caching and sessions
+REDIS_URL=redis://username:password@host:port
+
+# -----------------------------------------------------------------------------
+# MONITORING & ERROR TRACKING
+# -----------------------------------------------------------------------------
+
+# Sentry DSN for error tracking and performance monitoring
+SENTRY_DSN=https://examplePublicKey@o0.ingest.sentry.io/0
+
+# -----------------------------------------------------------------------------
+# DEVELOPMENT CONFIGURATION
+# -----------------------------------------------------------------------------
+
+# Environment identifier
+NODE_ENV=development
+
+# Application URLs for different environments
+DEV_URL=http://localhost:5173
+STAGING_URL=https://your-staging-app.railway.app
+PRODUCTION_URL=https://your-production-app.railway.app
+
+# -----------------------------------------------------------------------------
+# SECURITY CONFIGURATION
+# -----------------------------------------------------------------------------
+
+# Session secret for authentication (auto-generated)
+SESSION_SECRET=your-session-secret-here
+
+# JWT secret for token signing (auto-generated)
+JWT_SECRET=your-jwt-secret-here
+
+# Encryption key for sensitive data (auto-generated)
+ENCRYPTION_KEY=your-encryption-key-here
+
+# -----------------------------------------------------------------------------
+# CLAUDE CODE AI SPECIFIC
+# -----------------------------------------------------------------------------
+
+# Enable autonomous features
+CLAUDE_AUTONOMOUS_MODE=true
+CLAUDE_AUTO_DEPLOY=true
+CLAUDE_AUTO_CLEANUP=true
+CLAUDE_PREDICTIVE_DEVELOPMENT=true
+```
+
+## 🧪 Testing Your Setup
+
+After creating your `.env.local` file, test it:
+
+```bash
+# Test all configurations
+pnpm run validate
+
+# Test specific services
+pnpm run health
+
+# Test database connection
+npx prisma db execute --stdin <<< "SELECT 1;"
+
+# Test GitHub authentication
+gh auth status
+
+# Test Railway authentication
+railway whoami
+```
+
+## 🔒 Security Best Practices
+
+1. **Never commit `.env.local`** to version control
+2. **Use different tokens** for different environments
+3. **Rotate tokens regularly** (every 90 days)
+4. **Use minimal permissions** for each token
+5. **Monitor token usage** in each service's dashboard
+
+## 🚨 Troubleshooting
+
+### Common Issues:
+
+**Token format errors:**
+
+- GitHub tokens must start with `ghp_` or `github_pat_`
+- Railway tokens are 32+ alphanumeric characters
+- Resend keys start with `re_`
+
+**Database connection fails:**
+
+- Check your connection string format
+- Ensure the database exists and is accessible
+- Verify your IP is whitelisted (for cloud databases)
+
+**Authentication errors:**
+
+- Verify token permissions/scopes
+- Check if tokens have expired
+- Ensure CLI tools are properly installed
+
+**Service unavailable:**
+
+- Check service status pages
+- Verify your account limits haven't been exceeded
+- Ensure proper network connectivity
+
+### Getting Help:
+
+1. Check the service status pages
+2. Review the setup script output for errors
+3. Verify all tokens are correctly formatted
+4. Test each service individually
+
+## 🎯 Next Steps
+
+Once your environment is set up:
+
+1. **Start the development server**: `pnpm run dev`
+2. **Run tests**: `pnpm run test`
+3. **Deploy to staging**: Railway will auto-deploy from GitHub
+4. **Monitor with Sentry**: Check your error dashboard
+5. **Begin autonomous development**: Claude Code AI is ready!
+
+## 🤖 Claude Code AI Capabilities
+
+With this setup complete, Claude Code AI can:
+
+- **🚀 Deploy applications** automatically to Railway
+- **🔧 Manage infrastructure** and environment variables
+- **📧 Send notifications** about deployments and issues
+- **🐛 Monitor and fix errors** using Sentry data
+- **🔍 Implement search features** with Meilisearch
+- **⚡ Optimize performance** with Redis caching
+- **🔒 Secure your application** with proper authentication
+- **📊 Provide insights** on usage and performance
+
+This creates a complete autonomous development ecosystem where Claude Code AI can manage your entire homelab infrastructure!

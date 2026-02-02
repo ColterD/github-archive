@@ -1,0 +1,10 @@
+# .cloudflare/pages.toml
+# Configuration for Cloudflare Pages
+
+[build]
+command = "./build.sh"
+output_directory = "docs-minimal/.vitepress/dist"
+base_directory = ""
+
+[build.environment]
+NODE_VERSION = "20"

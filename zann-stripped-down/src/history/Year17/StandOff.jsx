@@ -1,0 +1,17 @@
+const StandOff = () => {
+    return ( 
+        <div>
+            <h4 className="entrytitle" >Stand Off</h4>
+            <text className="hentry">
+            On Day 185, Defiler infiltrators of Zann Consortium gained favorable information while posing as scouts for mercenary transport organization Ever Light. Ever Light was planning on locating the system of Drup for their client Anax Noctru. Soon after receiving the data, Zann agents determined the system did exist once they veered off course while following the mercenaries. The Zann agent, along with a pirate of Dread, then went on to mislead the leader of Ever Light, Kray Voh, into believing that the system of Drup was not found and that one much further away had been located.<br/><br/>
+            The operation to invade the system of Drup would prove fruitful as Zann Defilers, space expeditionary forces, and rescue operators flooded into that area of space. They would soon be met by Rift Alliance [RA] troops, in what would later become a standoff between Zann insurgents and Rift Alliance members in which RA would frequently contradict itself.<br/><br/>
+            Initially, the Alliance attempted to threaten Zann with force through their spokesperson of Krath Dynasty, Lord Jeraq Moridin; however, soon after would try peace despite secretly attempting to attack Zann ground units. Following both incidents, Zann would observe Rift officials frequently contradicting their stance about why the actions had taken place from their business partners. Lord Solarius Masha soon after joined with Jeraq officially in what he stated was an attempt to gain Zann as allies.<br/><br/>
+            Soon after the arrival of Lord Masha, Lord Jeraq Moridin was mysteriously reported deceased by both Krath and Rift officials not long after he changed his stance advocating for peace with the rival government, in which his state had a long-standing feud with that had ended in Dynasty losses on several occasions in the past. No official identification was given to Jeraq's body, and rumors continued to circulate about who was responsible, or if Moridin was even genuinely deceased.<br/><br/>
+            After several days of aggressive posturing and occasionally hostile negotiations from both organizations, including more failed attempts from RA to provoke Zann agents strike first, armed soldiers and pilots of Rift retreated from the system of Drup allowing Zann to colonize the system without further incident. This event removed all potential for future possibilities of peace with the umbrella which RA had claimed it wanted.<br/><br/>
+            Following successful colonization Lord Ximaro Jix, along with Greyson Abrams and other high command of Zann, issued transmissions to the leaders of the RA council that their poor communication and lack of trust for one another was evident by their inability to coordinate an offensive to provide a significant resistance against Zann, or even coordinate a successful attack. Ximaro went on to state RA lies of friendship and attempts to deceive the rogue state of Zann would not go unpunished if RA organizations tried such actions in the future.
+            </text>
+        </div>
+     );
+}
+ 
+export default StandOff;

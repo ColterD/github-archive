@@ -1,0 +1,238 @@
+name: Standards Enforcement & Quality Gates
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20.x'
+  MIN_COVERAGE: 80
+
+jobs:
+  # Job 1: Code Quality Checks (parallel)
+  lint-and-format:
+    name: Lint & Format Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./mimir
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: './mimir/package-lock.json'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run ESLint
+        run: npm run lint
+        continue-on-error: false
+      
+      - name: Check Prettier formatting
+        run: npx prettier --check "src/**/*.{ts,tsx,js,jsx,json,md}"
+      
+      - name: Upload lint results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-results
+          path: ./mimir/lint-results.json
+          retention-days: 7
+
+  # Job 2: Unit Tests with Coverage (parallel)
+  test:
+    name: Unit Tests & Coverage
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./mimir
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: './mimir/package-lock.json'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests with coverage
+        run: npm test -- --coverage --coverageReporters=text --coverageReporters=lcov
+      
+      - name: Check coverage threshold
+        run: |
+          coverage=$(node -e "const cov = require('./coverage/coverage-summary.json'); console.log(Math.floor(cov.total.lines.pct))")
+          if [ "$coverage" -lt "${{ env.MIN_COVERAGE }}" ]; then
+            echo "❌ Coverage $coverage% is below threshold ${{ env.MIN_COVERAGE }}%"
+            exit 1
+          fi
+          echo "✅ Coverage $coverage% meets threshold ${{ env.MIN_COVERAGE }}%"
+      
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: ./mimir/coverage/
+          retention-days: 30
+
+  # Job 3: Security Scan (parallel)
+  security:
+    name: Security Scan (Snyk)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./mimir
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: './mimir/package-lock.json'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run Snyk SCA scan
+        run: |
+          if ! npx snyk test --severity-threshold=high; then
+            echo "❌ High or critical vulnerabilities found in dependencies"
+            exit 1
+          fi
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: false
+      
+      - name: Run Snyk Code scan
+        run: |
+          if ! npx snyk code test --severity-threshold=high; then
+            echo "❌ High or critical security issues found in code"
+            exit 1
+          fi
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: false
+
+  # Job 4: Build Verification (parallel)
+  build:
+    name: Build Verification
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./mimir
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: './mimir/package-lock.json'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: TypeScript compilation
+        run: npm run build
+      
+      - name: Check build artifacts
+        run: |
+          if [ ! -d "build" ]; then
+            echo "❌ Build directory not created"
+            exit 1
+          fi
+          echo "✅ Build successful"
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: ./mimir/build/
+          retention-days: 7
+
+  # Job 5: Accessibility Check (for frontend code)
+  accessibility:
+    name: Accessibility Check
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.modified, 'src/') || github.event_name == 'pull_request'
+    defaults:
+      run:
+        working-directory: ./mimir
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: './mimir/package-lock.json'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run accessibility checks
+        run: |
+          # Install axe-core if not already in dependencies
+          if ! npm list @axe-core/cli > /dev/null 2>&1; then
+            npm install --no-save @axe-core/cli
+          fi
+          # Check for common accessibility issues in built files
+          echo "ℹ️  Running accessibility audit..."
+          npx axe --dir build --exit || echo "⚠️  Accessibility issues detected"
+
+  # Job 6: Quality Gate Summary (runs after all parallel jobs)
+  quality-gate:
+    name: Quality Gate Summary
+    runs-on: ubuntu-latest
+    needs: [lint-and-format, test, security, build]
+    if: always()
+    
+    steps:
+      - name: Check all jobs passed
+        run: |
+          if [ "${{ needs.lint-and-format.result }}" != "success" ] || \
+             [ "${{ needs.test.result }}" != "success" ] || \
+             [ "${{ needs.security.result }}" != "success" ] || \
+             [ "${{ needs.build.result }}" != "success" ]; then
+            echo "❌ Quality gate FAILED"
+            echo "Lint: ${{ needs.lint-and-format.result }}"
+            echo "Test: ${{ needs.test.result }}"
+            echo "Security: ${{ needs.security.result }}"
+            echo "Build: ${{ needs.build.result }}"
+            exit 1
+          fi
+          echo "✅ All quality gates PASSED"
+      
+      - name: Post summary
+        run: |
+          echo "## Quality Gate Results" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Linting & Formatting: ${{ needs.lint-and-format.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Tests & Coverage (≥${{ env.MIN_COVERAGE }}%): ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Security Scan: ${{ needs.security.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Build: ${{ needs.build.result }}" >> $GITHUB_STEP_SUMMARY

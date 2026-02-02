@@ -1,0 +1,30 @@
+Conduct comprehensive security analysis using Snyk and manual review.
+
+**Scope:**
+- Run Snyk code scan on all source files (EXCLUDE /reorganization/)
+- Run Snyk SCA scan on dependencies
+- Review docker-compose.yml for security issues
+- Check for exposed secrets/credentials
+- Analyze authentication/authorization patterns
+
+**Snyk Configuration:**
+Add to .snyk file:
+```
+exclude:
+  - Github/reorganization/**
+```
+
+**Tasks:**
+1. Run: snyk code test --exclude=Github/reorganization/
+2. Run: snyk test (dependency scan)
+3. Review environment variables and secrets management
+4. Check for hardcoded credentials
+5. Analyze Docker security (ports, volumes, networks)
+
+**Deliverables:**
+1. Snyk scan reports
+2. Security vulnerability summary
+3. Risk assessment with severity levels
+4. Remediation recommendations
+
+CRITICAL: Exclude Github/reorganization/ from ALL scans

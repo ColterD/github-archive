@@ -1,0 +1,291 @@
+{
+  "dashboard": {
+    "title": "Emily Sovereign Advanced Monitoring",
+    "uid": "emily-advanced",
+    "tags": [
+      "emily",
+      "sovereign",
+      "advanced"
+    ],
+    "timezone": "browser",
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "title": "Request Rate & Errors",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "sum(rate(http_requests_total[5m]))",
+            "legendFormat": "Requests/s"
+          },
+          {
+            "expr": "sum(rate(http_requests_total{status=~\"5..\"}[5m]))",
+            "legendFormat": "Errors/s"
+          }
+        ]
+      },
+      {
+        "title": "Response Time",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "p50"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "p95"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))",
+            "legendFormat": "p99"
+          }
+        ]
+      },
+      {
+        "title": "CPU Usage",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 0,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "100 - (avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+            "legendFormat": "{{instance}}"
+          }
+        ]
+      },
+      {
+        "title": "Memory Usage",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 6,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+            "legendFormat": "{{instance}}"
+          }
+        ]
+      },
+      {
+        "title": "Disk Usage",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "targets": [
+          {
+            "expr": "(1 - (node_filesystem_avail_bytes{fstype!=\"tmpfs\"} / node_filesystem_size_bytes{fstype!=\"tmpfs\"})) * 100",
+            "legendFormat": "{{device}} ({{instance}})"
+          }
+        ]
+      },
+      {
+        "title": "IPFS Peers & Bandwidth",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        },
+        "targets": [
+          {
+            "expr": "ipfs_peers_count",
+            "legendFormat": "Peers"
+          },
+          {
+            "expr": "rate(ipfs_bandwidth_in_bytes[5m])",
+            "legendFormat": "In (B/s)"
+          },
+          {
+            "expr": "rate(ipfs_bandwidth_out_bytes[5m])",
+            "legendFormat": "Out (B/s)"
+          }
+        ]
+      },
+      {
+        "title": "IPFS Repository Size",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 12,
+          "y": 16
+        },
+        "targets": [
+          {
+            "expr": "ipfs_repo_size_bytes",
+            "legendFormat": "Size"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "bytes"
+          }
+        }
+      },
+      {
+        "title": "Backup Status",
+        "type": "stat",
+        "gridPos": {
+          "h": 4,
+          "w": 6,
+          "x": 18,
+          "y": 16
+        },
+        "targets": [
+          {
+            "expr": "backup_success",
+            "legendFormat": "Success"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {
+                "type": "value",
+                "options": {
+                  "0": {
+                    "text": "FAILED",
+                    "color": "red"
+                  },
+                  "1": {
+                    "text": "SUCCESS",
+                    "color": "green"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "title": "DeepFlow Trace Rate",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 24
+        },
+        "targets": [
+          {
+            "expr": "rate(deepflow_traces_total[5m])",
+            "legendFormat": "Traces/s"
+          }
+        ]
+      },
+      {
+        "title": "DeepFlow Trace Latency",
+        "type": "graph",
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 12,
+          "y": 24
+        },
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(deepflow_trace_duration_seconds_bucket[5m]))",
+            "legendFormat": "p50"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(deepflow_trace_duration_seconds_bucket[5m]))",
+            "legendFormat": "p95"
+          }
+        ]
+      },
+      {
+        "title": "Prefect Flow Status",
+        "type": "stat",
+        "gridPos": {
+          "h": 6,
+          "w": 4,
+          "x": 0,
+          "y": 32
+        },
+        "targets": [
+          {
+            "expr": "sum(prefect_flow_runs{status=\"Running\"})",
+            "legendFormat": "Running"
+          }
+        ]
+      },
+      {
+        "title": "Prefect Flow Failed",
+        "type": "stat",
+        "gridPos": {
+          "h": 6,
+          "w": 4,
+          "x": 4,
+          "y": 32
+        },
+        "targets": [
+          {
+            "expr": "sum(prefect_flow_runs{status=\"Failed\"})",
+            "legendFormat": "Failed"
+          }
+        ]
+      },
+      {
+        "title": "Temporal Workflow Status",
+        "type": "stat",
+        "gridPos": {
+          "h": 6,
+          "w": 4,
+          "x": 8,
+          "y": 32
+        },
+        "targets": [
+          {
+            "expr": "sum(temporal_workflow_status{status=\"running\"})",
+            "legendFormat": "Running"
+          }
+        ]
+      },
+      {
+        "title": "PostgreSQL Connections",
+        "type": "graph",
+        "gridPos": {
+          "h": 6,
+          "w": 12,
+          "x": 12,
+          "y": 32
+        },
+        "targets": [
+          {
+            "expr": "pg_stat_database{datname=\"emily\"}",
+            "legendFormat": "Connections"
+          }
+        ]
+      }
+    ]
+  }
+}

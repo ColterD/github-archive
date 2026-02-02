@@ -1,0 +1,157 @@
+# Ray Cluster Configuration
+# Emily Sovereign V4 Distributed Cognitive Computing
+
+cluster_name: emily-sovereign-v4
+max_workers: 4
+
+provider:
+  type: local
+
+# Head node configuration
+head_node:
+  ip: 192.168.1.100
+  port: 6379
+  dashboard_port: 8265
+  
+  # Resources
+  resources:
+    cpu: 32
+    gpu: 1
+    memory: 384G
+  
+  # Object store
+  object_store_memory: 64G
+  
+  # Environment
+  env_vars:
+    RAY_BACKEND_LOG_LEVEL: INFO
+    RAY_cluster_config: "{\"max_call_task_args_size\": 1000000000}"
+
+# Worker nodes
+worker_nodes:
+  - ip: 192.168.1.101
+    port: 6379
+    resources:
+      cpu: 32
+      gpu: 1
+      memory: 384G
+    object_store_memory: 64G
+  
+  - ip: 192.168.1.102
+    port: 6379
+    resources:
+      cpu: 32
+      gpu: 1
+      memory: 384G
+    object_store_memory: 64G
+
+  - ip: 192.168.1.103
+    port: 6379
+    resources:
+      cpu: 32
+      gpu: 1
+      memory: 384G
+    object_store_memory: 64G
+
+# Runtime configuration
+runtime:
+  # Ray version
+  ray_version: 2.9.0
+  
+  # Python version
+  python_version: 3.11
+  
+  # Dashboard
+  dashboard:
+    enabled: true
+    host: 0.0.0.0
+    port: 8265
+
+# Resource management
+resources:
+  # CPU per actor
+  default_cpu_per_actor: 2
+  
+  # GPU per actor
+  default_gpu_per_actor: 0
+  
+  # Memory per actor
+  default_memory_per_actor: 4G
+
+# Fault tolerance
+fault_tolerance:
+  # Maximum retries
+  max_retries: 3
+  
+  # Task timeout
+  task_timeout: 300
+  
+  # Actor timeout
+  actor_timeout: 600
+
+# Logging
+logging:
+  level: INFO
+  format: "%(asctime)s [%(levelname)s] %(message)s"
+  
+# Monitoring
+monitoring:
+  # Prometheus metrics
+  prometheus:
+    enabled: true
+    port: 8080
+  
+  # Grafana dashboard
+  grafana:
+    enabled: false
+
+# Network
+network:
+  # Redis port
+  redis_port: 6379
+  
+  # Object manager port
+  object_manager_port: 6378
+  
+  # Node manager port
+  node_manager_port: 6379
+
+# Storage
+storage:
+  # Spilling to disk
+  spilling:
+    enabled: true
+    directory: /tmp/ray_spill
+    
+  # Checkpointing
+  checkpointing:
+    enabled: true
+    directory: /tmp/ray_checkpoint
+
+# Autoscaling
+autoscaling:
+  # Minimum workers
+  min_workers: 2
+  
+  # Maximum workers
+  max_workers: 4
+  
+  # Idle timeout
+  idle_timeout_minutes: 5
+  
+  # Upscale speed
+  upscale_speed: 1.0
+
+# Cognitive module configuration
+cognitive:
+  # Neurotransmitter actors
+  neurotransmitter_actors: 4
+  
+  # Global workspace actors
+  workspace_actors: 2
+  
+  # Inference engine actors (GPU)
+  inference_actors: 1
+  
+  # Actor pool size
+  actor_pool_size: 100

@@ -1,0 +1,43 @@
+v1.2.1:
+Changes:
+
+Configuration Changes:
+- Fixed MemoryTester
+- Fixed Kinetic Dynamo recipe, was RIDICULOUSLY hard for some reason
+- Block of Coal Coke corrected in quests to actual Block of Coal Coke from Immersive Engineering
+
+Scripting Changes:
+- You can now convert 1 Ender Translocator to 1 regular Ender Stone
+- You can now convert 1 regular Ender Pearl to 1 Ender Translocator
+- You can now convert 1 Cobweb into 4 String
+- Iron Trowel and Garden Trowel Recipes have been fixed
+- Bronze Sword (MekanismTools) removed
+- Fertilized Dirt removed, bugged
+
+Updated:
+- Actually Additions
+- BetterSprinting
+- Blockcraftery
+- Common Capabilities
+- CoroUtil
+- CraftTweaker
+- CyclopsCore
+- Forestry
+- FTB Library
+- FTB Quests
+- FTB Utilities
+- iChunUtil
+- Industrial Foregoing
+- JourneyMap
+- Just Enough Items (JEI)
+- Main Menu Scale
+- MalisisCore
+- MemoryTester
+- Mystical Agriculture
+- MysticalLib
+- Overloaded Armor Bar
+- Quantum Storage
+- RandomPatches
+- Reborn Core
+- Rustic Thaumaturgy
+- YABBA

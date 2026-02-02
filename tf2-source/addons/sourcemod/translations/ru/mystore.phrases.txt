@@ -1,0 +1,46 @@
+// Exported from SourceMod Translator
+// Date: 2020-01-27 03:10:10 UTC
+// Language: Russian (ru)
+// 
+// To view other translations for this plugin, please visit:
+// http://translator.mitchdempsey.com/sourcemod_plugins/322
+//
+"Phrases"
+{
+
+	"HUD"
+	{
+		"ru"		"ХУД"
+	}
+
+	"Head"
+	{
+		"ru"		"Голова"
+	}
+
+	"knife"
+	{
+		"ru"		"Нож"
+	}
+
+	"respawn"
+	{
+		"ru"		"Респавн"
+	}
+
+	"daily"
+	{
+		"ru"		"Ежедневный бонус"
+	}
+
+	"admin"
+	{
+		"ru"		"Администратор"
+	}
+
+	"casino"
+	{
+		"ru"		"Казино"
+	}
+
+}

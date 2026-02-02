@@ -1,0 +1,131 @@
+{
+    "system": {
+      "mode": "paper_trading",
+      "name": "CryptoTradingSystem",
+      "version": "0.1.0",
+      "log_level": "INFO"
+    },
+    "exchange": {
+      "name": "TradeOgre",
+      "api_key": "",
+      "api_secret": "",
+      "fee_rate": 0.002,
+      "rate_limit": {
+        "max_requests_per_minute": 60,
+        "retry_delay_seconds": 2,
+        "max_retries": 3
+      }
+    },
+    "storage": {
+      "type": "sqlite",
+      "path": "data/paper_trading.db",
+      "backup_frequency_hours": 24,
+      "data_retention_days": 90
+    },
+    "markets": [
+      "BTC-XMR",
+      "BTC-ETH",
+      "BTC-LTC"
+    ],
+    "strategy": {
+      "type": "grid",
+      "params": {
+        "grid_levels": 10,
+        "grid_spacing_pct": 1.0,
+        "price_range_pct": 10.0,
+        "rebalance_threshold_pct": 5.0,
+        "position_size_pct": 2.0,
+        "max_open_positions": 20,
+        "dynamic_spacing": true
+      }
+    },
+    "risk": {
+      "max_position_pct": 5.0,
+      "max_total_exposure_pct": 30.0,
+      "max_daily_drawdown_pct": 5.0,
+      "max_correlation": 0.7,
+      "volatility_scaling": true,
+      "use_kelly_criterion": true,
+      "kelly_fraction": 0.5,
+      "max_open_positions": 10,
+      "quote_currency": "BTC"
+    },
+    "paper_trading": {
+      "initial_balances": {
+        "BTC": 1.0,
+        "XMR": 0.0,
+        "ETH": 0.0,
+        "LTC": 0.0
+      },
+      "slippage_model": "fixed",
+      "slippage_params": {
+        "fixed": 0.001,
+        "percentage": 0.01
+      },
+      "execution_delay_seconds": 5,
+      "order_fill_probability": 0.95,
+      "partial_fill_probability": 0.2,
+      "save_trade_history": true,
+      "trade_history_path": "data/paper_trading_results/"
+    },
+    "tasks": {
+      "market_data": {
+        "interval_seconds": 60,
+        "markets_per_request": 5
+      },
+      "signal_generation": {
+        "interval_seconds": 300,
+        "min_data_points": 20
+      },
+      "order_check": {
+        "interval_seconds": 10,
+        "timeout_seconds": 5
+      },
+      "risk_check": {
+        "interval_seconds": 900
+      },
+      "heartbeat": {
+        "interval_seconds": 1800
+      }
+    },
+    "logging": {
+      "level": "INFO",
+      "file": "data/logs/paper_trading.log",
+      "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+      "max_size_mb": 10,
+      "backup_count": 5
+    },
+    "dashboard": {
+      "enabled": true,
+      "host": "0.0.0.0",
+      "port": 8080,
+      "refresh_interval_seconds": 5,
+      "authentication": {
+        "enabled": true,
+        "username": "admin",
+        "password": "change_me_immediately"
+      }
+    },
+    "notifications": {
+      "email": {
+        "enabled": false,
+        "smtp_server": "",
+        "smtp_port": 587,
+        "from_address": "",
+        "to_address": "",
+        "username": "",
+        "password": ""
+      },
+      "telegram": {
+        "enabled": false,
+        "bot_token": "",
+        "chat_id": ""
+      },
+      "notify_on": {
+        "trade_executed": true,
+        "error": true,
+        "daily_summary": true,
+        "risk_limit_exceeded": true
+      }
+    }
+  }

@@ -1,0 +1,148 @@
+The Multiplayer Update!
+Hunting and mining dimensions merged with The Beneath mod.
+Added content from minecraft patches up to 1.16 with Future MC mod.
+FPS improvement when tabbed-out or idle with FPS Reducer.
+
+LycanitesMobs removed just due to the continued trouble of developing with it and replaced with other (better) mods.
+Better Diving removed, in the end, I was only using it for its underwater mechanic and for nothing else; seemed a waste.
+GottschCore removed mostly because it just isn't needed anymore but also due to an incompatibility with Corail Tombstone.
+Plus-TiC removed due to the author sabotaging his own code.  See more here: https://tinyurl.com/y9e92nkj
+
+Added:
+- Better Animal Models
+- Better Animals Plus
+- Blur
+- Crafting Tweaks
+- Deep Sea Exploration
+- Double Slabs
+- FPS Reducer
+- FTB Utilities
+- Future MC
+- Gauges and Switches
+- Good Ol' Currency
+- JEI Hider
+- Just a Few Fish
+- Just Enough Dimensions
+- KleeSlabs
+- Macaw's Bridges
+- Macaw's Doors
+- Macaw's Furniture
+- Macaw's Roofs
+- Macaw's Windows
+- No Default Auto-Jump
+- Pick Up Notifier
+- Rough Mobs Revamped
+- Save My Stronghold!
+- Serene Seasons + XML
+- SpecialAI
+- The Beneath
+- Torch Slabs Mod
+- Waystones
+- ☃ Snow! Real Magic!
+
+Removed:
+- Better Diving
+- Cooking for Blockheads
+- GottschCore
+- Hunting Dimension
+- Lycanites Mobs
+- Plus-TiC (due to author sabotaging his own code)
+- Mining Dimension
+
+Config:
+- Cleaned config files
+- Improved preloader time
+- Modified Pick Up Notifier scale and fade
+- Moved FPS Reducer RAM/CPU information to lower left-hand corner
+- Moved JEI search bar to the middle
+- Moved WAILA information to lower left-hand corner
+
+Updated:
+- Actually Additions
+- AE2 Wireless Terminal Library
+- ArmorPlus
+- Better Animal Models
+- Better Diving
+- Bonsai Trees 2
+- Bookshelf
+- Brandon's Core
+- Chisel
+- CoFH Core
+- CoFH World
+- Common Capabilities
+- ConnectedTexturesMod
+- Corail Tombstone
+- CoroUtil
+- Cosmetic Armor Reworked
+- CraftPresence
+- CraftTweaker
+- Custom Main Menu
+- Cyclic
+- Cyclops Core
+- Dark Utilities
+- Draconic Evolution
+- End: Reborn
+- Ender IO
+- Ender IO Endergy
+- ExtraCells2
+- Farseek
+- FastWorkbench
+- Flux Networks
+- FoamFix​  (is now Asie's FPS Enhancer)
+- FTB Library
+- FTB Quests
+- GottschCore
+- Hammer (Lib) Core
+- Ice and Fire: Dragons in a whole new light!
+- Inspirations
+- Integration Foregoing
+- JEI Integration
+- Just Enough HarvestCraft
+- JustEnoughIDs
+- LibraryEx
+- Magneticraft
+- Mekanism
+- Mekanism Generators
+- Mekanism Tools
+- ModTweaker
+- MysticalLib
+- Nature's Compass
+- NetherEx
+- NuclearCraft
+- Open Terrain Generator (OpenTerrainGenerator / OTG)
+- OpenBlocks Elevator
+- OpenComputers
+- OpenSecurity
+- p455w0rd's Library
+- Pam's HarvestCraft
+- Quark
+- Random Things
+- RandomPatches
+- RandomTweaks
+- Reborn Core
+- Redstone Arsenal
+- Redstone Flux
+- RFTools
+- Rustic
+- Silent Lib
+- Smooth Font
+- Storage Drawers
+- Streams
+- Tesla Core Lib
+- Thaumic Additions: Reconstructed
+- Thaumic Energistics
+- Thaumic Tinkerer
+- Thermal Dynamics
+- Thermal Expansion
+- Thermal Foundation
+- Thermal Innovation
+- Tinker I/O
+- Tinkers Construct
+- Tinkers' Complement
+- Traveller's Backpack
+- UniDict
+- VanillaFix
+- Wawla - What Are We Looking At
+- Wireless Crafting Terminal
+- Xaero's Minimap
+- Xaero's World Map
