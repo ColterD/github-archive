@@ -2,6 +2,7 @@
 > Consolidated into [ColterD/github-archive](https://github.com/ColterD/github-archive);
 > useful patterns were mined into [ColterD/workbench](https://github.com/ColterD/workbench).
 > Git history was scrubbed of two exposed API keys before archival.
+> Project history: [HISTORY.md](./HISTORY.md).
 
 <h1 align="center">⚒️ Forge: AI-Enhanced Terminal Development Environment</h1>
 <p align="center">A comprehensive coding agent that integrates AI capabilities with your development environment</p>

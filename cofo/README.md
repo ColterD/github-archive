@@ -8,3 +8,5 @@ Hetzner infrastructure CLI. Manages server provisioning, deployment, and operati
 
 Status at archival: CI bridge baseline applied; infrastructure configuration backed by
 Vault paths (e.g. `secret/infrastructure/cloudflare`) — secret names only, no values in this tree.
+
+History: see [HISTORY.md](./HISTORY.md).

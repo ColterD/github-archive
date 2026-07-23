@@ -12,3 +12,5 @@ Rust CLI launcher for the Codex coding agent with Proton Pass secret injection.
 - `src/prelaunch.rs`, `src/script.rs`, `src/cli.rs` — preflight checks, script handling, CLI definition
 
 Status at archival: v0.2.0, tests under `tests/`, CI bridge baseline applied.
+
+History: see [HISTORY.md](./HISTORY.md).
