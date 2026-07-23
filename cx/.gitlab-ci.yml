@@ -1,0 +1,4 @@
+include:
+  - project: github-mirror/ci-pipelines
+    ref: ci-bridge-template-v3
+    file: /.gitlab/bridge-common.yml

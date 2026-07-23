@@ -2,7 +2,7 @@
 
 > **This repository is archived and read-only.**
 
-A consolidated archive of 42 deprecated GitHub repositories. Every project here is **unmaintained and not intended for production use**. These are snapshots preserved for personal reference only.
+A consolidated archive of 45 deprecated GitHub repositories. Every project here is **unmaintained and not intended for production use**. These are snapshots preserved for personal reference only.
 
 No issues or pull requests will be accepted.
 
@@ -31,6 +31,7 @@ No issues or pull requests will be accepted.
 | [graphiti-mcp-private](./graphiti-mcp-private) | Fork of Zep's Graphiti - real-time knowledge graph builder for AI agents with MCP server integration | Python | Full |
 | [open-webui-graphiti-memory](./open-webui-graphiti-memory) | Graphiti-based temporal knowledge graph memory extension for Open WebUI with multi-user isolation | Python | Full |
 | [cloudlab-mn](./cloudlab-mn) | CloudLab Utah/Minnesota workspace configs with Docker stacks for Ollama, FalkorDB, Graphiti, and LFM models | YAML, Shell | Full |
+| [coco](./coco) | Personal fork of tailcallhq/forgecode (Forge AI terminal development environment) with custom profile launcher; history scrubbed of exposed API keys before archival | Rust | Full |
 
 ## Discord Bots & Integrations
 
@@ -51,6 +52,8 @@ No issues or pull requests will be accepted.
 | [lgsm-master-control](./lgsm-master-control) | Shell script to control multiple LinuxGSM game server instances | Shell | Basic |
 | [recyclarr](./recyclarr) | Personal Recyclarr configuration backup optimized for x265/AV1/x264 with Trash Guides integration | YAML | Basic |
 | [chocolatey-scripts](./chocolatey-scripts) | Automation scripts for Chocolatey package manager | Batchfile | Minimal |
+| [cx](./cx) | Rust CLI launcher for the Codex coding agent with Proton Pass secret injection, doctor/heal diagnostics | Rust | Basic |
+| [cofo](./cofo) | Hetzner infrastructure CLI for server provisioning, deployment, and operations (Vault-backed config) | Shell, YAML | Minimal |
 
 ## Gaming & Game Servers
 

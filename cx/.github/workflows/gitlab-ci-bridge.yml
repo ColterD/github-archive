@@ -1,0 +1,1911 @@
+name: gitlab-ci-bridge
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'ci-bridge-template-*'
+      - 'v*'
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  issues:
+    types: [opened, reopened, labeled]
+  issue_comment:
+    types: [created]
+  merge_group:
+    types: [checks_requested]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'
+
+jobs:
+  bridge:
+    if: >
+      (
+        github.event_name != 'pull_request' ||
+        (
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          contains(fromJson('["OWNER","MEMBER","COLLABORATOR"]'), github.event.pull_request.author_association)
+        )
+      ) &&
+      (
+        github.event_name != 'issues' ||
+        contains(fromJson('["OWNER","MEMBER","COLLABORATOR"]'), github.event.issue.author_association)
+      ) &&
+      (
+        github.event_name != 'issue_comment' ||
+        (
+          github.event.issue.pull_request == null &&
+          contains(fromJson('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
+        )
+      )
+    runs-on:
+      - self-hosted
+      - Linux
+      - X64
+      - ci-pipelines-hetzner
+    timeout-minutes: 200
+    env:
+      GITLAB_TRIGGER_ATTEMPTS: "20"
+      GITLAB_REF_VISIBILITY_ATTEMPTS: "20"
+      GITLAB_REF_VISIBILITY_INTERVAL_SECS: "6"
+      GITLAB_POLL_ATTEMPTS: "720"
+      GITLAB_POLL_INTERVAL_SECS: "15"
+      GITLAB_PENDING_DIAG_INTERVAL_POLLS: "8"
+      GITLAB_PENDING_FAIL_FAST_POLLS: "120"
+      GITLAB_PIPELINE_NOT_FOUND_FAIL_FAST_POLLS: "12"
+      GITLAB_NO_PIPELINE_FAST_FAIL_ATTEMPTS: "8"
+      GITLAB_API_CONNECT_TIMEOUT_SECS: "10"
+      GITLAB_API_MAX_TIME_SECS: "30"
+    concurrency:
+      group: gitlab-ci-bridge-${{ github.repository }}-${{ github.ref }}
+      cancel-in-progress: true
+    permissions:
+      contents: write
+      pull-requests: write
+      statuses: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+
+      - name: Prepare tool bootstrap helper
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/bootstrap-tool.sh" <<'EOF'
+          #!/usr/bin/env bash
+          set -euo pipefail
+          TOOL_NAME="${1:?tool name is required}"
+          PACKAGE_NAME="${2:-$TOOL_NAME}"
+
+          if command -v "${TOOL_NAME}" >/dev/null 2>&1; then
+            "${TOOL_NAME}" --version
+            exit 0
+          fi
+
+          run_pkg_cmd() {
+            if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+              sudo -n "$@"
+            else
+              "$@"
+            fi
+          }
+
+          if command -v apt-get >/dev/null 2>&1; then
+            export DEBIAN_FRONTEND=noninteractive
+            run_pkg_cmd apt-get update
+            run_pkg_cmd apt-get install -y --no-install-recommends "${PACKAGE_NAME}"
+          elif command -v dnf >/dev/null 2>&1; then
+            run_pkg_cmd dnf install -y "${PACKAGE_NAME}"
+          elif command -v yum >/dev/null 2>&1; then
+            run_pkg_cmd yum install -y "${PACKAGE_NAME}"
+          elif command -v apk >/dev/null 2>&1; then
+            run_pkg_cmd apk add --no-cache "${PACKAGE_NAME}"
+          else
+            echo "::error::${TOOL_NAME} is required for gitlab-ci-bridge (supported package managers: apt-get, dnf, yum, apk)"
+            exit 1
+          fi
+          "${TOOL_NAME}" --version
+          EOF
+          chmod 700 "$RUNNER_TEMP/bootstrap-tool.sh"
+
+      - name: Ensure Python 3 available
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/bootstrap-tool.sh" "python3" "python3"
+
+      - name: Ensure jq available
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/bootstrap-tool.sh" "jq" "jq"
+
+      - name: Preflight CI policy lint
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .gitlab-ci.yml
+          test -f .github/workflows/gitlab-ci-bridge.yml
+          if [ ! -f renovate.json ] \
+            && [ ! -f renovate.json5 ] \
+            && [ ! -f .renovaterc ] \
+            && [ ! -f .renovaterc.json ] \
+            && [ ! -f .renovaterc.json5 ] \
+            && [ ! -f .github/renovate.json ] \
+            && [ ! -f .github/renovate.json5 ] \
+            && [ ! -f .gitlab/renovate.json ] \
+            && [ ! -f .gitlab/renovate.json5 ]; then
+            echo "Policy lint: repo must define a Renovate config"
+            exit 1
+          fi
+          if [ -f .github/dependabot.yml ] || [ -f .github/dependabot.yaml ]; then
+            echo "Policy lint: repo must not define Dependabot (Renovate is mandatory in this repo)"
+            exit 1
+          fi
+          if [ ! -f sonar-project.properties ]; then
+            echo "Policy lint: repo must define sonar-project.properties"
+            exit 1
+          fi
+
+          if grep -Eq 'bridge-common\.yml' .gitlab-ci.yml; then
+            echo "Policy lint: centralized bridge template include detected"
+          elif grep -Eq '^preflight-health:' .gitlab-ci.yml; then
+            if ! grep -Eq 'GIT_STRATEGY:\s*"?none"?' .gitlab-ci.yml; then
+              echo "Policy lint: full runtime pipeline must set GIT_STRATEGY: none"
+              exit 1
+            fi
+
+            if ! grep -Eq 'dagger call health-check' .gitlab-ci.yml; then
+              echo "Policy lint: full runtime pipeline must run dagger call health-check"
+              exit 1
+            fi
+
+            if ! grep -Eq 'dagger call pr-merge-check' .gitlab-ci.yml; then
+              echo "Policy lint: full runtime pipeline must run dagger call pr-merge-check"
+              exit 1
+            fi
+
+            if ! grep -Eq 'dagger call sonar-scan-with-vault' .gitlab-ci.yml; then
+              echo "Policy lint: full runtime pipeline must run dagger call sonar-scan-with-vault"
+              exit 1
+            fi
+
+            if ! grep -Eq 'VAULT_ROLE_ID' .gitlab-ci.yml; then
+              echo "Policy lint: full runtime pipeline must reference VAULT_ROLE_ID"
+              exit 1
+            fi
+
+            if ! grep -Eq 'VAULT_SECRET_ID' .gitlab-ci.yml; then
+              echo "Policy lint: full runtime pipeline must reference VAULT_SECRET_ID"
+              exit 1
+            fi
+
+            if ! grep -Eq 'GL_PUSH_TOKEN' .gitlab-ci.yml; then
+              echo "Policy lint: full runtime pipeline must reference GL_PUSH_TOKEN"
+              exit 1
+            fi
+
+            if ! grep -Eq 'GH_EVENT_NAME == "merge_group"' .gitlab-ci.yml; then
+              echo "Policy lint: full runtime pipeline must define merge_group handling"
+              exit 1
+            fi
+
+            if ! grep -Eq 'git fetch .*CI_COMMIT_SHA' .gitlab-ci.yml; then
+              echo "Policy lint: full runtime pipeline must bootstrap mirrored source via CI_COMMIT_SHA fetch"
+              exit 1
+            fi
+
+            if ! grep -Eq 'git clean -ffdqx' .gitlab-ci.yml; then
+              echo "Policy lint: full runtime pipeline must clean runner workspace after mirrored checkout"
+              exit 1
+            fi
+
+            if ! grep -Eq 'Fetched source .*\$\{CI_COMMIT_SHA\}' .gitlab-ci.yml; then
+              echo "Policy lint: full runtime pipeline must verify fetched source SHA"
+              exit 1
+            fi
+
+            echo "Policy lint: full runtime GitLab pipeline detected"
+          else
+            if ! grep -Eq 'GIT_STRATEGY:\s*"?none"?' .gitlab-ci.yml; then
+              echo "Policy lint: .gitlab-ci.yml must set GIT_STRATEGY: none"
+              exit 1
+            fi
+
+            if ! grep -Eq 'CI_PIPELINE_SOURCE == "push"' .gitlab-ci.yml; then
+              echo "Policy lint: missing push rule in .gitlab-ci.yml"
+              exit 1
+            fi
+
+            if ! grep -Eq 'CI_PIPELINE_SOURCE == "api"' .gitlab-ci.yml; then
+              echo "Policy lint: missing api trigger rule in .gitlab-ci.yml"
+              exit 1
+            fi
+
+            if ! grep -Eq 'CI_PIPELINE_SOURCE == "trigger"' .gitlab-ci.yml; then
+              echo "Policy lint: missing trigger rule in .gitlab-ci.yml"
+              exit 1
+            fi
+
+            if ! grep -Eq 'GH_EVENT_NAME == "merge_group"' .gitlab-ci.yml; then
+              echo "Policy lint: missing merge_group rule in .gitlab-ci.yml"
+              exit 1
+            fi
+          fi
+      - name: Resolve branch and project path
+        id: vars
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch || '' }}
+          ISSUE_NUMBER_INPUT: ${{ github.event.issue.number || '' }}
+          ISSUE_ACTION_INPUT: ${{ github.event.action || '' }}
+          ISSUE_COMMENT_BODY_INPUT: ${{ github.event_name == 'issue_comment' && github.event.comment.body || '' }}
+        shell: bash
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
+            BRANCH="${GITHUB_HEAD_REF}"
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+            ISSUE_NUMBER=""
+            ISSUE_ACTION=""
+            ISSUE_COMMENT_BODY=""
+          else
+            BRANCH="${GITHUB_REF_NAME:-${DEFAULT_BRANCH}}"
+            PR_NUMBER=""
+            ISSUE_NUMBER="${ISSUE_NUMBER_INPUT}"
+            ISSUE_ACTION="${ISSUE_ACTION_INPUT}"
+            ISSUE_COMMENT_BODY="${ISSUE_COMMENT_BODY_INPUT}"
+          fi
+          BRANCH="${BRANCH//$'\r'/}"
+          if [ -z "${BRANCH}" ]; then
+            BRANCH="${GITHUB_REF_NAME:-${DEFAULT_BRANCH}}"
+          fi
+          if [ -z "${BRANCH}" ]; then
+            echo "Unable to resolve destination branch"
+            exit 1
+          fi
+          SHA="$(git rev-parse HEAD)"
+          PROJECT_PATH="${{ vars.GITLAB_PROJECT_PATH }}"
+          if [ -z "${PROJECT_PATH}" ]; then
+            PROJECT_PATH="github-mirror/${{ github.event.repository.name }}"
+          fi
+          {
+            echo "branch=${BRANCH}"
+            echo "sha=${SHA}"
+            echo "pr_number=${PR_NUMBER}"
+            echo "issue_number=${ISSUE_NUMBER}"
+            echo "issue_action=${ISSUE_ACTION}"
+            ISSUE_COMMENT_DELIM="__ISSUE_COMMENT_$(date +%s)_${RANDOM}_$$_EOF__"
+            {
+              echo "issue_comment<<${ISSUE_COMMENT_DELIM}"
+              printf '%s\n' "${ISSUE_COMMENT_BODY}"
+              echo "${ISSUE_COMMENT_DELIM}"
+            } | sed $'s/\r$//'
+            echo "event_name=${GITHUB_EVENT_NAME}"
+            echo "gh_repo=${{ github.repository }}"
+            echo "project_path=${PROJECT_PATH}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Publish pending gitlab-ci status
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STATUS_REPO: ${{ github.repository }}
+          STATUS_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.event_name == 'merge_group' && github.event.merge_group.head_sha || github.sha }}
+          STATUS_TARGET_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          STATUS_PAYLOAD="$(python3 -c 'import json, os; print(json.dumps({
+          "state": "pending",
+          "target_url": os.environ["STATUS_TARGET_URL"],
+          "description": "GitLab mirror pipeline running",
+          "context": "gitlab-ci",
+          }))')"
+
+          curl --silent --show-error --fail-with-body \
+            --request POST \
+            --url "https://api.github.com/repos/${STATUS_REPO}/statuses/${STATUS_SHA}" \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            --header "Content-Type: application/json" \
+            --data "${STATUS_PAYLOAD}" >/dev/null
+
+      - name: Push commit to GitLab mirror
+        env:
+          GITLAB_SYNC_TOKEN: ${{ secrets.GITLAB_SYNC_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -z "${GITLAB_SYNC_TOKEN}" ]; then
+            echo "GITLAB_SYNC_TOKEN secret is missing"
+            exit 1
+          fi
+
+          GITLAB_ASKPASS="${RUNNER_TEMP}/gitlab-askpass.sh"
+          cat > "${GITLAB_ASKPASS}" <<'EOF'
+          #!/usr/bin/env bash
+          case "${1}" in
+            *Username*) printf '%s\n' "oauth2" ;;
+            *Password*) printf '%s\n' "${GITLAB_SYNC_TOKEN}" ;;
+            *) printf '\n' ;;
+          esac
+          EOF
+          chmod 700 "${GITLAB_ASKPASS}"
+
+          gitlab_auth() {
+            GIT_TERMINAL_PROMPT=0 \
+              GIT_ASKPASS="${GITLAB_ASKPASS}" \
+              git "$@"
+          }
+
+          gitlab_push() {
+            gitlab_auth push gitlab "$@"
+          }
+
+          gitlab_ls_remote_head() {
+            local ref="$1"
+            local ls_remote_output=""
+            if ls_remote_output="$(gitlab_auth ls-remote --heads gitlab "${ref}" 2>/dev/null)"; then
+              printf '%s\n' "${ls_remote_output}" | awk 'NR==1 {print $1}'
+            fi
+          }
+
+          mirror_remote_url="https://git.colter.dev/${{ steps.vars.outputs.project_path }}.git"
+          had_gitlab_remote="false"
+          original_gitlab_remote_url=""
+          if original_gitlab_remote_url="$(git remote get-url gitlab 2>/dev/null)"; then
+            had_gitlab_remote="true"
+            git remote set-url gitlab "${mirror_remote_url}"
+          else
+            git remote add gitlab "${mirror_remote_url}"
+          fi
+          cleanup_gitlab_remote() {
+            rm -f "${GITLAB_ASKPASS}" || true
+            if [ "${had_gitlab_remote}" = "true" ]; then
+              git remote set-url gitlab "${original_gitlab_remote_url}" || true
+            else
+              git remote remove gitlab || true
+            fi
+          }
+          trap cleanup_gitlab_remote EXIT
+
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            TAG_NAME="${GITHUB_REF#refs/tags/}"
+            if [ -z "${TAG_NAME}" ]; then
+              echo "Unable to determine tag name for mirror push"
+              exit 1
+            fi
+            gitlab_push "refs/tags/${TAG_NAME}:refs/tags/${TAG_NAME}"
+            echo "Tag mirror sync complete for ${TAG_NAME}"
+            exit 0
+          fi
+
+          DEST_BRANCH="${{ steps.vars.outputs.branch }}"
+          DEST_BRANCH="${DEST_BRANCH//$'\r'/}"
+          if [ -z "${DEST_BRANCH}" ]; then
+            DEST_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          fi
+          if [ -z "${DEST_BRANCH}" ]; then
+            echo "Unable to determine destination branch for mirror push"
+            exit 1
+          fi
+
+          DEST_REF="refs/heads/${DEST_BRANCH}"
+          remote_sha="$(gitlab_ls_remote_head "${DEST_REF}")"
+          push_succeeded="false"
+          if [ -n "${remote_sha}" ]; then
+            if gitlab_push --follow-tags --force-with-lease="${DEST_REF}:${remote_sha}" "HEAD:${DEST_REF}"; then
+              push_succeeded="true"
+            fi
+          else
+            if gitlab_push --follow-tags "HEAD:${DEST_REF}"; then
+              push_succeeded="true"
+            fi
+            if [ "${push_succeeded}" != "true" ]; then
+              retry_remote_sha="$(gitlab_ls_remote_head "${DEST_REF}")"
+              if [ -n "${retry_remote_sha}" ] && gitlab_push --follow-tags --force-with-lease="${DEST_REF}:${retry_remote_sha}" "HEAD:${DEST_REF}"; then
+                push_succeeded="true"
+              fi
+            fi
+          fi
+
+          if [ "${push_succeeded}" != "true" ]; then
+            echo "Failed to mirror branch ${DEST_BRANCH} to GitLab"
+            exit 1
+          fi
+
+          echo "Tag sync: branch mirror uses --follow-tags; explicit tag events are mirrored separately"
+
+      - name: Prepare GitLab API helper
+        shell: bash
+        run: |
+          cat > "$RUNNER_TEMP/gitlab-api.sh" <<'EOF'
+          gitlab_api() {
+            local method="$1"
+            shift
+            local url="$1"
+            shift
+            local body_file
+            body_file="$(mktemp)"
+            local http_code
+
+            http_code="$(curl --silent --show-error --fail-with-body \
+              --connect-timeout "${GITLAB_API_CONNECT_TIMEOUT_SECS:-10}" \
+              --max-time "${GITLAB_API_MAX_TIME_SECS:-60}" \
+              --retry 4 \
+              --retry-delay 3 \
+              --retry-connrefused \
+              --output "$body_file" \
+              --write-out "%{http_code}" \
+              --request "$method" \
+              --header "PRIVATE-TOKEN: ${GITLAB_SYNC_TOKEN}" \
+              "$@" \
+              "$url")" || {
+                local curl_exit=$?
+                echo "GitLab API request failed after retries: method=${method} url=${url} curl_exit=${curl_exit}" >&2
+                if [ -s "$body_file" ]; then
+                  cat "$body_file" >&2
+                fi
+                rm -f "$body_file"
+                return 1
+              }
+
+            if [ "${http_code}" -lt 200 ] || [ "${http_code}" -ge 400 ]; then
+              echo "GitLab API request returned HTTP ${http_code}: method=${method} url=${url}" >&2
+              if [ -s "$body_file" ]; then
+                cat "$body_file" >&2
+              fi
+              rm -f "$body_file"
+              return 1
+            fi
+
+            cat "$body_file"
+            rm -f "$body_file"
+          }
+
+          gitlab_request_with_http() {
+            local method="$1"
+            shift
+            local url="$1"
+            shift
+            local body_file
+            body_file="$(mktemp)"
+            local http_code
+
+            http_code="$(curl --silent --show-error \
+              --connect-timeout "${GITLAB_API_CONNECT_TIMEOUT_SECS:-10}" \
+              --max-time "${GITLAB_API_MAX_TIME_SECS:-60}" \
+              --retry 4 \
+              --retry-delay 3 \
+              --retry-connrefused \
+              --output "$body_file" \
+              --write-out "%{http_code}" \
+              --request "$method" \
+              --header "PRIVATE-TOKEN: ${GITLAB_SYNC_TOKEN}" \
+              "$@" \
+              "$url" || echo "000")"
+
+            GITLAB_LAST_HTTP_CODE="${http_code}"
+            if [ "${http_code}" = "000" ]; then
+              : > "$body_file"
+            fi
+            GITLAB_LAST_RESPONSE="$(cat "$body_file")"
+            rm -f "$body_file"
+          }
+
+          gitlab_trigger_pipeline_request() {
+            local project_encoded="$1"
+            shift
+            gitlab_request_with_http \
+              POST \
+              "https://git.colter.dev/api/v4/projects/${project_encoded}/pipeline" \
+              "$@"
+          }
+
+          build_trigger_form_args() {
+            local ref="$1"
+            local event_name="$2"
+            local repo="$3"
+            local sha="$4"
+            local gh_token="${5-}"
+            local pr_number="${6-}"
+            local issue_number="${7-}"
+            local issue_action="${8-}"
+            local issue_comment="${9-}"
+
+            TRIGGER_FORM_ARGS=(
+              --form-string "ref=${ref}"
+              --form "variables[][key]=GH_EVENT_NAME"
+              --form-string "variables[][value]=${event_name}"
+              --form "variables[][key]=GH_REPO"
+              --form-string "variables[][value]=${repo}"
+              --form "variables[][key]=GH_SHA"
+              --form-string "variables[][value]=${sha}"
+            )
+
+            if [ -n "${gh_token}" ] && [ -n "${pr_number}" ]; then
+              TRIGGER_FORM_ARGS+=(
+                --form "variables[][key]=GH_TOKEN"
+                --form-string "variables[][value]=${gh_token}"
+              )
+            fi
+            if [ -n "${pr_number}" ]; then
+              TRIGGER_FORM_ARGS+=(
+                --form "variables[][key]=GH_PR_NUMBER"
+                --form-string "variables[][value]=${pr_number}"
+              )
+            fi
+            if [ -n "${issue_number}" ]; then
+              TRIGGER_FORM_ARGS+=(
+                --form "variables[][key]=GH_ISSUE_NUMBER"
+                --form-string "variables[][value]=${issue_number}"
+              )
+            fi
+            if [ -n "${issue_action}" ]; then
+              TRIGGER_FORM_ARGS+=(
+                --form "variables[][key]=GH_ISSUE_ACTION"
+                --form-string "variables[][value]=${issue_action}"
+              )
+            fi
+            if [ -n "${issue_comment}" ]; then
+              TRIGGER_FORM_ARGS+=(
+                --form "variables[][key]=GH_ISSUE_COMMENT_BODY"
+                --form-string "variables[][value]=${issue_comment}"
+              )
+            fi
+          }
+
+          extract_branch_commit_sha() {
+            python3 -c 'import json,sys; text=sys.stdin.read().strip(); obj=(json.loads(text) if text else {}); commit=(obj.get("commit") or {}).get("id","") if isinstance(obj,dict) else ""; print(commit)' 2>/dev/null || echo ""
+          }
+
+          ensure_branch_visible() {
+            local project_encoded="$1"
+            local branch_encoded="$2"
+            local branch_name="$3"
+            local target_sha="$4"
+            local verify_sha="${5:-false}"
+            local branch_url="https://git.colter.dev/api/v4/projects/${project_encoded}/repository/branches/${branch_encoded}"
+
+            gitlab_request_with_http GET "${branch_url}"
+            local branch_http="${GITLAB_LAST_HTTP_CODE}"
+            local branch_resp="${GITLAB_LAST_RESPONSE}"
+
+            if [ "${branch_http}" = "200" ]; then
+              if [ "${verify_sha}" = "true" ]; then
+                local mirror_sha
+                mirror_sha="$(echo "${branch_resp}" | extract_branch_commit_sha)"
+                if [ -n "${mirror_sha}" ] && [ "${mirror_sha}" = "${target_sha}" ]; then
+                  echo "GitLab branch ${branch_name} is visible at ${mirror_sha}"
+                  return 0
+                fi
+                echo "GitLab branch ${branch_name} exists but at ${mirror_sha}, waiting for ${target_sha}"
+                return 1
+              fi
+
+              echo "GitLab branch ${branch_name} is visible"
+              return 0
+            fi
+
+            if [ "${branch_http}" != "404" ]; then
+              echo "Failed to query GitLab branch ${branch_name} (HTTP ${branch_http})" >&2
+              if [ -n "${branch_resp}" ]; then
+                echo "${branch_resp}" >&2
+              fi
+              return 1
+            fi
+
+            if [ -z "${target_sha}" ]; then
+              echo "Cannot create GitLab branch ${branch_name} without target SHA" >&2
+              return 1
+            fi
+
+            echo "Ensuring GitLab branch ${branch_name} exists for ${target_sha}"
+            gitlab_request_with_http POST "https://git.colter.dev/api/v4/projects/${project_encoded}/repository/branches?branch=${branch_encoded}&ref=${target_sha}"
+            local create_http="${GITLAB_LAST_HTTP_CODE}"
+            local create_resp="${GITLAB_LAST_RESPONSE}"
+
+            if [ "${create_http}" != "201" ] && ! echo "${create_resp}" | grep -qi "already exists"; then
+              echo "Branch ensure failed HTTP ${create_http}" >&2
+              if [ -n "${create_resp}" ]; then
+                echo "${create_resp}" >&2
+              fi
+              return 1
+            fi
+
+            if [ "${verify_sha}" = "true" ]; then
+              gitlab_request_with_http GET "${branch_url}"
+              branch_http="${GITLAB_LAST_HTTP_CODE}"
+              branch_resp="${GITLAB_LAST_RESPONSE}"
+              if [ "${branch_http}" = "200" ]; then
+                local mirror_sha
+                mirror_sha="$(echo "${branch_resp}" | extract_branch_commit_sha)"
+                if [ -n "${mirror_sha}" ] && [ "${mirror_sha}" = "${target_sha}" ]; then
+                  echo "GitLab branch ${branch_name} is now visible at ${mirror_sha}"
+                  return 0
+                fi
+                echo "GitLab branch ${branch_name} is visible but at ${mirror_sha}, waiting for ${target_sha}"
+                return 1
+              fi
+
+              echo "GitLab branch ${branch_name} still not visible after creation (HTTP ${branch_http})" >&2
+              if [ -n "${branch_resp}" ]; then
+                echo "${branch_resp}" >&2
+              fi
+              return 1
+            fi
+
+            echo "Branch is now visible to GitLab API"
+            return 0
+          }
+          EOF
+
+      - name: Validate GitLab API access
+        env:
+          GITLAB_SYNC_TOKEN: ${{ secrets.GITLAB_SYNC_TOKEN }}
+          PROJECT_PATH: ${{ steps.vars.outputs.project_path }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          source "$RUNNER_TEMP/gitlab-api.sh"
+
+          PROJECT_ENCODED=$(python3 -c "import os,urllib.parse; print(urllib.parse.quote(os.environ['PROJECT_PATH'], safe=''))")
+
+          if ! RESP="$(gitlab_api GET "https://git.colter.dev/api/v4/projects/${PROJECT_ENCODED}")"; then
+            echo "Failed to validate GitLab API access for ${PROJECT_PATH}" >&2
+            exit 1
+          fi
+
+          PROJECT_ID=$(echo "${RESP}" | python3 -c "import json,sys; obj=json.load(sys.stdin); print(obj.get('id',''))")
+          if [ -z "${PROJECT_ID}" ]; then
+            echo "GitLab project lookup returned no id for ${PROJECT_PATH}" >&2
+            echo "${RESP}" >&2
+            exit 1
+          fi
+
+          echo "Validated GitLab API access for ${PROJECT_PATH} (id=${PROJECT_ID})"
+
+      - name: Wait for mirrored ref visibility in GitLab
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        env:
+          GITLAB_SYNC_TOKEN: ${{ secrets.GITLAB_SYNC_TOKEN }}
+          DIFY_AI_HEAL_APP_API_KEY: ${{ secrets.DIFY_AI_HEAL_APP_API_KEY }}
+          DIFY_BASE_URL: ${{ vars.DIFY_BASE_URL }}
+          PROJECT_PATH: ${{ steps.vars.outputs.project_path }}
+          BRANCH: ${{ steps.vars.outputs.branch }}
+          GH_SHA: ${{ steps.vars.outputs.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          source "$RUNNER_TEMP/gitlab-api.sh"
+
+          PROJECT_ENCODED="$(python3 -c "import os,urllib.parse; print(urllib.parse.quote(os.environ['PROJECT_PATH'], safe=''))")"
+          BRANCH_ENCODED="$(python3 -c "import os,urllib.parse; print(urllib.parse.quote(os.environ['BRANCH'], safe=''))")"
+
+          for i in $(seq 1 "${GITLAB_REF_VISIBILITY_ATTEMPTS}"); do
+            if RESP="$(gitlab_api GET "https://git.colter.dev/api/v4/projects/${PROJECT_ENCODED}/repository/branches/${BRANCH_ENCODED}")"; then
+              MIRROR_SHA="$(echo "${RESP}" | python3 -c "import json,sys; obj=json.load(sys.stdin); print((obj.get('commit') or {}).get('id',''))")"
+              if [ -n "${MIRROR_SHA}" ] && [ "${MIRROR_SHA}" = "${GH_SHA}" ]; then
+                echo "GitLab mirror branch ${BRANCH} is visible at ${MIRROR_SHA}"
+                exit 0
+              fi
+              if [ -n "${MIRROR_SHA}" ]; then
+                echo "GitLab mirror branch ${BRANCH} visible but at ${MIRROR_SHA}; waiting for ${GH_SHA} (attempt ${i}/${GITLAB_REF_VISIBILITY_ATTEMPTS})"
+              else
+                echo "GitLab mirror branch ${BRANCH} visible but commit id unavailable; attempt ${i}/${GITLAB_REF_VISIBILITY_ATTEMPTS}"
+              fi
+            else
+              echo "GitLab mirror branch ${BRANCH} not visible yet; attempt ${i}/${GITLAB_REF_VISIBILITY_ATTEMPTS}"
+            fi
+            sleep "${GITLAB_REF_VISIBILITY_INTERVAL_SECS}"
+          done
+
+          echo "Timed out waiting for GitLab mirror branch ${BRANCH} to expose commit ${GH_SHA}" >&2
+          exit 1
+
+      - name: Trigger GitLab pipeline with context variables
+        id: trigger
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        env:
+          GITLAB_SYNC_TOKEN: ${{ secrets.GITLAB_SYNC_TOKEN }}
+          DIFY_AI_HEAL_APP_API_KEY: ${{ secrets.DIFY_AI_HEAL_APP_API_KEY }}
+          DIFY_BASE_URL: ${{ vars.DIFY_BASE_URL }}
+          PROJECT_PATH: ${{ steps.vars.outputs.project_path }}
+          BRANCH: ${{ steps.vars.outputs.branch }}
+          EVENT_NAME: ${{ steps.vars.outputs.event_name }}
+          PR_NUMBER: ${{ steps.vars.outputs.pr_number }}
+          ISSUE_NUMBER: ${{ steps.vars.outputs.issue_number }}
+          ISSUE_ACTION: ${{ steps.vars.outputs.issue_action }}
+          ISSUE_COMMENT: ${{ steps.vars.outputs.issue_comment }}
+          GH_REPO: ${{ steps.vars.outputs.gh_repo }}
+          GH_SHA: ${{ steps.vars.outputs.sha }}
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          source "$RUNNER_TEMP/gitlab-api.sh"
+
+          PROJECT_ENCODED=$(python3 -c "import os,urllib.parse; print(urllib.parse.quote(os.environ['PROJECT_PATH'], safe=''))")
+          BRANCH_ENCODED=$(python3 -c "import os,urllib.parse; print(urllib.parse.quote(os.environ['BRANCH'], safe=''))")
+          build_trigger_form_args "${BRANCH}" "${EVENT_NAME}" "${GH_REPO}" "${GH_SHA}" "${GH_TOKEN}" "${PR_NUMBER}" "${ISSUE_NUMBER}" "${ISSUE_ACTION}" "${ISSUE_COMMENT}"
+
+          trigger_pipeline() {
+            gitlab_trigger_pipeline_request "${PROJECT_ENCODED}" "${TRIGGER_FORM_ARGS[@]}"
+            TRIGGER_HTTP_CODE="${GITLAB_LAST_HTTP_CODE:-000}"
+            TRIGGER_RESPONSE="${GITLAB_LAST_RESPONSE:-}"
+          }
+
+          pipeline_skipped="false"
+          pipeline_id_output=""
+          trigger_request_accepted="false"
+          trigger_source="gitlab"
+          trigger_poll_start_ts="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          TRIGGER_HTTP_CODE=""
+          TRIGGER_RESPONSE=""
+
+          write_trigger_outputs() {
+            echo "pipeline_skipped=${pipeline_skipped}" >> "$GITHUB_OUTPUT"
+            echo "pipeline_id=${pipeline_id_output}" >> "$GITHUB_OUTPUT"
+            echo "trigger_request_accepted=${trigger_request_accepted}" >> "$GITHUB_OUTPUT"
+            echo "trigger_source=${trigger_source}" >> "$GITHUB_OUTPUT"
+            echo "trigger_poll_start_ts=${trigger_poll_start_ts}" >> "$GITHUB_OUTPUT"
+          }
+
+          trigger_pipeline_via_dify() {
+            : "${DIFY_BASE_URL:?DIFY_BASE_URL repository variable is required for pull_request bridge runs}"
+            : "${DIFY_AI_HEAL_APP_API_KEY:?DIFY_AI_HEAL_APP_API_KEY secret is required for pull_request bridge runs}"
+
+            local dify_response_file
+            dify_response_file="$(mktemp)"
+            local dify_request
+            dify_request="$(python3 - <<'PY'
+          import json
+          import os
+
+          repo = os.environ["GH_REPO"]
+          pr_number = int(os.environ["PR_NUMBER"])
+          branch = os.environ["BRANCH"]
+          sha = os.environ["GH_SHA"]
+          event_name = os.environ["EVENT_NAME"]
+          project_key = repo.split("/", 1)[-1]
+          note = f"github bridge trigger repo={repo} pr={pr_number} sha={sha}"
+
+          payload = {
+              "inputs": {
+                  "repo": repo,
+                  "prNumber": pr_number,
+                  "ref": branch,
+                  "eventName": event_name,
+                  "requestedBy": "github-actions[bot]",
+                  "projectKey": project_key,
+                  "operatorNote": note,
+              },
+              "response_mode": "blocking",
+              "user": f"github-actions/{repo}",
+          }
+          print(json.dumps(payload))
+          PY
+          )"
+
+            local dify_http_code
+            dify_http_code="$(curl --silent --show-error --connect-timeout "${GITLAB_API_CONNECT_TIMEOUT_SECS}" --max-time "${GITLAB_API_MAX_TIME_SECS}" \
+              --retry 4 \
+              --retry-delay 3 \
+              --retry-connrefused \
+              --output "${dify_response_file}" \
+              --write-out "%{http_code}" \
+              --header "Authorization: Bearer ${DIFY_AI_HEAL_APP_API_KEY}" \
+              --header "Content-Type: application/json" \
+              --data "${dify_request}" \
+              "${DIFY_BASE_URL%/}/v1/workflows/run")"
+
+            if [ "${dify_http_code}" -lt 200 ] || [ "${dify_http_code}" -ge 300 ]; then
+              echo "Dify workflow trigger failed for ${PROJECT_PATH} ref=${BRANCH} (HTTP ${dify_http_code})"
+              cat "${dify_response_file}"
+              rm -f "${dify_response_file}"
+              return 1
+            fi
+
+            mapfile -t dify_parse < <(python3 - "${dify_response_file}" <<'PY'
+          import json
+          import sys
+          from typing import Any
+
+          payload_path = sys.argv[1]
+          with open(payload_path, "r", encoding="utf-8") as handle:
+              payload = json.load(handle)
+
+          data = payload.get("data") or {}
+          outputs = data.get("outputs") or {}
+          parsed_response: dict[str, Any] = outputs.get("parsed_response") or {}
+          raw_response_body = outputs.get("raw_response_body")
+
+          job_id = ""
+          if isinstance(parsed_response, dict):
+              for key in ("jobId", "pipelineId", "pipeline_id"):
+                  value = parsed_response.get(key)
+                  if value is not None and str(value).strip():
+                      job_id = str(value).strip()
+                      break
+
+          if not job_id and isinstance(raw_response_body, str) and raw_response_body.strip():
+              try:
+                  body_obj = json.loads(raw_response_body)
+              except json.JSONDecodeError:
+                  body_obj = {}
+              if isinstance(body_obj, dict):
+                  for key in ("jobId", "pipelineId", "pipeline_id"):
+                      value = body_obj.get(key)
+                      if value is not None and str(value).strip():
+                          job_id = str(value).strip()
+                          break
+
+          def get_pipeline_field(field: str) -> str:
+              pipeline_obj = parsed_response.get("pipeline")
+              if isinstance(pipeline_obj, dict):
+                  value = pipeline_obj.get(field)
+                  if value is not None and str(value).strip():
+                      return str(value).strip()
+
+              if isinstance(parsed_response, dict):
+                  value = parsed_response.get(field)
+                  if value is not None and str(value).strip():
+                      return str(value).strip()
+
+              if isinstance(raw_response_body, str) and raw_response_body.strip():
+                  try:
+                      body_obj = json.loads(raw_response_body)
+                  except json.JSONDecodeError:
+                      body_obj = {}
+                  if isinstance(body_obj, dict):
+                      body_pipeline = body_obj.get("pipeline")
+                      if isinstance(body_pipeline, dict):
+                          value = body_pipeline.get(field)
+                          if value is not None and str(value).strip():
+                              return str(value).strip()
+                      value = body_obj.get(field)
+                      if value is not None and str(value).strip():
+                          return str(value).strip()
+
+              return ""
+
+          http_status_code = outputs.get("http_status_code")
+          if http_status_code in (None, "") and isinstance(parsed_response, dict):
+              http_status_code = parsed_response.get("status")
+
+          workflow_status = data.get("status", "")
+          workflow_error = data.get("error", "")
+          pipeline_project_id = get_pipeline_field("projectId")
+          pipeline_ref = get_pipeline_field("ref")
+
+          print(job_id)
+          print("" if http_status_code is None else str(http_status_code))
+          print(str(workflow_status))
+          print(str(workflow_error))
+          print(pipeline_project_id)
+          print(pipeline_ref)
+          PY
+          )
+
+            local dify_pipeline_id="${dify_parse[0]:-}"
+          local control_plane_http_code="${dify_parse[1]:-}"
+          local dify_workflow_status="${dify_parse[2]:-}"
+          local dify_workflow_error="${dify_parse[3]:-}"
+          local dify_pipeline_project_id="${dify_parse[4]:-}"
+          local dify_pipeline_ref="${dify_parse[5]:-}"
+
+            if [ "${control_plane_http_code}" != "202" ]; then
+              echo "Dify workflow completed without accepted control-plane trigger (status=${dify_workflow_status}, control_plane_http=${control_plane_http_code})"
+              if [ -n "${dify_workflow_error}" ] && [ "${dify_workflow_error}" != "None" ]; then
+                echo "Dify workflow error: ${dify_workflow_error}"
+              fi
+              cat "${dify_response_file}"
+              rm -f "${dify_response_file}"
+              return 1
+            fi
+
+            if [ -z "${dify_pipeline_id}" ]; then
+              echo "Dify workflow returned accepted control-plane response without pipeline id"
+              cat "${dify_response_file}"
+              rm -f "${dify_response_file}"
+              return 1
+            fi
+
+            if [ -z "${dify_pipeline_project_id}" ]; then
+              echo "Dify workflow returned pipeline id ${dify_pipeline_id} without pipeline projectId"
+              cat "${dify_response_file}"
+              rm -f "${dify_response_file}"
+              return 1
+            fi
+
+            if [ "${dify_pipeline_project_id}" != "${PROJECT_PATH}" ]; then
+              echo "Dify workflow pipeline project mismatch: expected ${PROJECT_PATH}, got ${dify_pipeline_project_id}"
+              cat "${dify_response_file}"
+              rm -f "${dify_response_file}"
+              return 1
+            fi
+
+            if [ -n "${dify_pipeline_ref}" ] && [ "${dify_pipeline_ref}" != "${BRANCH}" ]; then
+              echo "Dify workflow pipeline ref mismatch: expected ${BRANCH}, got ${dify_pipeline_ref}"
+              cat "${dify_response_file}"
+              rm -f "${dify_response_file}"
+              return 1
+            fi
+
+          trigger_request_accepted="true"
+            pipeline_id_output="${dify_pipeline_id}"
+            echo "Triggered AI-Heal via Dify workflow -> GitLab pipeline ${dify_pipeline_id}"
+            rm -f "${dify_response_file}"
+            return 0
+          }
+
+          if [ "${EVENT_NAME}" = "pull_request" ] && [ -n "${PR_NUMBER}" ]; then
+            trigger_source="dify"
+            if trigger_pipeline_via_dify; then
+              write_trigger_outputs
+              exit 0
+            fi
+
+            echo "Dify trigger path failed validation; falling back to direct GitLab API trigger for ${PROJECT_PATH} ref=${BRANCH}"
+            trigger_source="gitlab-fallback"
+          fi
+
+          trigger_pipeline
+          if [ "${TRIGGER_HTTP_CODE}" != "201" ] && echo "${TRIGGER_RESPONSE}" | grep -qi "Reference not found"; then
+            echo "GitLab trigger reported missing ref for ${BRANCH}; retrying with branch visibility guard"
+            for n in $(seq 1 "${GITLAB_TRIGGER_ATTEMPTS}"); do
+              if ! ensure_branch_visible "${PROJECT_ENCODED}" "${BRANCH_ENCODED}" "${BRANCH}" "${GH_SHA}" "true"; then
+                if [ "${n}" -lt "${GITLAB_TRIGGER_ATTEMPTS}" ]; then
+                  sleep 3
+                fi
+                continue
+              fi
+              trigger_pipeline
+              if [ "${TRIGGER_HTTP_CODE}" = "201" ] || ! echo "${TRIGGER_RESPONSE}" | grep -qi "Reference not found"; then
+                break
+              fi
+              if [ "${n}" -lt "${GITLAB_TRIGGER_ATTEMPTS}" ]; then
+                sleep 3
+              fi
+            done
+          fi
+
+          if [ "${TRIGGER_HTTP_CODE}" = "201" ]; then
+            trigger_request_accepted="true"
+            PIPELINE_ID="$(echo "${TRIGGER_RESPONSE}" | python3 -c "import json,sys; obj=json.load(sys.stdin); print(obj.get('id',''))")"
+            PIPELINE_WEB_URL="$(echo "${TRIGGER_RESPONSE}" | python3 -c "import json,sys; obj=json.load(sys.stdin); print(obj.get('web_url',''))")"
+            if [ -n "${PIPELINE_ID}" ]; then
+              echo "Triggered GitLab pipeline ${PIPELINE_ID}"
+              pipeline_id_output="${PIPELINE_ID}"
+            else
+              echo "GitLab trigger returned HTTP 201 but no pipeline id; falling back to SHA polling"
+              pipeline_id_output=""
+            fi
+            if [ -n "${PIPELINE_WEB_URL}" ]; then
+              echo "GitLab pipeline URL: ${PIPELINE_WEB_URL}"
+            fi
+            write_trigger_outputs
+            exit 0
+          fi
+
+          if [ "${EVENT_NAME}" = "push" ] && echo "${TRIGGER_RESPONSE}" | grep -qi "The resulting pipeline would have been empty"; then
+            echo "GitLab trigger skipped for push event: no runnable jobs for ref=${BRANCH}"
+            pipeline_skipped="true"
+            write_trigger_outputs
+            exit 0
+          fi
+
+          echo "Failed to trigger GitLab pipeline for ${PROJECT_PATH} ref=${BRANCH} (HTTP ${TRIGGER_HTTP_CODE})"
+          echo "GitLab pipeline trigger returned HTTP ${TRIGGER_HTTP_CODE}; falling back to SHA polling path"
+          if [ -n "${TRIGGER_RESPONSE}" ]; then
+            echo "${TRIGGER_RESPONSE}"
+          fi
+          write_trigger_outputs
+
+      - name: Wait for GitLab pipeline result
+        id: wait
+        if: ${{ !startsWith(github.ref, 'refs/tags/') && steps.trigger.outputs.pipeline_skipped != 'true' }}
+        env:
+          GITLAB_SYNC_TOKEN: ${{ secrets.GITLAB_SYNC_TOKEN }}
+          PROJECT_PATH: ${{ steps.vars.outputs.project_path }}
+          BRANCH: ${{ steps.vars.outputs.branch }}
+          GH_EVENT_NAME: ${{ github.event_name }}
+          GH_REPO: ${{ steps.vars.outputs.gh_repo }}
+          GH_SHA: ${{ steps.vars.outputs.sha }}
+          GH_PR_NUMBER: ${{ steps.vars.outputs.pr_number }}
+          GH_ISSUE_NUMBER: ${{ steps.vars.outputs.issue_number }}
+          GH_ISSUE_ACTION: ${{ steps.vars.outputs.issue_action }}
+          GH_ISSUE_COMMENT_BODY: ${{ steps.vars.outputs.issue_comment }}
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ steps.vars.outputs.sha }}
+          TRIGGERED_PIPELINE_ID: ${{ steps.trigger.outputs.pipeline_id }}
+          TRIGGER_REQUEST_ACCEPTED: ${{ steps.trigger.outputs.trigger_request_accepted || 'false' }}
+          TRIGGER_SOURCE: ${{ steps.trigger.outputs.trigger_source || 'gitlab' }}
+          TRIGGER_POLL_START_TS: ${{ steps.trigger.outputs.trigger_poll_start_ts }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          source "$RUNNER_TEMP/gitlab-api.sh"
+
+          PROJECT_ENCODED=$(python3 -c "import os,urllib.parse; print(urllib.parse.quote(os.environ['PROJECT_PATH'], safe=''))")
+          BRANCH_ENCODED=$(python3 -c "import os,urllib.parse; print(urllib.parse.quote(os.environ['BRANCH'], safe=''))")
+          TRIGGERED_PIPELINE=0
+          POLL_START_TS="${TRIGGER_POLL_START_TS:-$(date -u +"%Y-%m-%dT%H:%M:%SZ")}"
+          ACCEPTED_WITHOUT_PIPELINE_POLLS=0
+          ACCEPTED_WITHOUT_PIPELINE_RETRIGGERED=0
+          HTTP_CODE=""
+          TRIGGER_RESP=""
+          TRIGGER_PIPELINE_ID=""
+          TRIGGER_PIPELINE_STATUS=""
+          TRIGGER_PIPELINE_CREATED_AT=""
+          FALLBACK_TRIGGER_ATTEMPTED=0
+          PRE_TRIGGER_PIPELINE_ID=0
+          QUEUE_STREAK_PIPELINE_ID=""
+          QUEUE_STATUS_STREAK=0
+          PIPELINE_LOOKUP_STREAK_PIPELINE_ID=""
+          PIPELINE_LOOKUP_404_STREAK=0
+          if ! [[ "${GITLAB_PENDING_DIAG_INTERVAL_POLLS}" =~ ^[0-9]+$ ]]; then
+            echo "Invalid GITLAB_PENDING_DIAG_INTERVAL_POLLS=${GITLAB_PENDING_DIAG_INTERVAL_POLLS}; defaulting to 8"
+            GITLAB_PENDING_DIAG_INTERVAL_POLLS=8
+          fi
+          if ! [[ "${GITLAB_PENDING_FAIL_FAST_POLLS}" =~ ^[0-9]+$ ]]; then
+            echo "Invalid GITLAB_PENDING_FAIL_FAST_POLLS=${GITLAB_PENDING_FAIL_FAST_POLLS}; defaulting to 120"
+            GITLAB_PENDING_FAIL_FAST_POLLS=120
+          fi
+          if ! [[ "${GITLAB_PIPELINE_NOT_FOUND_FAIL_FAST_POLLS}" =~ ^[0-9]+$ ]]; then
+            echo "Invalid GITLAB_PIPELINE_NOT_FOUND_FAIL_FAST_POLLS=${GITLAB_PIPELINE_NOT_FOUND_FAIL_FAST_POLLS}; defaulting to 12"
+            GITLAB_PIPELINE_NOT_FOUND_FAIL_FAST_POLLS=12
+          fi
+
+          echo "Bridge trigger source: ${TRIGGER_SOURCE}"
+
+          redact_trace() {
+            python3 -c 'import re,sys; trace=sys.stdin.read(); trace=re.sub(r"(PRIVATE-TOKEN:\s*)\S+", r"\1[REDACTED]", trace, flags=re.IGNORECASE); trace=re.sub(r"(Authorization:\s*Bearer\s+)\S+", r"\1[REDACTED]", trace, flags=re.IGNORECASE); trace=re.sub(r"(https://oauth2:)[^@/\s]+@", r"\1[REDACTED]@", trace, flags=re.IGNORECASE); trace=re.sub(r"(https://x-access-token:)[^@/\s]+@", r"\1[REDACTED]@", trace, flags=re.IGNORECASE); sys.stdout.write(trace)'
+          }
+
+          dump_pipeline_diagnostics() {
+            local pipeline_id="$1"
+            local pipeline_resp=""
+            local jobs_resp=""
+            local failed_jobs=""
+
+            if pipeline_resp="$(gitlab_api GET "https://git.colter.dev/api/v4/projects/${PROJECT_ENCODED}/pipelines/${pipeline_id}")"; then
+              local pipeline_url
+              pipeline_url=$(echo "${pipeline_resp}" | python3 -c "import json,sys; obj=json.load(sys.stdin); print(obj.get('web_url',''))")
+              if [ -n "${pipeline_url}" ]; then
+                echo "GitLab pipeline URL: ${pipeline_url}"
+              fi
+            else
+              echo "Unable to fetch pipeline details for ${pipeline_id}" >&2
+            fi
+
+            if jobs_resp="$(gitlab_api GET "https://git.colter.dev/api/v4/projects/${PROJECT_ENCODED}/pipelines/${pipeline_id}/jobs?per_page=100")"; then
+              echo "GitLab job diagnostics for pipeline ${pipeline_id}:"
+              echo "${jobs_resp}" | python3 -c "import json,sys; jobs=json.load(sys.stdin); [print(f\"- stage={job.get('stage','')} name={job.get('name','')} status={job.get('status','')} failure_reason={job.get('failure_reason','')} web_url={job.get('web_url','')}\") for job in jobs]"
+              failed_jobs=$(echo "${jobs_resp}" | python3 -c "import json,sys; jobs=json.load(sys.stdin); [print(f\"{job.get('id','')}|{job.get('stage','')}|{job.get('name','')}|{job.get('web_url','')}\") for job in jobs if job.get('status') == 'failed']")
+            else
+              echo "Unable to fetch job diagnostics for pipeline ${pipeline_id}" >&2
+              return
+            fi
+
+            if [ -z "${failed_jobs}" ]; then
+              echo "No failed GitLab jobs found for pipeline ${pipeline_id}"
+              return
+            fi
+
+            while IFS='|' read -r job_id job_stage job_name job_url; do
+              local job_trace=""
+              [ -n "${job_id}" ] || continue
+              echo "GitLab trace for failed job ${job_id} (${job_stage}/${job_name}) ${job_url}:"
+              if [ "${GITLAB_TRACE_DIAGNOSTICS:-false}" != "true" ]; then
+                echo "Trace tail suppressed (set GITLAB_TRACE_DIAGNOSTICS=true to enable redacted output)"
+                continue
+              fi
+              if job_trace="$(gitlab_api GET "https://git.colter.dev/api/v4/projects/${PROJECT_ENCODED}/jobs/${job_id}/trace")"; then
+                printf '%s\n' "${job_trace}" | redact_trace | tail -n 200
+                if echo "${job_trace}" | grep -q "Insufficient permissions to pull from the repository"; then
+                  echo "Hint: GitLab runner checkout failed during get_sources. Keep GIT_STRATEGY:none plus mirrored source bootstrap in .gitlab-ci.yml, or fix GitLab runner repository permissions for ${PROJECT_PATH}."
+                fi
+              else
+                echo "Unable to fetch trace for failed GitLab job ${job_id}" >&2
+              fi
+            done <<< "${failed_jobs}"
+          }
+
+          dump_pipeline_queue_diagnostics() {
+            local pipeline_id="$1"
+            local jobs_resp=""
+            local runners_resp=""
+            local jobs_file=""
+            local runners_file=""
+
+            if ! jobs_resp="$(gitlab_api GET "https://git.colter.dev/api/v4/projects/${PROJECT_ENCODED}/pipelines/${pipeline_id}/jobs?per_page=100&include_retried=true")"; then
+              echo "Unable to fetch queue diagnostics for pipeline ${pipeline_id}" >&2
+              return
+            fi
+
+            echo "GitLab queue diagnostics for pipeline ${pipeline_id}:"
+            echo "${jobs_resp}" | python3 -c "import json,sys; queue={'created','pending','preparing','waiting_for_resource','manual','scheduled'}; jobs=json.load(sys.stdin); queued=[job for job in jobs if job.get('status') in queue]; print(f'queued_jobs={len(queued)}'); [print(f\"- stage={job.get('stage','')} name={job.get('name','')} status={job.get('status','')} tags={','.join(job.get('tag_list') or []) or '<none>'} runner={((job.get('runner') or {}).get('description','<none>'))} failure_reason={job.get('failure_reason','')} web_url={job.get('web_url','')}\") for job in queued]"
+
+            if ! runners_resp="$(gitlab_api GET "https://git.colter.dev/api/v4/projects/${PROJECT_ENCODED}/runners?per_page=100")"; then
+              echo "Unable to fetch project runner inventory for ${PROJECT_PATH}" >&2
+              return
+            fi
+
+            jobs_file="$(mktemp)"
+            runners_file="$(mktemp)"
+            printf '%s' "${jobs_resp}" > "${jobs_file}"
+            printf '%s' "${runners_resp}" > "${runners_file}"
+
+            python3 - "${jobs_file}" "${runners_file}" <<'PY'
+          import json, pathlib, sys
+
+          jobs = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
+          runners = json.loads(pathlib.Path(sys.argv[2]).read_text(encoding="utf-8"))
+          queue_statuses = {"created", "pending", "preparing", "waiting_for_resource", "manual", "scheduled"}
+          queued_jobs = [job for job in jobs if job.get("status") in queue_statuses]
+          online_active = [
+              runner
+              for runner in runners
+              if str(runner.get("status", "")).lower() == "online" and not bool(runner.get("paused", False))
+          ]
+          print(
+              "project_runners="
+              f"{len(runners)} online_active={len(online_active)} "
+              f"offline_or_paused={len(runners) - len(online_active)}"
+          )
+
+          for job in queued_jobs:
+              tags = [str(tag) for tag in (job.get("tag_list") or []) if str(tag).strip()]
+              tag_set = set(tags)
+              matches = []
+              for runner in online_active:
+                  runner_tags = {str(tag) for tag in (runner.get("tag_list") or []) if str(tag).strip()}
+                  if tag_set.issubset(runner_tags):
+                      matches.append(runner)
+              if matches:
+                  print(
+                      f"runner_match job={job.get('name','')} stage={job.get('stage','')} "
+                      f"required_tags={','.join(tags) or '<none>'} matches={len(matches)}"
+                  )
+              else:
+                  print(
+                      f"runner_mismatch job={job.get('name','')} stage={job.get('stage','')} "
+                      f"required_tags={','.join(tags) or '<none>'} matches=0"
+                  )
+          PY
+            rm -f "${jobs_file}" "${runners_file}"
+          }
+
+          is_queue_status() {
+            case "$1" in
+              created|pending|preparing|waiting_for_resource|manual|scheduled)
+                return 0
+                ;;
+              *)
+                return 1
+                ;;
+            esac
+          }
+
+          run_queue_watchdog() {
+            local pipeline_id="$1"
+            local status="$2"
+
+            if ! is_queue_status "${status}"; then
+              QUEUE_STREAK_PIPELINE_ID="${pipeline_id}"
+              QUEUE_STATUS_STREAK=0
+              return 0
+            fi
+
+            if [ "${QUEUE_STREAK_PIPELINE_ID}" != "${pipeline_id}" ]; then
+              QUEUE_STREAK_PIPELINE_ID="${pipeline_id}"
+              QUEUE_STATUS_STREAK=0
+            fi
+
+            QUEUE_STATUS_STREAK=$((QUEUE_STATUS_STREAK + 1))
+
+            if [ "${GITLAB_PENDING_DIAG_INTERVAL_POLLS}" -gt 0 ] && [ $((QUEUE_STATUS_STREAK % GITLAB_PENDING_DIAG_INTERVAL_POLLS)) -eq 0 ]; then
+              echo "Queue watchdog: pipeline ${pipeline_id} remained in status=${status} for ${QUEUE_STATUS_STREAK} polls"
+              dump_pipeline_queue_diagnostics "${pipeline_id}" || true
+            fi
+
+            if [ "${GITLAB_PENDING_FAIL_FAST_POLLS}" -gt 0 ] && [ "${QUEUE_STATUS_STREAK}" -ge "${GITLAB_PENDING_FAIL_FAST_POLLS}" ]; then
+              echo "Fail-fast: pipeline ${pipeline_id} remained in queue status=${status} for ${QUEUE_STATUS_STREAK} polls"
+              dump_pipeline_queue_diagnostics "${pipeline_id}" || true
+              return 1
+            fi
+
+            return 0
+          }
+
+          run_pipeline_lookup_watchdog() {
+            local pipeline_id="$1"
+            local http_code="$2"
+
+            if [ "${http_code}" != "404" ]; then
+              if [ "${PIPELINE_LOOKUP_STREAK_PIPELINE_ID}" = "${pipeline_id}" ]; then
+                PIPELINE_LOOKUP_404_STREAK=0
+              fi
+              return 0
+            fi
+
+            if [ "${PIPELINE_LOOKUP_STREAK_PIPELINE_ID}" != "${pipeline_id}" ]; then
+              PIPELINE_LOOKUP_STREAK_PIPELINE_ID="${pipeline_id}"
+              PIPELINE_LOOKUP_404_STREAK=0
+            fi
+
+            PIPELINE_LOOKUP_404_STREAK=$((PIPELINE_LOOKUP_404_STREAK + 1))
+            echo "Pipeline lookup watchdog: pipeline ${pipeline_id} returned HTTP 404 (${PIPELINE_LOOKUP_404_STREAK}/${GITLAB_PIPELINE_NOT_FOUND_FAIL_FAST_POLLS})"
+
+            if [ "${GITLAB_PIPELINE_NOT_FOUND_FAIL_FAST_POLLS}" -gt 0 ] && [ "${PIPELINE_LOOKUP_404_STREAK}" -ge "${GITLAB_PIPELINE_NOT_FOUND_FAIL_FAST_POLLS}" ]; then
+              echo "Fail-fast: pipeline ${pipeline_id} remained unreadable (HTTP 404) for ${PIPELINE_LOOKUP_404_STREAK} polls"
+              return 1
+            fi
+
+            return 0
+          }
+
+          trigger_pipeline_via_dify_with_context() {
+            : "${DIFY_BASE_URL:?DIFY_BASE_URL repository variable is required for Dify-triggered pull_request bridge runs}"
+            : "${DIFY_AI_HEAL_APP_API_KEY:?DIFY_AI_HEAL_APP_API_KEY secret is required for Dify-triggered pull_request bridge runs}"
+
+            local dify_response_file
+            dify_response_file="$(mktemp)"
+            local dify_request
+            dify_request="$(python3 - <<'PY'
+          import json
+          import os
+
+          repo = os.environ["GH_REPO"]
+          pr_number = int(os.environ["GH_PR_NUMBER"])
+          branch = os.environ["BRANCH"]
+          sha = os.environ["GH_SHA"]
+          event_name = os.environ["GH_EVENT_NAME"]
+          project_key = repo.split("/", 1)[-1]
+          note = f"github bridge retrigger repo={repo} pr={pr_number} sha={sha}"
+
+          payload = {
+              "inputs": {
+                  "repo": repo,
+                  "prNumber": pr_number,
+                  "ref": branch,
+                  "eventName": event_name,
+                  "requestedBy": "github-actions[bot]",
+                  "projectKey": project_key,
+                  "operatorNote": note,
+              },
+              "response_mode": "blocking",
+              "user": f"github-actions/{repo}",
+          }
+          print(json.dumps(payload))
+          PY
+          )"
+
+            HTTP_CODE="$(curl --silent --show-error --connect-timeout "${GITLAB_API_CONNECT_TIMEOUT_SECS}" --max-time "${GITLAB_API_MAX_TIME_SECS}" \
+              --retry 4 \
+              --retry-delay 3 \
+              --retry-connrefused \
+              --output "${dify_response_file}" \
+              --write-out "%{http_code}" \
+              --header "Authorization: Bearer ${DIFY_AI_HEAL_APP_API_KEY}" \
+              --header "Content-Type: application/json" \
+              --data "${dify_request}" \
+              "${DIFY_BASE_URL%/}/v1/workflows/run")"
+
+            TRIGGER_RESP="$(cat "${dify_response_file}")"
+            TRIGGER_PIPELINE_CREATED_AT="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+            mapfile -t dify_parse < <(python3 - "${dify_response_file}" <<'PY'
+          import json
+          import sys
+          from typing import Any
+
+          payload_path = sys.argv[1]
+          with open(payload_path, "r", encoding="utf-8") as handle:
+              payload = json.load(handle)
+
+          data = payload.get("data") or {}
+          outputs = data.get("outputs") or {}
+          parsed_response: dict[str, Any] = outputs.get("parsed_response") or {}
+          raw_response_body = outputs.get("raw_response_body")
+
+          job_id = ""
+          if isinstance(parsed_response, dict):
+              for key in ("jobId", "pipelineId", "pipeline_id"):
+                  value = parsed_response.get(key)
+                  if value is not None and str(value).strip():
+                      job_id = str(value).strip()
+                      break
+
+          if not job_id and isinstance(raw_response_body, str) and raw_response_body.strip():
+              try:
+                  body_obj = json.loads(raw_response_body)
+              except json.JSONDecodeError:
+                  body_obj = {}
+              if isinstance(body_obj, dict):
+                  for key in ("jobId", "pipelineId", "pipeline_id"):
+                      value = body_obj.get(key)
+                      if value is not None and str(value).strip():
+                          job_id = str(value).strip()
+                          break
+
+          def get_pipeline_field(field: str) -> str:
+              pipeline_obj = parsed_response.get("pipeline")
+              if isinstance(pipeline_obj, dict):
+                  value = pipeline_obj.get(field)
+                  if value is not None and str(value).strip():
+                      return str(value).strip()
+
+              if isinstance(parsed_response, dict):
+                  value = parsed_response.get(field)
+                  if value is not None and str(value).strip():
+                      return str(value).strip()
+
+              if isinstance(raw_response_body, str) and raw_response_body.strip():
+                  try:
+                      body_obj = json.loads(raw_response_body)
+                  except json.JSONDecodeError:
+                      body_obj = {}
+                  if isinstance(body_obj, dict):
+                      body_pipeline = body_obj.get("pipeline")
+                      if isinstance(body_pipeline, dict):
+                          value = body_pipeline.get(field)
+                          if value is not None and str(value).strip():
+                              return str(value).strip()
+                      value = body_obj.get(field)
+                      if value is not None and str(value).strip():
+                          return str(value).strip()
+
+              return ""
+
+          http_status_code = outputs.get("http_status_code")
+          if http_status_code in (None, "") and isinstance(parsed_response, dict):
+              http_status_code = parsed_response.get("status")
+
+          workflow_status = data.get("status", "")
+          workflow_error = data.get("error", "")
+          pipeline_project_id = get_pipeline_field("projectId")
+          pipeline_ref = get_pipeline_field("ref")
+
+          print(job_id)
+          print("" if http_status_code is None else str(http_status_code))
+          print(str(workflow_status))
+          print(str(workflow_error))
+          print(pipeline_project_id)
+          print(pipeline_ref)
+          PY
+          )
+
+            local control_plane_http_code="${dify_parse[1]:-}"
+            TRIGGER_PIPELINE_ID="${dify_parse[0]:-}"
+            TRIGGER_PIPELINE_STATUS="${dify_parse[2]:-}"
+            local dify_workflow_error="${dify_parse[3]:-}"
+            local dify_pipeline_project_id="${dify_parse[4]:-}"
+            local dify_pipeline_ref="${dify_parse[5]:-}"
+
+            if [ "${HTTP_CODE}" -lt 200 ] || [ "${HTTP_CODE}" -ge 300 ]; then
+              echo "Dify retrigger request failed for ${PROJECT_PATH} ref=${BRANCH} (HTTP ${HTTP_CODE})"
+              cat "${dify_response_file}"
+              rm -f "${dify_response_file}"
+              return 1
+            fi
+
+            if [ "${control_plane_http_code}" = "202" ]; then
+              HTTP_CODE="201"
+              if [ -z "${TRIGGER_PIPELINE_STATUS}" ]; then
+                TRIGGER_PIPELINE_STATUS="created"
+              fi
+            else
+              echo "Dify retrigger completed without accepted control-plane trigger (status=${TRIGGER_PIPELINE_STATUS}, control_plane_http=${control_plane_http_code})"
+              if [ -n "${dify_workflow_error}" ] && [ "${dify_workflow_error}" != "None" ]; then
+                echo "Dify retrigger workflow error: ${dify_workflow_error}"
+              fi
+              cat "${dify_response_file}"
+              rm -f "${dify_response_file}"
+              return 1
+            fi
+
+            if [ -z "${TRIGGER_PIPELINE_ID}" ]; then
+              echo "Dify retrigger returned accepted control-plane response without pipeline id"
+              cat "${dify_response_file}"
+              rm -f "${dify_response_file}"
+              return 1
+            fi
+
+            if [ -z "${dify_pipeline_project_id}" ]; then
+              echo "Dify retrigger returned pipeline id ${TRIGGER_PIPELINE_ID} without pipeline projectId"
+              cat "${dify_response_file}"
+              rm -f "${dify_response_file}"
+              return 1
+            fi
+
+            if [ "${dify_pipeline_project_id}" != "${PROJECT_PATH}" ]; then
+              echo "Dify retrigger pipeline project mismatch: expected ${PROJECT_PATH}, got ${dify_pipeline_project_id}"
+              cat "${dify_response_file}"
+              rm -f "${dify_response_file}"
+              return 1
+            fi
+
+            if [ -n "${dify_pipeline_ref}" ] && [ "${dify_pipeline_ref}" != "${BRANCH}" ]; then
+              echo "Dify retrigger pipeline ref mismatch: expected ${BRANCH}, got ${dify_pipeline_ref}"
+              cat "${dify_response_file}"
+              rm -f "${dify_response_file}"
+              return 1
+            fi
+
+            rm -f "${dify_response_file}"
+            return 0
+          }
+
+          trigger_pipeline_with_context() {
+            if [ "${TRIGGER_SOURCE}" = "dify" ] && [ "${GH_EVENT_NAME}" = "pull_request" ] && [ -n "${GH_PR_NUMBER}" ]; then
+              trigger_pipeline_via_dify_with_context
+              return
+            fi
+            build_trigger_form_args "${BRANCH}" "${GH_EVENT_NAME}" "${GH_REPO}" "${GH_SHA}" "${GH_TOKEN}" "${GH_PR_NUMBER}" "${GH_ISSUE_NUMBER}" "${GH_ISSUE_ACTION}" "${GH_ISSUE_COMMENT_BODY}"
+            gitlab_trigger_pipeline_request "${PROJECT_ENCODED}" "${TRIGGER_FORM_ARGS[@]}"
+            HTTP_CODE="${GITLAB_LAST_HTTP_CODE:-000}"
+            TRIGGER_RESP="${GITLAB_LAST_RESPONSE:-}"
+            TRIGGER_PIPELINE_ID="$(echo "${TRIGGER_RESP}" | python3 -c 'import json,sys; text=sys.stdin.read().strip(); obj=(json.loads(text) if text else {}); print(obj.get("id","") if isinstance(obj,dict) else "")' 2>/dev/null || true)"
+            TRIGGER_PIPELINE_STATUS="$(echo "${TRIGGER_RESP}" | python3 -c 'import json,sys; text=sys.stdin.read().strip(); obj=(json.loads(text) if text else {}); print(obj.get("status","") if isinstance(obj,dict) else "")' 2>/dev/null || true)"
+            TRIGGER_PIPELINE_CREATED_AT="$(echo "${TRIGGER_RESP}" | python3 -c 'import json,sys; text=sys.stdin.read().strip(); obj=(json.loads(text) if text else {}); print(obj.get("created_at","") if isinstance(obj,dict) else "")' 2>/dev/null || true)"
+          }
+
+          select_fresh_pipeline_json() {
+            local start_ts="$1"
+            local baseline_pipeline_id="${2:-0}"
+            jq -c --arg start "${start_ts}" --argjson skew 30 --argjson baseline "${baseline_pipeline_id}" '[.[] | select((((.id // 0) | tonumber? // 0) > $baseline) and (((((.created_at // "") | gsub("\\.[0-9]+Z$"; "Z") | fromdateiso8601?) // -1) >= (((($start | fromdateiso8601?) // 0) - $skew)))))] | .[0] // {}'
+          }
+
+          resolve_pre_trigger_pipeline_id() {
+            local start_ts="$1"
+            local candidate_resp=""
+            if ! candidate_resp="$(gitlab_api GET "https://git.colter.dev/api/v4/projects/${PROJECT_ENCODED}/pipelines?sha=${SHA}&ref=${BRANCH_ENCODED}&order_by=id&sort=desc&per_page=20")"; then
+              echo "Warning: unable to query baseline GitLab pipelines before SHA fallback selection."
+              echo "0"
+              return
+            fi
+            local baseline_id="0"
+            if ! baseline_id="$(printf '%s' "${candidate_resp}" | jq -r --arg start "${start_ts}" '
+              ($start | gsub("\\.[0-9]+Z$"; "Z")) as $start_norm
+              | [
+                  .[]?
+                  | select(type == "object")
+                  | ((.created_at // "") | tostring | gsub("\\.[0-9]+Z$"; "Z")) as $created_norm
+                  | select($created_norm != "" and $created_norm < $start_norm)
+                  | ((.id // "") | tostring) as $id
+                  | select($id | test("^[0-9]+$"))
+                  | ($id | tonumber)
+                ]
+              | max // 0
+            ' 2>/dev/null)"; then
+              echo "Warning: unable to parse baseline GitLab pipeline list before SHA fallback selection."
+              echo "0"
+              return
+            fi
+            if [ -z "${baseline_id}" ] || ! [[ "${baseline_id}" =~ ^[0-9]+$ ]]; then
+              echo "0"
+              return
+            fi
+            echo "${baseline_id}"
+          }
+
+          fetch_pipeline_by_id() {
+            local pipeline_id="$1"
+            gitlab_request_with_http GET "https://git.colter.dev/api/v4/projects/${PROJECT_ENCODED}/pipelines/${pipeline_id}"
+            case "${GITLAB_LAST_HTTP_CODE}" in
+              200)
+                RESP="${GITLAB_LAST_RESPONSE}"
+                return 0
+                ;;
+              404|429|5*|000)
+                echo "GitLab pipeline ${pipeline_id} is not readable yet (HTTP ${GITLAB_LAST_HTTP_CODE}); retrying."
+                return 2
+                ;;
+              *)
+                echo "Failed to fetch GitLab pipeline ${pipeline_id} (HTTP ${GITLAB_LAST_HTTP_CODE})" >&2
+                if [ -n "${GITLAB_LAST_RESPONSE}" ]; then
+                  echo "${GITLAB_LAST_RESPONSE}" >&2
+                fi
+                return 1
+                ;;
+            esac
+          }
+
+          fetch_pipeline_by_id() {
+            local pipeline_id="$1"
+            gitlab_request_with_http GET "https://git.colter.dev/api/v4/projects/${PROJECT_ENCODED}/pipelines/${pipeline_id}"
+            case "${GITLAB_LAST_HTTP_CODE}" in
+              200)
+                RESP="${GITLAB_LAST_RESPONSE}"
+                return 0
+                ;;
+              404|429|5*|000)
+                echo "GitLab pipeline ${pipeline_id} is not readable yet (HTTP ${GITLAB_LAST_HTTP_CODE}); retrying."
+                return 2
+                ;;
+              *)
+                echo "Failed to fetch GitLab pipeline ${pipeline_id} (HTTP ${GITLAB_LAST_HTTP_CODE})" >&2
+                if [ -n "${GITLAB_LAST_RESPONSE}" ]; then
+                  echo "${GITLAB_LAST_RESPONSE}" >&2
+                fi
+                return 1
+                ;;
+            esac
+          }
+
+          JQ_FROMDATE_READY=0
+          PRE_TRIGGER_PIPELINE_ID="$(resolve_pre_trigger_pipeline_id "${POLL_START_TS}")"
+          if [ -z "${PRE_TRIGGER_PIPELINE_ID}" ] || ! [[ "${PRE_TRIGGER_PIPELINE_ID}" =~ ^[0-9]+$ ]]; then
+            PRE_TRIGGER_PIPELINE_ID=0
+          fi
+          LAST_SEEN_PIPELINE_ID=""
+          LAST_SEEN_STATUS=""
+          echo "SHA fallback baseline pipeline id before trigger window: ${PRE_TRIGGER_PIPELINE_ID}"
+
+          if [ -n "${TRIGGERED_PIPELINE_ID}" ]; then
+            echo "Waiting for triggered GitLab pipeline id=${TRIGGERED_PIPELINE_ID}"
+            for i in $(seq 1 "${GITLAB_POLL_ATTEMPTS}"); do
+              if fetch_pipeline_by_id "${TRIGGERED_PIPELINE_ID}"; then
+                run_pipeline_lookup_watchdog "${TRIGGERED_PIPELINE_ID}" "200" || true
+                :
+              else
+                fetch_rc=$?
+                if [ "${fetch_rc}" -eq 2 ]; then
+                  if ! run_pipeline_lookup_watchdog "${TRIGGERED_PIPELINE_ID}" "${GITLAB_LAST_HTTP_CODE}"; then
+                    dump_pipeline_queue_diagnostics "${TRIGGERED_PIPELINE_ID}" || true
+                    exit 1
+                  fi
+                  sleep "${GITLAB_POLL_INTERVAL_SECS}"
+                  continue
+                fi
+                exit 1
+              fi
+              STATUS=$(echo "${RESP}" | python3 -c "import json,sys; obj=json.load(sys.stdin); print(obj.get('status',''))")
+              LAST_SEEN_PIPELINE_ID="${TRIGGERED_PIPELINE_ID}"
+              LAST_SEEN_STATUS="${STATUS}"
+              echo "GitLab pipeline ${TRIGGERED_PIPELINE_ID} status=${STATUS}"
+              if ! run_queue_watchdog "${TRIGGERED_PIPELINE_ID}" "${STATUS}"; then
+                exit 1
+              fi
+              case "${STATUS}" in
+                success)
+                  exit 0
+                  ;;
+                failed|canceled|skipped)
+                  dump_pipeline_diagnostics "${TRIGGERED_PIPELINE_ID}"
+                  echo "Pipeline ${TRIGGERED_PIPELINE_ID} ended with status=${STATUS}"
+                  exit 1
+                  ;;
+                created|pending|preparing|running|waiting_for_resource|manual|scheduled)
+                  sleep "${GITLAB_POLL_INTERVAL_SECS}"
+                  ;;
+                *)
+                  echo "Unexpected pipeline status: ${STATUS}"
+                  sleep "${GITLAB_POLL_INTERVAL_SECS}"
+                  ;;
+              esac
+            done
+            echo "Timed out waiting for triggered GitLab pipeline ${TRIGGERED_PIPELINE_ID} (last_status=${LAST_SEEN_STATUS:-unknown})"
+            dump_pipeline_diagnostics "${TRIGGERED_PIPELINE_ID}" || true
+            exit 1
+          fi
+
+          echo "Waiting for GitLab pipeline: project=${PROJECT_PATH} branch=${BRANCH} sha=${SHA}"
+          echo "SHA fallback poll window starts at ${POLL_START_TS}"
+          for i in $(seq 1 "${GITLAB_POLL_ATTEMPTS}"); do
+            if [ "${TRIGGERED_PIPELINE}" = "1" ] && [ -n "${TRIGGERED_PIPELINE_ID}" ]; then
+              if fetch_pipeline_by_id "${TRIGGERED_PIPELINE_ID}"; then
+                run_pipeline_lookup_watchdog "${TRIGGERED_PIPELINE_ID}" "200" || true
+                :
+              else
+                fetch_rc=$?
+                if [ "${fetch_rc}" -eq 2 ]; then
+                  if ! run_pipeline_lookup_watchdog "${TRIGGERED_PIPELINE_ID}" "${GITLAB_LAST_HTTP_CODE}"; then
+                    dump_pipeline_queue_diagnostics "${TRIGGERED_PIPELINE_ID}" || true
+                    exit 1
+                  fi
+                  sleep "${GITLAB_POLL_INTERVAL_SECS}"
+                  continue
+                fi
+                exit 1
+              fi
+              PIPELINE_ID="${TRIGGERED_PIPELINE_ID}"
+              STATUS="$(echo "${RESP}" | python3 -c 'import json,sys; text=sys.stdin.read().strip(); obj=(json.loads(text) if text else {}); print(obj.get("status","") if isinstance(obj,dict) else "")' 2>/dev/null || true)"
+              PIPELINE_CREATED_AT="$(echo "${RESP}" | python3 -c 'import json,sys; text=sys.stdin.read().strip(); obj=(json.loads(text) if text else {}); print(obj.get("created_at","") if isinstance(obj,dict) else "")' 2>/dev/null || true)"
+            else
+              gitlab_request_with_http GET "https://git.colter.dev/api/v4/projects/${PROJECT_ENCODED}/pipelines?sha=${SHA}&ref=${BRANCH_ENCODED}&order_by=id&sort=desc&per_page=20"
+              case "${GITLAB_LAST_HTTP_CODE}" in
+                200)
+                  RESP="${GITLAB_LAST_RESPONSE}"
+                  ;;
+                404|429|5*|000)
+                  echo "GitLab pipeline list is not readable yet (HTTP ${GITLAB_LAST_HTTP_CODE}) for ${PROJECT_PATH} sha=${SHA} ref=${BRANCH}; retrying."
+                  RESP=""
+                  ;;
+                *)
+                  echo "Failed to query GitLab pipelines for ${PROJECT_PATH} sha=${SHA} ref=${BRANCH} (HTTP ${GITLAB_LAST_HTTP_CODE})" >&2
+                  if [ -n "${GITLAB_LAST_RESPONSE}" ]; then
+                    echo "${GITLAB_LAST_RESPONSE}" >&2
+                  fi
+                  exit 1
+                  ;;
+              esac
+              if [ "${JQ_FROMDATE_READY}" != "1" ]; then
+                JQ_VERSION_RAW="$(jq --version 2>/dev/null || true)"
+                if [ -z "${JQ_VERSION_RAW}" ] || echo "${JQ_VERSION_RAW}" | grep -Eq '^jq-1\.[0-4]($|[^0-9])'; then
+                  echo "::error::gitlab-ci-bridge requires jq >= 1.5 for fromdateiso8601 in SHA fallback mode (found: ${JQ_VERSION_RAW:-missing})"
+                  exit 1
+                fi
+                if ! printf '"1970-01-01T00:00:00Z"\n' | jq -e 'fromdateiso8601 | . >= 0' >/dev/null 2>&1; then
+                  echo "::error::gitlab-ci-bridge requires jq with fromdateiso8601 support in SHA fallback mode (found: ${JQ_VERSION_RAW:-missing})"
+                  exit 1
+                fi
+                JQ_FROMDATE_READY=1
+              fi
+              FRESH_PIPELINE_JSON="$(echo "${RESP}" | select_fresh_pipeline_json "${POLL_START_TS}" "${PRE_TRIGGER_PIPELINE_ID}")"
+              STATUS="$(echo "${FRESH_PIPELINE_JSON}" | jq -r '.status // empty')"
+              PIPELINE_ID="$(echo "${FRESH_PIPELINE_JSON}" | jq -r '.id // empty')"
+              PIPELINE_CREATED_AT="$(echo "${FRESH_PIPELINE_JSON}" | jq -r '.created_at // empty')"
+              if [ -n "${PIPELINE_ID}" ] && [ -z "${TRIGGERED_PIPELINE_ID}" ]; then
+                EXACT_WINDOW_MATCH="$(echo "${FRESH_PIPELINE_JSON}" | jq -r --arg start "${POLL_START_TS}" --argjson skew 30 '((((.created_at // "") | gsub("\\.[0-9]+Z$"; "Z") | fromdateiso8601?) // -1) >= (((($start | fromdateiso8601?) // 0) - $skew)))')"
+                if [ "${EXACT_WINDOW_MATCH}" = "true" ]; then
+                  TRIGGERED_PIPELINE=1
+                  TRIGGERED_PIPELINE_ID="${PIPELINE_ID}"
+                else
+                  echo "Ignoring stale GitLab pipeline ${PIPELINE_ID} created_at=${PIPELINE_CREATED_AT}; outside skew-adjusted poll window."
+                  PIPELINE_ID=""
+                  STATUS=""
+                  PIPELINE_CREATED_AT=""
+                fi
+              fi
+            fi
+
+              if [ -z "${PIPELINE_ID}" ]; then
+                if [ "${TRIGGERED_PIPELINE}" = "0" ] && [ "${TRIGGER_REQUEST_ACCEPTED}" = "true" ]; then
+                  ACCEPTED_WITHOUT_PIPELINE_POLLS=$((ACCEPTED_WITHOUT_PIPELINE_POLLS + 1))
+                  if [ "${ACCEPTED_WITHOUT_PIPELINE_RETRIGGERED}" = "1" ]; then
+                    echo "No pipeline visible after accepted trigger (attempt ${ACCEPTED_WITHOUT_PIPELINE_POLLS}/${GITLAB_NO_PIPELINE_FAST_FAIL_ATTEMPTS}, post-retrigger)"
+                  else
+                    echo "No pipeline visible after accepted trigger (attempt ${ACCEPTED_WITHOUT_PIPELINE_POLLS}/${GITLAB_NO_PIPELINE_FAST_FAIL_ATTEMPTS})"
+                  fi
+                  if [ "${ACCEPTED_WITHOUT_PIPELINE_POLLS}" -ge "${GITLAB_NO_PIPELINE_FAST_FAIL_ATTEMPTS}" ]; then
+                    if [ "${ACCEPTED_WITHOUT_PIPELINE_RETRIGGERED}" = "0" ]; then
+                      echo "Accepted trigger produced no visible pipeline; attempting one retrigger before fail-fast."
+                      ACCEPTED_WITHOUT_PIPELINE_RETRIGGERED=1
+                      trigger_pipeline_with_context
+                      if [ "${HTTP_CODE}" = "201" ]; then
+                        ACCEPTED_WITHOUT_PIPELINE_POLLS=0
+                        if [ -n "${TRIGGER_PIPELINE_ID}" ]; then
+                          TRIGGERED_PIPELINE_ID="${TRIGGER_PIPELINE_ID}"
+                          PIPELINE_ID="${TRIGGER_PIPELINE_ID}"
+                          STATUS="${TRIGGER_PIPELINE_STATUS:-created}"
+                          PIPELINE_CREATED_AT="${TRIGGER_PIPELINE_CREATED_AT}"
+                          TRIGGERED_PIPELINE=1
+                          echo "Retrigger accepted (HTTP 201) with pipeline id=${PIPELINE_ID}; switching to direct pipeline status."
+                        else
+                          echo "Retrigger accepted (HTTP 201) with no pipeline id; keeping original SHA polling window."
+                          continue
+                        fi
+                      elif [ "${GH_EVENT_NAME}" = "push" ] && echo "${TRIGGER_RESP}" | grep -qi "The resulting pipeline would have been empty"; then
+                        echo "Retrigger skipped for push event: no runnable jobs for ref=${BRANCH}"
+                        echo "pipeline_skipped=true" >> "$GITHUB_OUTPUT"
+                        exit 0
+                      elif [ "${HTTP_CODE}" = "429" ] || [[ "${HTTP_CODE}" =~ ^5 ]] || [ "${HTTP_CODE}" = "000" ]; then
+                        echo "Retrigger returned transient HTTP ${HTTP_CODE}; continuing SHA polling for original accepted trigger visibility."
+                        if [ -n "${TRIGGER_RESP}" ]; then
+                          echo "${TRIGGER_RESP}"
+                        fi
+                        ACCEPTED_WITHOUT_PIPELINE_POLLS=0
+                        continue
+                      else
+                        echo "Retrigger failed while recovering missing pipeline visibility (HTTP ${HTTP_CODE})"
+                        if [ -n "${TRIGGER_RESP}" ]; then
+                          echo "${TRIGGER_RESP}"
+                        fi
+                        if echo "${TRIGGER_RESP}" | grep -qi "Reference not found"; then
+                          echo "GitLab API reports missing ref after retrigger failure; attempting branch ensure before failing"
+                          if ! ensure_branch_visible "${PROJECT_ENCODED}" "${BRANCH_ENCODED}" "${BRANCH}" "${GH_SHA}" "true"; then
+                            echo "Branch ensure did not confirm ${GH_SHA}; failing retrigger path"
+                          else
+                            echo "Branch ensure confirmed ${GH_SHA}; resuming SHA polling."
+                            ACCEPTED_WITHOUT_PIPELINE_POLLS=0
+                            continue
+                          fi
+                        fi
+                        exit 1
+                      fi
+                    else
+                      echo "Fail-fast: accepted trigger still produced no visible pipeline after retrigger."
+                      exit 1
+                    fi
+                  fi
+                fi
+                if [ "${TRIGGERED_PIPELINE}" = "0" ] && [ "${TRIGGER_REQUEST_ACCEPTED}" != "true" ] && [ "${FALLBACK_TRIGGER_ATTEMPTED}" = "0" ] && [ "${i}" -ge 2 ]; then
+                  echo "No pipeline found yet; triggering pipeline on ref=${BRANCH}"
+                  FALLBACK_TRIGGER_ATTEMPTED=1
+                  fallback_poll_start_ts="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+                  trigger_pipeline_with_context
+                  if [ "${HTTP_CODE}" = "201" ]; then
+                    POLL_START_TS="${fallback_poll_start_ts}"
+                    echo "Fallback trigger accepted (HTTP 201)"
+                    TRIGGER_REQUEST_ACCEPTED="true"
+                    if [ -n "${TRIGGER_PIPELINE_ID}" ]; then
+                      TRIGGERED_PIPELINE=1
+                      TRIGGERED_PIPELINE_ID="${TRIGGER_PIPELINE_ID}"
+                    fi
+                  elif [ "${HTTP_CODE}" = "429" ] || [[ "${HTTP_CODE}" =~ ^5 ]] || [ "${HTTP_CODE}" = "000" ]; then
+                    echo "Fallback trigger outcome is ambiguous (HTTP ${HTTP_CODE}); continuing SHA polling without another POST."
+                    if [ -n "${TRIGGER_RESP}" ]; then
+                      echo "${TRIGGER_RESP}"
+                    fi
+                    sleep "${GITLAB_POLL_INTERVAL_SECS}"
+                    continue
+                  elif [ "${GH_EVENT_NAME}" = "push" ] && echo "${TRIGGER_RESP}" | grep -qi "The resulting pipeline would have been empty"; then
+                    echo "Fallback trigger skipped for push event: no runnable jobs for ref=${BRANCH}"
+                    echo "pipeline_skipped=true" >> "$GITHUB_OUTPUT"
+                    exit 0
+                  else
+                    echo "Failed to trigger fallback GitLab pipeline for ${PROJECT_PATH} ref=${BRANCH} (HTTP ${HTTP_CODE})"
+                    echo "Fallback trigger returned HTTP ${HTTP_CODE}; will continue polling by SHA"
+                    if [ -n "${TRIGGER_RESP}" ]; then
+                      echo "${TRIGGER_RESP}"
+                    fi
+                    if echo "${TRIGGER_RESP}" | grep -qi "Reference not found"; then
+                      echo "GitLab API reports missing ref; attempting branch ensure before next poll"
+                      if ! ensure_branch_visible "${PROJECT_ENCODED}" "${BRANCH_ENCODED}" "${BRANCH}" "${GH_SHA}" "true"; then
+                        echo "Branch ensure did not confirm ${GH_SHA}; continuing SHA polling"
+                      else
+                        echo "Branch ensure confirmed ${GH_SHA}; resetting fallback trigger guard for retry."
+                        FALLBACK_TRIGGER_ATTEMPTED=0
+                        fallback_poll_start_ts=""
+                      fi
+                    fi
+                  fi
+                fi
+                if [ -z "${PIPELINE_ID}" ]; then
+                  echo "No pipeline yet (attempt ${i}/${GITLAB_POLL_ATTEMPTS}); sleeping ${GITLAB_POLL_INTERVAL_SECS}s"
+                  sleep "${GITLAB_POLL_INTERVAL_SECS}"
+                  continue
+                fi
+              fi
+
+            echo "GitLab pipeline ${PIPELINE_ID} created_at=${PIPELINE_CREATED_AT} status=${STATUS}"
+            LAST_SEEN_PIPELINE_ID="${PIPELINE_ID}"
+            LAST_SEEN_STATUS="${STATUS}"
+            if ! run_queue_watchdog "${PIPELINE_ID}" "${STATUS}"; then
+              exit 1
+            fi
+            ACCEPTED_WITHOUT_PIPELINE_POLLS=0
+            case "${STATUS}" in
+              success)
+                exit 0
+                ;;
+              failed|canceled|skipped)
+                dump_pipeline_diagnostics "${PIPELINE_ID}"
+                echo "Pipeline ${PIPELINE_ID} ended with status=${STATUS}"
+                exit 1
+                ;;
+              created|pending|preparing|running|waiting_for_resource|manual|scheduled)
+                sleep "${GITLAB_POLL_INTERVAL_SECS}"
+                ;;
+              *)
+                echo "Unexpected pipeline status: ${STATUS}"
+                sleep "${GITLAB_POLL_INTERVAL_SECS}"
+                ;;
+            esac
+          done
+
+          if [ -n "${LAST_SEEN_PIPELINE_ID}" ]; then
+            echo "Timed out waiting for GitLab pipeline id=${LAST_SEEN_PIPELINE_ID} (last_status=${LAST_SEEN_STATUS:-unknown})"
+            dump_pipeline_diagnostics "${LAST_SEEN_PIPELINE_ID}" || true
+          else
+            echo "Timed out waiting for GitLab pipeline (no pipeline id observed)"
+          fi
+          exit 1
+
+      - name: Finalize gitlab-ci status
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STATUS_REPO: ${{ github.repository }}
+          STATUS_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.event_name == 'merge_group' && github.event.merge_group.head_sha || github.sha }}
+          STATUS_TARGET_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          JOB_STATUS: ${{ job.status }}
+          PIPELINE_SKIPPED: ${{ steps.wait.outputs.pipeline_skipped || steps.trigger.outputs.pipeline_skipped || 'false' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          case "${JOB_STATUS}" in
+            success)
+              STATUS_STATE="success"
+              if [ "${PIPELINE_SKIPPED}" = "true" ]; then
+                STATUS_DESCRIPTION="GitLab mirror pipeline skipped (no matching jobs)"
+              else
+                STATUS_DESCRIPTION="GitLab mirror pipeline passed"
+              fi
+              ;;
+            cancelled)
+              STATUS_STATE="error"
+              STATUS_DESCRIPTION="GitLab mirror pipeline cancelled"
+              ;;
+            *)
+              STATUS_STATE="failure"
+              STATUS_DESCRIPTION="GitLab mirror pipeline failed"
+              ;;
+          esac
+
+          export STATUS_STATE STATUS_DESCRIPTION
+          STATUS_PAYLOAD="$(python3 -c 'import json, os; print(json.dumps({
+          "state": os.environ["STATUS_STATE"],
+          "target_url": os.environ["STATUS_TARGET_URL"],
+          "description": os.environ["STATUS_DESCRIPTION"],
+          "context": "gitlab-ci",
+          }))')"
+
+          curl --silent --show-error --fail-with-body \
+            --request POST \
+            --url "https://api.github.com/repos/${STATUS_REPO}/statuses/${STATUS_SHA}" \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            --header "Content-Type: application/json" \
+            --data "${STATUS_PAYLOAD}" >/dev/null
+
+      - name: Dispatch ai-pr-agent on bridge failure
+        if: ${{ always() && failure() && github.event_name == 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BRIDGE_RUN_ID: ${{ github.run_id }}
+          BRIDGE_RUN_ATTEMPT: ${{ github.run_attempt }}
+          BRIDGE_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PR_LABELS_JSON: ${{ toJson(github.event.pull_request.labels.*.name) }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -z "${PR_NUMBER:-}" ]; then
+            echo "No PR context found; skipping ai-pr-agent dispatch."
+            exit 0
+          fi
+
+          SKIP_DISPATCH="$(python3 -c 'import json, os; labels=json.loads(os.environ.get("PR_LABELS_JSON", "[]") or "[]"); blocked={"ai-fixing","no-ai-fix"}; print("true" if any(label in blocked for label in labels) else "false")')"
+          if [ "${SKIP_DISPATCH}" = "true" ]; then
+            echo "Skipping ai-pr-agent dispatch due to ai-fixing/no-ai-fix label."
+            exit 0
+          fi
+
+          DISPATCH_PAYLOAD="$(python3 -c 'import json, os; print(json.dumps({
+          "event_type": "ai-fix-pr",
+          "client_payload": {
+            "pr_number": int(os.environ["PR_NUMBER"]),
+            "source": "gitlab-ci-bridge",
+            "bridge_run_id": os.environ["BRIDGE_RUN_ID"],
+            "bridge_run_attempt": os.environ["BRIDGE_RUN_ATTEMPT"],
+            "bridge_run_url": os.environ["BRIDGE_RUN_URL"],
+          },
+          }))')"
+
+          if curl --silent --show-error --fail-with-body \
+            --request POST \
+            --url "https://api.github.com/repos/${REPO}/dispatches" \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            --header "Content-Type: application/json" \
+            --data "${DISPATCH_PAYLOAD}" >/dev/null; then
+            echo "Dispatched ai-fix-pr event for PR #${PR_NUMBER}."
+          else
+            echo "::warning::Failed to dispatch ai-pr-agent for PR #${PR_NUMBER}."
+          fi

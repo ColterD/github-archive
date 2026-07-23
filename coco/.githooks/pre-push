@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+remote_name="${1:-}"
+remote_url="${2:-}"
+
+if [[ "$remote_name" == "upstream" ]]; then
+  echo "Blocked: 'upstream' is read-only for coco." >&2
+  exit 1
+fi
+
+case "$remote_url" in
+  *github.com:tailcallhq/forgecode.git|*github.com/tailcallhq/forgecode.git|*github.com/tailcallhq/forgecode)
+    echo "Blocked: never push coco changes to tailcallhq/forgecode." >&2
+    exit 1
+    ;;
+esac
